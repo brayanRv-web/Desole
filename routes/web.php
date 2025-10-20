@@ -65,13 +65,13 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     });
 
     // Horarios - Rutas completas del CRUD
-    Route::prefix('horarios')->name('horarios.')->group(function () {
-        Route::get('/', [HorarioController::class, 'index'])->name('index');
-        Route::get('/{horario}/edit', [HorarioController::class, 'edit'])->name('edit');
-        Route::put('/{horario}', [HorarioController::class, 'update'])->name('update');
-        Route::put('/', [HorarioController::class, 'updateMultiple'])->name('update-multiple');
-        Route::patch('/{horario}/toggle-status', [HorarioController::class, 'toggleStatus'])->name('toggle-status');
-    });
+Route::prefix('horarios')->name('horarios.')->group(function () {
+    Route::get('/', [HorarioController::class, 'index'])->name('index');
+    Route::get('/{horario}/edit', [HorarioController::class, 'edit'])->name('edit');
+    Route::match(['put', 'patch'], '/{horario}', [HorarioController::class, 'update'])->name('update'); // ✅ acepta PUT y PATCH
+    Route::match(['put', 'patch'], '/', [HorarioController::class, 'updateMultiple'])->name('update-multiple'); // ✅ igual aquí
+    Route::patch('/{horario}/toggle-status', [HorarioController::class, 'toggleStatus'])->name('toggle-status');
+});
 
     // Módulos en desarrollo (vistas estáticas)
     Route::view('/pedidos', 'admin.pedidos.index')->name('pedidos.index');
