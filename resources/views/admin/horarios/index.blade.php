@@ -161,7 +161,7 @@
                             $estaAbierto = $horario->estaAbierto();
                         @endphp
                         <tr class="hover:bg-blue-900/20 transition-all duration-200 group {{ $esHoy ? 'bg-blue-900/10 border-l-4 border-blue-500' : '' }}">
-                            <!-- Day -->
+                            <!-- Día -->
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-lg bg-blue-600/20 border border-blue-600/30 flex items-center justify-center">
@@ -172,13 +172,13 @@
                                             {{ $horario->dia_semana_completo }}
                                         </div>
                                         @if($esHoy)
-                                        <div class="text-xs text-blue-400 mt-1 flex items-center gap-1">
-                                            <i class="fas fa-star text-yellow-400"></i>
-                                            <span>Hoy</span>
-                                            @if($estaAbierto)
-                                            <span class="text-green-400 ml-2">• Abierto ahora</span>
-                                            @endif
-                                        </div>
+                                            <div class="text-xs text-blue-400 mt-1 flex items-center gap-1">
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                                <span>Hoy</span>
+                                                @if($estaAbierto)
+                                                    <span class="text-green-400 ml-2">• Abierto ahora</span>
+                                                @endif
+                                            </div>
                                         @endif
                                     </div>
                                 </div>
@@ -188,7 +188,7 @@
                             <td class="px-6 py-4">
                                 <input type="time" 
                                        name="horarios[{{ $horario->id }}][apertura]" 
-                                       value="{{ $horario->apertura->format('H:i') }}"
+                                       value="{{ $horario->apertura ? date('H:i', strtotime($horario->apertura)) : '' }}"
                                        class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
                             </td>
 
@@ -196,7 +196,7 @@
                             <td class="px-6 py-4">
                                 <input type="time" 
                                        name="horarios[{{ $horario->id }}][cierre]" 
-                                       value="{{ $horario->cierre->format('H:i') }}"
+                                       value="{{ $horario->cierre ? date('H:i', strtotime($horario->cierre)) : '' }}"
                                        class="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
                             </td>
 
@@ -205,140 +205,35 @@
                                 <div class="text-sm text-white font-medium">
                                     {{ $horario->horario_formateado }}
                                 </div>
-                                <div class="text-xs text-gray-400">
-                                    {{ $horario->apertura->format('H:i') }} - {{ $horario->cierre->format('H:i') }}
-                                </div>
                             </td>
 
-                            <!-- Status -->
+                            <!-- Estado -->
                             <td class="px-6 py-4">
-                                <div class="flex flex-col gap-2">
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" 
-                                               name="horarios[{{ $horario->id }}][activo]" 
-                                               value="1" 
-                                               {{ $horario->activo ? 'checked' : '' }}
-                                               class="sr-only peer">
-                                        <div class="relative w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                        <span class="ms-3 text-sm font-medium text-gray-300">
-                                            {{ $horario->activo ? 'Activo' : 'Inactivo' }}
-                                        </span>
-                                    </label>
-                                    @if($esHoy && $horario->activo)
-                                    <div class="text-xs {{ $estaAbierto ? 'text-green-400' : 'text-red-400' }} flex items-center gap-1">
-                                        <i class="fas fa-circle text-xs"></i>
-                                        {{ $estaAbierto ? 'Abierto ahora' : 'Cerrado ahora' }}
-                                    </div>
-                                    @endif
-                                </div>
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" 
+                                           name="horarios[{{ $horario->id }}][activo]" 
+                                           value="1" 
+                                           {{ $horario->activo ? 'checked' : '' }}
+                                           class="sr-only peer">
+                                    <div class="relative w-11 h-6 bg-gray-700 rounded-full peer peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:h-5 after:w-5 after:rounded-full after:transition-all peer-checked:after:translate-x-full"></div>
+                                    <span class="ml-3 text-sm text-gray-300">{{ $horario->activo ? 'Activo' : 'Inactivo' }}</span>
+                                </label>
                             </td>
 
-                            <!-- Actions -->
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center justify-center gap-2">
-                                    <!-- Edit Button -->
-                                    <a href="{{ route('admin.horarios.edit', $horario) }}" 
-                                       class="bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/50 hover:border-blue-400 text-blue-400 hover:text-blue-300 p-2 rounded-xl transition-all duration-200 group/edit tooltip"
-                                       title="Editar horario individualmente">
-                                        <i class="fas fa-edit group-hover/edit:scale-110 transition-transform"></i>
-                                    </a>
-
-                                    <!-- Quick Status Toggle -->
-                                    <form action="{{ route('admin.horarios.toggle-status', $horario) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" 
-                                                class="bg-{{ $horario->activo ? 'yellow' : 'green' }}-600/20 hover:bg-{{ $horario->activo ? 'yellow' : 'green' }}-600/40 border border-{{ $horario->activo ? 'yellow' : 'green' }}-500/50 hover:border-{{ $horario->activo ? 'yellow' : 'green' }}-400 text-{{ $horario->activo ? 'yellow' : 'green' }}-400 hover:text-{{ $horario->activo ? 'yellow' : 'green' }}-300 p-2 rounded-xl transition-all duration-200 group/toggle tooltip"
-                                                title="{{ $horario->activo ? 'Desactivar horario' : 'Activar horario' }}">
-                                            <i class="fas {{ $horario->activo ? 'fa-pause' : 'fa-play' }} group-hover/toggle:scale-110 transition-transform"></i>
-                                        </button>
-                                    </form>
-                                </div>
+                            <!-- Acciones -->
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <a href="{{ route('admin.horarios.edit', $horario) }}" 
+                                   class="bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/50 text-blue-400 p-2 rounded-xl transition-all duration-200"
+                                   title="Editar horario individualmente">
+                                    <i class="fas fa-edit"></i>
+                                </a>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-
-            <div class="px-6 py-4 border-t border-gray-700/50 bg-gray-800/30">
-                <div class="flex items-center justify-between">
-                    <div class="text-sm text-gray-400">
-                        Configura los horarios de atención para cada día de la semana
-                    </div>
-                    <button type="submit" 
-                           class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 font-semibold">
-                        <i class="fas fa-save"></i>
-                        Guardar Todos los Cambios
-                    </button>
-                </div>
-            </div>
         </div>
     </form>
-
-    <!-- Current Time Info -->
-    <div class="bg-gray-800/30 rounded-xl p-4 border border-green-500/20">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-green-600/20 flex items-center justify-center">
-                    <i class="fas fa-clock text-green-400"></i>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-sm">Información del Sistema</p>
-                    <p class="text-white">
-                        Hora actual del servidor: 
-                        <span class="font-mono text-green-400">{{ now()->format('H:i:s') }}</span>
-                    </p>
-                </div>
-            </div>
-            <div class="text-right">
-                <p class="text-gray-400 text-sm">Día actual</p>
-                <p class="text-white font-semibold">{{ now()->isoFormat('dddd, D [de] MMMM [de] YYYY') }}</p>
-            </div>
-        </div>
-    </div>
 </div>
-
-<style>
-.tooltip {
-    position: relative;
-}
-
-.tooltip:hover::after {
-    content: attr(title);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 1000;
-    margin-bottom: 8px;
-    max-width: 250px;
-    word-wrap: break-word;
-    white-space: normal;
-    text-align: center;
-}
-
-.tooltip:hover::before {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 5px solid transparent;
-    border-top-color: rgba(0, 0, 0, 0.9);
-    margin-bottom: -2px;
-    z-index: 1000;
-}
-
-/* Custom toggle switch */
-input:checked ~ .dot {
-    transform: translateX(100%);
-}
-</style>
 @endsection

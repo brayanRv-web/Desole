@@ -4,11 +4,26 @@
     <p>
       <i class="fas fa-clock"></i>
       @php
+        use Carbon\Carbon;
+
+        // Traemos los horarios
         $horarios = \App\Models\Horario::ordenados()->get();
-        $horarioHoy = $horarios->firstWhere('dia_semana', strtolower(now()->isoFormat('dddd')));
+
+        // Día de hoy en español
+        $diaHoy = strtolower(now()->locale('es')->isoFormat('dddd'));
+
+        // Obtenemos el horario correspondiente al día de hoy
+        $horarioHoy = $horarios->firstWhere('dia_semana', $diaHoy);
+
+        // Convertimos apertura y cierre a Carbon si existe
+        if ($horarioHoy) {
+            $apertura = Carbon::createFromFormat('H:i:s', $horarioHoy->apertura)->format('g:i A');
+            $cierre   = Carbon::createFromFormat('H:i:s', $horarioHoy->cierre)->format('g:i A');
+        }
       @endphp
+
       @if($horarioHoy && $horarioHoy->activo)
-        Pedidos {{ $horarioHoy->apertura->format('g:i A') }} - {{ $horarioHoy->cierre->format('g:i A') }}
+        Pedidos {{ $apertura }} - {{ $cierre }}
       @else
         Cerrado hoy
       @endif

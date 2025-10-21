@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon; // 
 
 class Horario extends Model
 {
@@ -18,12 +20,16 @@ class Horario extends Model
         'activo'
     ];
 
-    protected $casts = [
-        'apertura' => 'datetime',
-        'cierre' => 'datetime',
-        'activo' => 'boolean'
-    ];
+protected $casts = [
+    'apertura' => 'string',
+    'cierre' => 'string',
+    'activo' => 'boolean'
+];
 
+
+    /**
+     * Devuelve el nombre completo del día.
+     */
     public function getDiaSemanaCompletoAttribute()
     {
         $dias = [
@@ -36,44 +42,64 @@ class Horario extends Model
             'domingo' => 'Domingo'
         ];
 
-        return $dias[$this->dia_semana] ?? $this->dia_semana;
+        return $dias[$this->dia_semana] ?? ucfirst($this->dia_semana);
     }
 
+    /**
+     * Devuelve el horario formateado en formato legible (ej: 08:00 AM - 05:00 PM)
+     */
     public function getHorarioFormateadoAttribute()
     {
-        return $this->apertura->format('h:i A') . ' - ' . $this->cierre->format('h:i A');
+        $apertura = $this->apertura ? date('h:i A', strtotime($this->apertura)) : '--:--';
+        $cierre = $this->cierre ? date('h:i A', strtotime($this->cierre)) : '--:--';
+        return "$apertura - $cierre";
     }
 
-    public function estaAbierto()
-    {
-        if (!$this->activo) {
-            return false;
-        }
+    /**
+     * Indica si el negocio está actualmente abierto.
+     */
 
-        $now = now();
-        $horaActual = $now->format('H:i:s');
-        
-        return $horaActual >= $this->apertura->format('H:i:s') && 
-               $horaActual <= $this->cierre->format('H:i:s');
+
+
+
+public function estaAbierto()
+{
+    if (!$this->activo) {
+        return false;
     }
 
+    $ahora = Carbon::now('America/Mexico_City');
+    $horaActual = $ahora->format('H:i');
+
+    // Convertimos las horas de la BD a strings
+    $apertura = Carbon::createFromFormat('H:i:s', $this->apertura)->format('H:i');
+    $cierre = Carbon::createFromFormat('H:i:s', $this->cierre)->format('H:i');
+
+    // Si el cierre es después de la apertura (ej. 08:00–18:00)
+    if ($cierre > $apertura) {
+        return $horaActual >= $apertura && $horaActual <= $cierre;
+    }
+
+    // Si el horario cruza medianoche (ej. 22:00–02:00)
+    return $horaActual >= $apertura || $horaActual <= $cierre;
+}
+
+
+
+
+    /**
+     * Scope para obtener solo los horarios activos.
+     */
     public function scopeActivos($query)
     {
         return $query->where('activo', true);
     }
 
+    /**
+     * Scope para ordenar los días de la semana en orden lógico.
+     */
     public function scopeOrdenados($query)
     {
-        $ordenDias = [
-            'lunes' => 1,
-            'martes' => 2,
-            'miercoles' => 3,
-            'jueves' => 4,
-            'viernes' => 5,
-            'sabado' => 6,
-            'domingo' => 7
-        ];
-
         return $query->orderByRaw(
             "FIELD(dia_semana, 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo')"
         );
