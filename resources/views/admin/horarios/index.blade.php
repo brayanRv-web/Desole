@@ -2,6 +2,13 @@
 
 @section('content')
 @php
+    use Illuminate\Support\Str;
+
+    // Función para normalizar días (elimina acentos y convierte a minúsculas)
+    function normalizarDia($dia) {
+        return strtolower(Str::ascii($dia));
+    }
+
     $estadoColors = [
         true => 'bg-green-500/20 text-green-400 border-green-500',
         false => 'bg-gray-500/20 text-gray-400 border-gray-500',
@@ -16,6 +23,11 @@
         true => 'Activo',
         false => 'Inactivo'
     ];
+
+    // Día actual (sin acentos)
+    $diaHoy = normalizarDia(now()->locale('es')->isoFormat('dddd'));
+    $horarioHoy = $horarios->firstWhere('dia_semana', $diaHoy);
+    $estaAbierto = $horarioHoy && $horarioHoy->estaAbierto();
 @endphp
 
 <div class="flex flex-col space-y-6">
@@ -98,11 +110,7 @@
                 </div>
                 <div>
                     <p class="text-gray-400 text-sm">Estado Actual</p>
-                    <p class="text-2xl font-bold text-white">
-                        @php
-                            $horarioHoy = $horarios->firstWhere('dia_semana', strtolower(now()->isoFormat('dddd')));
-                            $estaAbierto = $horarioHoy && $horarioHoy->estaAbierto();
-                        @endphp
+                    <p class="text-2xl font-bold {{ $estaAbierto ? 'text-green-400' : 'text-red-400' }}">
                         {{ $estaAbierto ? 'Abierto' : 'Cerrado' }}
                     </p>
                 </div>
@@ -157,7 +165,7 @@
                     <tbody class="divide-y divide-gray-700/50">
                         @foreach($horarios as $horario)
                         @php
-                            $esHoy = $horario->dia_semana === strtolower(now()->isoFormat('dddd'));
+                            $esHoy = $horario->dia_semana === $diaHoy;
                             $estaAbierto = $horario->estaAbierto();
                         @endphp
                         <tr class="hover:bg-blue-900/20 transition-all duration-200 group {{ $esHoy ? 'bg-blue-900/10 border-l-4 border-blue-500' : '' }}">

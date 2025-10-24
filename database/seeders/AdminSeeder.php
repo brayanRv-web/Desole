@@ -14,6 +14,7 @@ class AdminSeeder extends Seeder
             'name' => 'Administrador',
             'email' => 'prueba@desole.com',
             'password' => Hash::make('admin123'), // Cambia esta contraseña
+            'role' => 'Administrador',
         ]);
 
         $this->command->info('✅ Administrador creado:');

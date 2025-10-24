@@ -81,6 +81,11 @@ class ProductoController extends Controller
     // 🟢 Eliminar producto
     public function destroy(Producto $producto)
     {
+        $user = request()->user('admin');
+        if (!$user || !$user->hasRole('Administrador')) {
+            return redirect()->route('admin.productos.index')->with('error', 'No tienes permiso para eliminar productos.');
+        }
+
         $producto->delete();
 
         return redirect()->route('admin.productos.index')

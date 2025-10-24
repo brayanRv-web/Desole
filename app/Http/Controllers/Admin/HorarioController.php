@@ -28,6 +28,11 @@ class HorarioController extends Controller
 
     public function update(Request $request, Horario $horario)
     {
+        $user = $request->user('admin');
+        if (!$user || !$user->hasRole('Administrador')) {
+            return redirect()->route('admin.horarios.index')->with('error', 'No tienes permiso para modificar horarios.');
+        }
+
         $request->validate([
             'apertura' => 'required|date_format:H:i',
             'cierre' => 'required|date_format:H:i|after:apertura',
@@ -57,6 +62,11 @@ class HorarioController extends Controller
 
     public function toggleStatus(Horario $horario)
     {
+        $user = request()->user('admin');
+        if (!$user || !$user->hasRole('Administrador')) {
+            return redirect()->route('admin.horarios.index')->with('error', 'No tienes permiso para cambiar el estado del horario.');
+        }
+
         try {
             $horario->update([
                 'activo' => !$horario->activo
@@ -75,6 +85,11 @@ class HorarioController extends Controller
 
     public function updateMultiple(Request $request)
     {
+        $user = $request->user('admin');
+        if (!$user || !$user->hasRole('Administrador')) {
+            return redirect()->route('admin.horarios.index')->with('error', 'No tienes permiso para modificar horarios.');
+        }
+
         $request->validate([
             'horarios' => 'required|array',
             'horarios.*.apertura' => 'required|date_format:H:i',

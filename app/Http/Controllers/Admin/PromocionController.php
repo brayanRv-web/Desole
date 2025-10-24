@@ -103,6 +103,11 @@ public function index()
 
     public function destroy(Promocion $promocione)
     {
+        $user = request()->user('admin');
+        if (!$user || !$user->hasRole('Administrador')) {
+            return redirect()->route('admin.promociones.index')->with('error', 'No tienes permiso para eliminar promociones.');
+        }
+
         $promocione->delete();
         return redirect()->route('admin.promociones.index')
                         ->with('success', 'Promoción eliminada exitosamente.');
@@ -110,6 +115,11 @@ public function index()
 
     public function toggleStatus(Promocion $promocione)
     {
+        $user = request()->user('admin');
+        if (!$user || !$user->hasRole('Administrador')) {
+            return redirect()->back()->with('error', 'No tienes permiso para cambiar el estado de la promoción.');
+        }
+
         $promocione->update(['activa' => !$promocione->activa]);
         $status = $promocione->activa ? 'activada' : 'desactivada';
         return back()->with('success', "Promoción {$status} exitosamente.");

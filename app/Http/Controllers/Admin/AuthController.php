@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,9 +17,14 @@ class AuthController extends Controller
     {
         // Verificar si ya está autenticado como admin
         if (Auth::guard('admin')->check()) {
+            $user = Auth::guard('admin')->user();
+            if (isset($user->role) && $user->role === 'Empleado') {
+                return redirect()->route('empleado.dashboard');
+            }
             return redirect()->route('admin.dashboard');
         }
-        
+
+        // Mostrar formulario de login (no redirigir automáticamente a empleado si hay sesión web)
         return view('admin.login');
     }
 
@@ -35,28 +41,46 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        // Verificar si el administrador existe y está activo
+        // Primero intentamos con el guard 'admin' (tabla admins)
         $admin = Admin::where('email', $credentials['email'])->first();
+        if ($admin) {
+            if (!$admin->is_active) {
+                return back()->withErrors([
+                    'email' => 'Tu cuenta está desactivada. Contacta al administrador.',
+                ])->onlyInput('email');
+            }
 
-        if (!$admin) {
-            return back()->withErrors([
-                'email' => 'Las credenciales proporcionadas no son válidas.',
-            ])->onlyInput('email');
+            if (Auth::guard('admin')->attempt($credentials)) {
+                $request->session()->regenerate();
+
+                $user = Auth::guard('admin')->user();
+                if (isset($user->role) && $user->role === 'Empleado') {
+                    return redirect()->route('empleado.dashboard')
+                        ->with('success', 'Inicio de sesión exitoso.');
+                }
+
+                return redirect()->route('admin.dashboard')
+                    ->with('success', 'Inicio de sesión exitoso.');
+            }
         }
 
-        // Verificar si el administrador está activo
-        if (!$admin->is_active) {
-            return back()->withErrors([
-                'email' => 'Tu cuenta está desactivada. Contacta al administrador.',
-            ])->onlyInput('email');
-        }
+        // Si no es admin o falló, intentar con la tabla users (empleados)
+        $user = User::where('email', $credentials['email'])->first();
+        if ($user) {
+            // El role esperado en users es 'employee' (según esquema), y debe estar activo
+            if (isset($user->role) && ($user->role === 'employee' || $user->role === 'Empleado')) {
+                if (!$user->is_active) {
+                    return back()->withErrors([
+                        'email' => 'Tu cuenta está desactivada. Contacta al administrador.',
+                    ])->onlyInput('email');
+                }
 
-        // Intentar iniciar sesión con el guardia admin
-        if (Auth::guard('admin')->attempt($credentials)) {
-            $request->session()->regenerate();
-
-            return redirect()->route('admin.dashboard')
-                ->with('success', 'Inicio de sesión exitoso.');
+                if (Auth::attempt($credentials)) {
+                    $request->session()->regenerate();
+                    return redirect()->route('empleado.dashboard')
+                        ->with('success', 'Inicio de sesión exitoso.');
+                }
+            }
         }
 
         // Si falla la autenticación
@@ -70,7 +94,14 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::guard('admin')->logout();
+        // Cerrar sesión en ambos guards por seguridad
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+        }
+
+        if (Auth::check()) {
+            Auth::logout();
+        }
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

@@ -49,31 +49,66 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
         Route::post('/', [ProductoController::class, 'store'])->name('store');
         Route::get('/{producto}/edit', [ProductoController::class, 'edit'])->name('edit');
         Route::put('/{producto}', [ProductoController::class, 'update'])->name('update');
-        Route::delete('/{producto}', [ProductoController::class, 'destroy'])->name('destroy');
-        Route::patch('/{producto}/estado', [ProductoController::class, 'updateEstado'])->name('updateEstado');
+        // Solo Administrador puede eliminar o cambiar el estado del producto
+        Route::delete('/{producto}', [ProductoController::class, 'destroy'])
+            ->name('destroy')
+            ->middleware(\App\Middleware\EnsureAdminRole::class.':Administrador');
+
+        Route::patch('/{producto}/estado', [ProductoController::class, 'updateEstado'])
+            ->name('updateEstado');
     });
 
     // Promociones - Rutas completas del CRUD
     Route::prefix('promociones')->name('promociones.')->group(function () {
-        Route::get('/', [PromocionController::class, 'index'])->name('index');
-        Route::get('/create', [PromocionController::class, 'create'])->name('create');
-        Route::post('/', [PromocionController::class, 'store'])->name('store');
-        Route::get('/{promocione}/edit', [PromocionController::class, 'edit'])->name('edit');
-        Route::match(['put', 'patch'], '/{promocione}', [PromocionController::class, 'update'])->name('update'); // ✅ ACEPTA AMBOS
-        Route::delete('/{promocione}', [PromocionController::class, 'destroy'])->name('destroy');
-        Route::patch('/{promocione}/toggle-status', [PromocionController::class, 'toggleStatus'])->name('toggle-status');
+        // Promociones: solo Administrador gestiona promociones
+        Route::get('/', [PromocionController::class, 'index'])->name('index')
+            ->middleware(\App\Middleware\EnsureAdminRole::class.':Administrador');
+        Route::get('/create', [PromocionController::class, 'create'])->name('create')
+            ->middleware(\App\Middleware\EnsureAdminRole::class.':Administrador');
+        Route::post('/', [PromocionController::class, 'store'])->name('store')
+            ->middleware(\App\Middleware\EnsureAdminRole::class.':Administrador');
+        Route::get('/{promocione}/edit', [PromocionController::class, 'edit'])->name('edit')
+            ->middleware(\App\Middleware\EnsureAdminRole::class.':Administrador');
+        Route::match(['put', 'patch'], '/{promocione}', [PromocionController::class, 'update'])->name('update') // ✅ ACEPTA AMBOS
+            ->middleware(\App\Middleware\EnsureAdminRole::class.':Administrador');
+        Route::delete('/{promocione}', [PromocionController::class, 'destroy'])->name('destroy')
+            ->middleware(\App\Middleware\EnsureAdminRole::class.':Administrador');
+        Route::patch('/{promocione}/toggle-status', [PromocionController::class, 'toggleStatus'])->name('toggle-status')
+            ->middleware(\App\Middleware\EnsureAdminRole::class.':Administrador');
     });
 
     // Horarios - Rutas completas del CRUD
 Route::prefix('horarios')->name('horarios.')->group(function () {
     Route::get('/', [HorarioController::class, 'index'])->name('index');
     Route::get('/{horario}/edit', [HorarioController::class, 'edit'])->name('edit');
-    Route::match(['put', 'patch'], '/{horario}', [HorarioController::class, 'update'])->name('update'); // ✅ acepta PUT y PATCH
-    Route::match(['put', 'patch'], '/', [HorarioController::class, 'updateMultiple'])->name('update-multiple'); // ✅ igual aquí
-    Route::patch('/{horario}/toggle-status', [HorarioController::class, 'toggleStatus'])->name('toggle-status');
+        // Solo Administrador puede modificar horarios
+        Route::match(['put', 'patch'], '/{horario}', [HorarioController::class, 'update'])->name('update') // ✅ acepta PUT y PATCH
+            ->middleware(\App\Middleware\EnsureAdminRole::class.':Administrador');
+        Route::match(['put', 'patch'], '/', [HorarioController::class, 'updateMultiple'])->name('update-multiple') // ✅ igual aquí
+            ->middleware(\App\Middleware\EnsureAdminRole::class.':Administrador');
+        Route::patch('/{horario}/toggle-status', [HorarioController::class, 'toggleStatus'])->name('toggle-status')
+            ->middleware(\App\Middleware\EnsureAdminRole::class.':Administrador');
 });
-
     // Módulos en desarrollo (vistas estáticas)
     Route::view('/pedidos', 'admin.pedidos.index')->name('pedidos.index');
     Route::view('/reportes', 'admin.reportes.index')->name('reportes.index');
+
 });
+
+// Panel Empleado (separate panel for employees)
+Route::middleware(['auth', \App\Middleware\EnsureUserRole::class.':employee'])->prefix('empleado')->name('empleado.')->group(function () {
+    // Pedidos - empleado: dashboard y listado
+    Route::get('/', [\App\Http\Controllers\Empleado\PedidoController::class, 'dashboard'])->name('dashboard');
+    Route::get('/pedidos', [\App\Http\Controllers\Empleado\PedidoController::class, 'index'])->name('pedidos.index');
+    Route::get('/pedidos/{pedido}', [\App\Http\Controllers\Empleado\PedidoController::class, 'show'])->name('pedidos.show');
+
+    // Productos - Empleado puede ver/editar y cambiar estado (no eliminar)
+    Route::prefix('productos')->name('productos.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Empleado\ProductoController::class, 'index'])->name('index');
+        Route::get('/{producto}/edit', [\App\Http\Controllers\Empleado\ProductoController::class, 'edit'])->name('edit');
+        Route::put('/{producto}', [\App\Http\Controllers\Empleado\ProductoController::class, 'update'])->name('update');
+        Route::patch('/{producto}/estado', [\App\Http\Controllers\Empleado\ProductoController::class, 'updateEstado'])->name('updateEstado');
+    });
+});
+
+    // Módulos en desarrollo (vistas estáticas)
