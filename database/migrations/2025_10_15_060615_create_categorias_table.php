@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->text('tipo')->nullable();
+            $table->string('icono')->nullable(); // 👈 NUEVO campo
+            $table->string('color')->nullable(); // 👈 NUEVO campo
+            $table->integer('orden')->default(0); // 👈 NUEVO campo
             $table->timestamps();
         });
     }

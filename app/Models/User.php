@@ -18,7 +18,7 @@ class User extends Authenticatable
         'role',
         'is_active',
         'phone',
-        'address',
+        'address'
     ];
 
     protected $hidden = [
@@ -35,7 +35,7 @@ class User extends Authenticatable
         ];
     }
 
-    // Métodos helper para roles
+     // ✅ ROLES UNIFICADOS (todos en minúsculas)
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
@@ -46,18 +46,16 @@ class User extends Authenticatable
         return $this->role === 'employee';
     }
 
-    public function scopeActive($query)
+    public function isCustomer(): bool
     {
-        return $query->where('is_active', true);
+        return $this->role === 'customer';
     }
 
-    public function scopeAdmins($query)
+    public function hasRole($role): bool
     {
-        return $query->where('role', 'admin');
-    }
-
-    public function scopeEmployees($query)
-    {
-        return $query->where('role', 'employee');
+        if (is_array($role)) {
+            return in_array($this->role, $role);
+        }
+        return $this->role === $role;
     }
 }

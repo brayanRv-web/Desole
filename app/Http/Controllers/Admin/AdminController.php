@@ -12,8 +12,21 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    /**
+     * Verificar que el admin esté autenticado
+     */
+    private function checkAdminAuth()
+    {
+        if (!session('admin_id')) {
+            return redirect()->route('admin.login')->send();
+        }
+    }
+
     public function dashboard()
     {
+        // ✅ Verificar autenticación
+        $this->checkAdminAuth();
+
         // Estadísticas de productos
         $totalProductos = Producto::count();
         $productosActivos = Producto::where('estado', 'activo')->count();

@@ -9,8 +9,19 @@ use Illuminate\Support\Facades\DB;
 
 class HorarioController extends Controller
 {
+    /**
+     * Verificar que el admin esté autenticado
+     */
+    private function checkAdminAuth()
+    {
+        if (!session('admin_id')) {
+            return redirect()->route('admin.login')->send();
+        }
+    }
+
     public function index()
     {
+        $this->checkAdminAuth();
         $horarios = Horario::ordenados()->get();
         
         // Si no existen horarios, crear unos por defecto
@@ -23,11 +34,18 @@ class HorarioController extends Controller
 
     public function edit(Horario $horario)
     {
+        $this->checkAdminAuth();
         return view('admin.horarios.edit', compact('horario'));
     }
 
     public function update(Request $request, Horario $horario)
     {
+        $this->checkAdminAuth();
+        // Modificar para usar sesión en lugar de user('admin')
+        if (!session('admin_role') || session('admin_role') !== 'Administrador') {
+            return redirect()->route('admin.horarios.index')->with('error', 'No tienes permiso para modificar horarios.');
+        }
+
         $request->validate([
             'apertura' => 'required|date_format:H:i',
             'cierre' => 'required|date_format:H:i|after:apertura',
@@ -57,6 +75,12 @@ class HorarioController extends Controller
 
     public function toggleStatus(Horario $horario)
     {
+        $this->checkAdminAuth();
+        // Modificar para usar sesión en lugar de user('admin')
+        if (!session('admin_role') || session('admin_role') !== 'Administrador') {
+            return redirect()->route('admin.horarios.index')->with('error', 'No tienes permiso para cambiar el estado del horario.');
+        }
+
         try {
             $horario->update([
                 'activo' => !$horario->activo
@@ -75,6 +99,12 @@ class HorarioController extends Controller
 
     public function updateMultiple(Request $request)
     {
+        $this->checkAdminAuth();
+        // Modificar para usar sesión en lugar de user('admin')
+        if (!session('admin_role') || session('admin_role') !== 'Administrador') {
+            return redirect()->route('admin.horarios.index')->with('error', 'No tienes permiso para modificar horarios.');
+        }
+
         $request->validate([
             'horarios' => 'required|array',
             'horarios.*.apertura' => 'required|date_format:H:i',

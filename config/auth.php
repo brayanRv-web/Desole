@@ -40,13 +40,22 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-            // Guard para admins
-    'admin' => [
-        'driver' => 'session',
-        'provider' => 'admins',
+        'admin' => [ // 👈 ESTE GUARD DEBE TENER SU PROVIDER
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
     ],
+
+    'providers' => [
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
+        ],
+        'admins' => [ // 👈 AGREGA ESTE PROVIDER
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
     ],
-    
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -69,11 +78,7 @@ return [
         'driver' => 'eloquent',
         'model' => App\Models\User::class,
     ],
-
-    'admins' => [ // 👈 Agregar este provider
-        'driver' => 'eloquent',
-        'model' => App\Models\Admin::class,
-    ],
+    // Se elimino el provider 'admin' (causa conflictos)
 ],
 
     /*

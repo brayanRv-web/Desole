@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Horario extends Model
 {
@@ -15,67 +16,95 @@ class Horario extends Model
         'dia_semana',
         'apertura',
         'cierre',
-        'activo'
+        'activo',
     ];
 
     protected $casts = [
-        'apertura' => 'datetime',
-        'cierre' => 'datetime',
-        'activo' => 'boolean'
+        'apertura' => 'string',
+        'cierre'   => 'string',
+        'activo'   => 'boolean',
     ];
 
+    /**
+     * ✅ Devuelve el nombre completo del día (con acentos).
+     */
     public function getDiaSemanaCompletoAttribute()
     {
         $dias = [
-            'lunes' => 'Lunes',
-            'martes' => 'Martes',
+            'lunes'     => 'Lunes',
+            'martes'    => 'Martes',
             'miercoles' => 'Miércoles',
-            'jueves' => 'Jueves',
-            'viernes' => 'Viernes',
-            'sabado' => 'Sábado',
-            'domingo' => 'Domingo'
+            'miércoles' => 'Miércoles',
+            'jueves'    => 'Jueves',
+            'viernes'   => 'Viernes',
+            'sabado'    => 'Sábado',
+            'sábado'    => 'Sábado',
+            'domingo'   => 'Domingo',
         ];
 
-        return $dias[$this->dia_semana] ?? $this->dia_semana;
+        return $dias[strtolower($this->dia_semana)] ?? ucfirst($this->dia_semana);
     }
 
+    /**
+     * ✅ Devuelve el horario formateado en formato legible (ej: 08:00 AM - 05:00 PM).
+     */
     public function getHorarioFormateadoAttribute()
     {
-        return $this->apertura->format('h:i A') . ' - ' . $this->cierre->format('h:i A');
+        $apertura = $this->apertura ? date('h:i A', strtotime($this->apertura)) : '--:--';
+        $cierre   = $this->cierre ? date('h:i A', strtotime($this->cierre)) : '--:--';
+
+        return "$apertura - $cierre";
     }
 
+    /**
+     * ✅ Indica si el negocio está actualmente abierto.
+     */
     public function estaAbierto()
     {
-        if (!$this->activo) {
+        if (!$this->activo || !$this->apertura || !$this->cierre) {
             return false;
         }
 
-        $now = now();
-        $horaActual = $now->format('H:i:s');
-        
-        return $horaActual >= $this->apertura->format('H:i:s') && 
-               $horaActual <= $this->cierre->format('H:i:s');
+        $ahora = Carbon::now('America/Mexico_City');
+        $horaActual = $ahora->format('H:i');
+
+        try {
+            $apertura = Carbon::createFromFormat('H:i:s', $this->apertura)->format('H:i');
+            $cierre   = Carbon::createFromFormat('H:i:s', $this->cierre)->format('H:i');
+        } catch (\Exception $e) {
+            // Si el formato no es válido
+            return false;
+        }
+
+        // Caso 1: horario normal (ej. 08:00–18:00)
+        if ($cierre > $apertura) {
+            return $horaActual >= $apertura && $horaActual <= $cierre;
+        }
+
+        // Caso 2: horario que cruza medianoche (ej. 22:00–02:00)
+        return $horaActual >= $apertura || $horaActual <= $cierre;
     }
 
+    /**
+     * ✅ Scope para obtener solo los horarios activos.
+     */
     public function scopeActivos($query)
     {
         return $query->where('activo', true);
     }
 
+    /**
+     * ✅ Scope para ordenar los días de la semana en orden lógico.
+     */
     public function scopeOrdenados($query)
     {
-        $ordenDias = [
-            'lunes' => 1,
-            'martes' => 2,
-            'miercoles' => 3,
-            'jueves' => 4,
-            'viernes' => 5,
-            'sabado' => 6,
-            'domingo' => 7
-        ];
-
-        return $query->orderByRaw(
-            "FIELD(dia_semana, 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo')"
-        );
+        return $query->orderByRaw("
+            FIELD(
+                dia_semana, 
+                'lunes', 'martes', 'miercoles', 'miércoles', 
+                'jueves', 'viernes', 'sabado', 'sábado', 'domingo'
+            )
+        ");
     }
 }
+    

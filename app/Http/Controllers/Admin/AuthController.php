@@ -5,77 +5,58 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    /**
-     * Mostrar formulario de login del administrador
-     */
     public function showLoginForm()
     {
-        // Verificar si ya está autenticado como admin
-        if (Auth::guard('admin')->check()) {
-            return redirect()->route('admin.dashboard');
-        }
-        
+        // ✅ ELIMINAR completamente Auth::check() y Auth::guard()
+        // Solo mostrar el formulario de login
         return view('admin.login');
     }
 
-    /**
-     * Procesar login del administrador
-     */
     public function authenticate(Request $request)
     {
-        // Validar campos obligatorios
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
-        $credentials = $request->only('email', 'password');
+        // ✅ Buscar admin directamente en la tabla admins
+        $admin = Admin::where('email', $request->email)->first();
 
-        // Verificar si el administrador existe y está activo
-        $admin = Admin::where('email', $credentials['email'])->first();
+        // ✅ Verificar contraseña con Hash::check()
+        if ($admin && Hash::check($request->password, $admin->password)) {
+            if (!$admin->is_active) {
+                return back()->withErrors([
+                    'email' => 'Tu cuenta está desactivada.',
+                ])->onlyInput('email');
+            }
 
-        if (!$admin) {
-            return back()->withErrors([
-                'email' => 'Las credenciales proporcionadas no son válidas.',
-            ])->onlyInput('email');
-        }
-
-        // Verificar si el administrador está activo
-        if (!$admin->is_active) {
-            return back()->withErrors([
-                'email' => 'Tu cuenta está desactivada. Contacta al administrador.',
-            ])->onlyInput('email');
-        }
-
-        // Intentar iniciar sesión con el guardia admin
-        if (Auth::guard('admin')->attempt($credentials)) {
-            $request->session()->regenerate();
+            // ✅ Login manual - guardar en sesión SIN usar Auth
+            session(['admin_id' => $admin->id]);
+            session(['admin_name' => $admin->name]);
+            session(['admin_email' => $admin->email]);
+            session(['admin_role' => $admin->role]);
 
             return redirect()->route('admin.dashboard')
-                ->with('success', 'Inicio de sesión exitoso.');
+                ->with('success', 'Bienvenido al panel de administración');
         }
 
-        // Si falla la autenticación
         return back()->withErrors([
             'email' => 'Credenciales incorrectas.',
         ])->onlyInput('email');
     }
 
-    /**
-     * Cerrar sesión del administrador
-     */
     public function logout(Request $request)
     {
-        Auth::guard('admin')->logout();
-
+        // ✅ Limpiar sesión de admin manualmente
+        $request->session()->forget(['admin_id', 'admin_name', 'admin_email', 'admin_role']);
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('admin.login')
-            ->with('success', 'Has cerrado sesión correctamente.');
+            ->with('success', 'Sesión cerrada correctamente.');
     }
 }

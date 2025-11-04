@@ -8,13 +8,13 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" href="{{ asset('assets/favicon.ico') }}">
 </head>
 <body class="bg-gray-50 text-gray-900">
     <!-- Header -->
     <header class="bg-green-700 text-white py-4 shadow-md">
         <div class="container mx-auto flex justify-between items-center px-6">
-            <h1 class="text-2xl font-bold">🌿 Desole</h1>
+            <h1 class="text-2xl font-bold">Désolé</h1>
             <nav class="space-x-4">
                 <a href="{{ url('/') }}" class="hover:underline">Inicio</a>
                 <a href="{{ url('/promociones') }}" class="hover:underline">Promociones</a>
@@ -30,7 +30,7 @@
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-gray-300 mt-12 py-6 text-center text-sm">
-        © {{ date('Y') }} Desole. Todos los derechos reservados.
+        © {{ date('Y') }} Désole. Todos los derechos reservados.
     </footer>
 </body>
 </html>

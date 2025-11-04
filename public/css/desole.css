@@ -42,6 +42,7 @@ a {
   backdrop-filter: blur(8px);
   position: sticky;
   top: 0;
+  width: 100%;
   z-index: 1000;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
 }
@@ -53,6 +54,7 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 0.8rem 1rem;
+  position: relative;
 }
 
 .brand {
@@ -61,22 +63,29 @@ a {
   font-weight: 700;
   font-size: 1.4rem;
   color: var(--color-primary);
+  z-index: 1001;
 }
 
 .logo {
-  width: 1020px;
+  width: 80px;  /* ← Tamaño razonable */
   height: auto;
+  margin-right: 0.6rem;
+  border-radius: 8px;
   transition: transform 0.3s ease;
+  box-shadow: 0 0 10px rgba(101, 207, 114, 0.4);
 }
 
 .logo:hover {
   transform: scale(1.05);
 }
 
+/* NAV LINKS - ESCRITORIO */
+
 .nav-links {
   display: flex;
   gap: 1.5rem;
   list-style: none;
+  align-items: center;
 }
 
 .nav-links a {
@@ -84,6 +93,7 @@ a {
   color: var(--color-text);
   font-weight: 500;
   transition: var(--transition);
+  padding: 0.5rem 0;
 }
 
 .nav-links a::after {
@@ -105,6 +115,15 @@ a {
   width: 100%;
 }
 
+/* BOTONES DEL NAV */
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1001;
+}
+
 .cart-btn {
   background: none;
   border: 1px solid var(--color-primary);
@@ -115,6 +134,9 @@ a {
   cursor: pointer;
   transition: var(--transition);
   font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cart-btn:hover {
@@ -129,6 +151,12 @@ a {
   color: var(--color-text);
   font-size: 1.6rem;
   display: none;
+  cursor: pointer;
+  z-index: 1001;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ===== HERO ===== */
@@ -139,7 +167,10 @@ a {
   justify-content: center;
   padding: 3rem 1rem;
   background: linear-gradient(135deg, #0f0f0f, #191919);
+  min-height: 90vh;
+  padding-top: 100px; /* Para el navbar fixed */
 }
+
 
 .hero-content {
   max-width: 550px;
@@ -365,8 +396,71 @@ a {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .nav-links { display: none; }
-  .hamburger { display: block; }
+  .nav {
+    padding: 0.8rem 1rem;
+  }
+
+  /* HAMBURGUESA VISIBLE EN MÓVIL */
+  .hamburger {
+    display: flex;
+    order: 2;
+  }
+
+  /* NAV LINKS - MÓVIL (REEMPLAZA el "display: none" anterior) */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(10, 10, 10, 0.98);
+    backdrop-filter: blur(10px);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    display: flex; /* Importante: mostramos como flex cuando está activo */
+  }
+
+  .nav-links.active {
+    transform: translateX(0);
+  }
+
+  .nav-links a {
+    font-size: 1.2rem;
+    padding: 1rem 2rem;
+  }
+
+  .nav-links a::after {
+    bottom: 8px;
+  }
+
+  /* BOTONES EN MÓVIL */
+  .nav-buttons {
+    order: 1;
+    margin-left: auto;
+    margin-right: 1rem;
+  }
+
+  .cart-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+
+  /* Estilo para el ícono de hamburguesa cuando está activo */
+  .hamburger.active {
+    color: var(--color-primary);
+  }
+
+  .hamburger.active i::before {
+    content: "\f00d";
+  }
+
+  /* MANTÉN ESTOS ESTILOS EXISTENTES */
   .hero { flex-direction: column; text-align: center; }
   .hero-content h1 { font-size: 2rem; }
   .hero-art img { width: 90%; }
@@ -374,10 +468,740 @@ a {
 }
 
 @media (max-width: 480px) {
+  .nav {
+    padding: 0.6rem 0.8rem;
+  }
+
+  .brand {
+    font-size: 1.2rem;
+  }
+
+  .logo {
+    width: 60px;
+  }
+
+  .nav-buttons {
+    gap: 0.5rem;
+    margin-right: 0.5rem;
+  }
+
+  .cart-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+
+  .hamburger {
+    width: 35px;
+    height: 35px;
+    font-size: 1.4rem;
+  }
+
+  /* MANTÉN ESTE ESTILO EXISTENTE */
   .chatbox {
     width: calc(100vw - 40px);
     right: 20px;
     left: 20px;
     bottom: 80px;
   }
+}
+
+/* ===== ESTILOS QUE BRAYAN PUSO EN WELCOME.BLADE.PHP =====*/
+
+    .hero img { 
+      max-width: 400px; 
+      height: auto; 
+      border-radius: 10px; 
+    }
+    
+    .notification { 
+      position: fixed; 
+      top: 20px; 
+      right: 20px; 
+      background: #d35400; 
+      color: #fff;              
+      padding: 12px 18px; 
+      border-radius: 10px; 
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transform: translateX(400px); 
+      transition: transform 0.3s ease; 
+      z-index: 9999; 
+      font-weight: 500; 
+    }
+    
+    .notification.show { 
+      transform: translateX(0); 
+    }
+    
+    /* Estilos para la sección de promociones */
+    .promociones-section {
+      background: #1a1a1a;
+      color: white;
+      padding: 60px 20px;
+      min-height: 70vh;
+    }
+    
+    .promociones-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 50px;
+      color: #22c55e;
+    }
+    
+    .promociones-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .promo-card {
+      background: #2d2d2d;
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid #333;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .promo-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2);
+      border-color: #22c55e;
+    }
+    
+    .promo-name {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #22c55e;
+      margin-bottom: 15px;
+    }
+    
+    .promo-desc {
+      color: #e5e5e5;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+    
+    .promo-detail {
+      margin-bottom: 10px;
+      color: #ccc;
+    }
+    
+    .promo-detail strong {
+      color: white;
+    }
+    
+    .promo-dates {
+      font-size: 0.9rem;
+      color: #999;
+      margin-top: 15px;
+    }
+    
+    .aprovechar-btn {
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+      width: 100%;
+    }
+    
+    .aprovechar-btn:hover {
+      background: #16a34a;
+      transform: scale(1.05);
+    }
+    
+    .no-promociones {
+      text-align: center;
+      color: #999;
+      font-size: 1.2rem;
+      margin-top: 50px;
+    }
+    
+    .no-promociones i {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #444;
+    }
+  
+/* =======================================================
+   🌿 SECCIÓN DE RESEÑAS - ESTILO INSPIRADO EN RESTAURANT GURU
+   Integrado con la identidad visual de Désolé Café
+   ======================================================= */
+
+/* --- ESTRUCTURA GENERAL --- */
+.reseñas-section {
+  background: var(--color-bg-alt);
+  padding: 60px 20px;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+  max-width: 1100px;
+  margin: 80px auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.reseñas-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+}
+
+/* --- TÍTULOS --- */
+.section-title {
+  color: var(--color-text);
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  color: var(--color-primary);
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+/* --- ESTADÍSTICAS Y PROMEDIO --- */
+.promedio-calificacion {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.estrellas-promedio {
+  font-size: 1.5rem;
+  color: #ffd700;
+  margin: 0.5rem 0;
+}
+
+.distribucion-calificaciones {
+  max-width: 220px;
+  margin: 0 auto;
+}
+
+/* --- PROGRESS BARS --- */
+.progress {
+  background-color: #2c2c2c;
+  border-radius: 10px;
+  height: 8px;
+}
+
+.progress-bar {
+  background-color: var(--color-primary);
+  border-radius: 10px;
+  transition: width 0.6s ease-in-out;
+}
+
+/* --- FORMULARIO DE RESEÑA --- */
+.form-reseña-card {
+  background: #1c1c1c;
+  border: 1px solid #333;
+  border-radius: 14px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  padding: 1.5rem;
+  margin-bottom: 3rem;
+  transition: var(--transition);
+}
+
+.form-reseña-card .card-title {
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* --- CAMPOS DEL FORMULARIO --- */
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-label {
+  color: var(--color-muted);
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.form-control {
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--color-text);
+  width: 100%;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 8px rgba(101, 207, 114, 0.3);
+  outline: none;
+}
+
+/* --- ESTRELLAS DEL FORMULARIO --- */
+.estrellas-form-container {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.estrellas-form {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  gap: 6px;
+}
+
+.estrellas-form input {
+  display: none;
+}
+
+.estrellas-form label {
+  font-size: 1.8rem;
+  color: #444;
+  cursor: pointer;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.estrellas-form label:hover,
+.estrellas-form label:hover ~ label {
+  color: #ffd700;
+  transform: scale(1.1);
+}
+
+.estrellas-form input:checked ~ label {
+  color: #ffd700;
+}
+
+/* --- BOTÓN DE ENVÍO --- */
+.btn-enviar-reseña {
+  background: linear-gradient(135deg, var(--color-primary), #4ebb5f);
+  border: none;
+  border-radius: 40px;
+  padding: 10px 26px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 4px 15px rgba(101, 207, 114, 0.25);
+  transition: var(--transition);
+}
+
+.btn-enviar-reseña:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(101, 207, 114, 0.35);
+}
+
+/* --- CARDS DE RESEÑAS EXISTENTES --- */
+.reseñas-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.reseña-card {
+  background: #1a1a1a;
+  border-radius: 14px;
+  border: 1px solid #2e2e2e;
+  padding: 1.2rem;
+  transition: var(--transition);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.reseña-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
+  box-shadow: 0 10px 20px rgba(101, 207, 114, 0.15);
+}
+
+.reseña-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.reseña-nombre {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.reseña-fecha {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.estrellas {
+  color: #ffd700;
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+/* --- TEXTO DE LA RESEÑA (CLAMP) --- */
+.reseña-texto {
+  color: #dcdcdc;
+  line-height: 1.5;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 4; /* Navegadores WebKit */
+  -webkit-box-orient: vertical;
+  line-clamp: 4; /* Estándar futuro */
+  overflow: hidden;
+}
+
+/* --- BOTÓN VER MÁS --- */
+.btn-vermas {
+  display: inline-block;
+  color: #ffd700;
+  border: 1px solid #ffd700;
+  border-radius: 25px;
+  padding: 6px 18px;
+  font-size: 0.85rem;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-vermas:hover {
+  background: #ffd700;
+  color: #1a1a1a;
+  transform: translateY(-2px);
+}
+
+/* --- ESTADO VACÍO --- */
+.no-reseñas {
+  text-align: center;
+  color: var(--color-muted);
+  margin: 3rem 0;
+  font-size: 1.1rem;
+}
+
+/* --- ANIMACIÓN SUAVE --- */
+.fade-in {
+  animation: fadeIn 0.6s ease-in;
+}
+
+/* Añadir estas reglas para mantener la interactividad */
+.estrellas-form input:checked ~ label {
+    color: #ffd700;
+    transform: scale(1.1);
+}
+
+.estrellas-form label:hover,
+.estrellas-form label:hover ~ label {
+    color: #ffd700;
+    transform: scale(1.05);
+}
+
+/* Añadir para el contador */
+#contador-caracteres.text-danger {
+    color: #ff6b6b !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .reseñas-section {
+    padding: 40px 15px;
+    margin: 50px auto;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .reseñas-lista {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =======================================================
+   📞 SECCIÓN DE CONTACTO - ESTILO MINIMALISTA
+   ======================================================= */
+
+.contact-section {
+    background: var(--color-bg-alt);
+    padding: 60px 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+    max-width: 1100px;
+    margin: 80px auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+}
+
+.contact-title {
+    color: var(--color-text);
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.contact-subtitle {
+    color: var(--color-primary);
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+/* Contacto minimalista con iconos */
+.contact-minimal {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.contact-item-minimal {
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.contact-item-minimal:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-primary);
+    box-shadow: 0 5px 20px rgba(101, 207, 114, 0.15);
+}
+
+.contact-icon-minimal {
+    font-size: 2rem;
+    color: var(--color-primary);
+    margin-bottom: 0.8rem;
+    display: block;
+}
+
+.contact-item-minimal h5 {
+    color: var(--color-text);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.contact-item-minimal a {
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: var(--transition);
+    font-size: 0.9rem;
+}
+
+.contact-item-minimal a:hover {
+    color: var(--color-primary);
+}
+
+/* Horario compacto */
+.horario-compact {
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    transition: var(--transition);
+}
+
+.horario-compact:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 5px 20px rgba(101, 207, 114, 0.1);
+}
+
+.horario-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.horario-header h5 {
+    color: var(--color-primary);
+    font-weight: 600;
+    margin: 0;
+}
+
+.horario-content {
+    text-align: center;
+    color: var(--color-text);
+    font-size: 0.95rem;
+}
+
+.horario-line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.horario-separator {
+    color: var(--color-muted);
+}
+
+/* Mapa con animación */
+.mapa-animado {
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    transition: var(--transition);
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.mapa-animado:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-primary);
+    box-shadow: 0 10px 25px rgba(101, 207, 114, 0.2);
+}
+
+.mapa-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.mapa-header h5 {
+    color: var(--color-primary);
+    font-weight: 600;
+    margin: 0;
+}
+
+.map-container-minimal {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Redes sociales al final */
+.social-section {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid #333;
+}
+
+.social-title {
+    color: var(--color-muted);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.social-links-minimal {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.social-link-minimal {
+    width: 45px;
+    height: 45px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: var(--transition);
+    font-size: 1.2rem;
+}
+
+.social-link-minimal:hover {
+    transform: translateY(-3px);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    box-shadow: 0 5px 15px rgba(101, 207, 114, 0.2);
+}
+
+/* Botón flotante de WhatsApp minimalista */
+.whatsapp-float-minimal {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: var(--color-primary);
+    color: var(--color-bg);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: var(--transition);
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(101, 207, 114, 0.4);
+    font-size: 1.5rem;
+}
+
+.whatsapp-float-minimal:hover {
+    transform: scale(1.1);
+    background: #5ac968;
+    box-shadow: 0 6px 20px rgba(101, 207, 114, 0.6);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contact-section {
+        padding: 40px 15px;
+        margin: 50px auto;
+    }
+
+    .contact-title {
+        font-size: 1.8rem;
+    }
+
+    .contact-minimal {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .horario-line {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .horario-separator {
+        display: none;
+    }
+
+    .social-links-minimal {
+        gap: 0.8rem;
+    }
+
+    .social-link-minimal {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
 }

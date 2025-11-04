@@ -9,12 +9,20 @@ use App\Models\Categoria;
 
 class ProductoController extends Controller
 {
-    // 🟢 ELIMINAR COMPLETAMENTE EL CONSTRUCTOR
-    // NO USAR CONSTRUCTOR CON MIDDLEWARE
+    /**
+     * Verificar que el admin esté autenticado
+     */
+    private function checkAdminAuth()
+    {
+        if (!session('admin_id')) {
+            return redirect()->route('admin.login')->send();
+        }
+    }
 
     // 🟢 Listado general
     public function index()
     {
+        $this->checkAdminAuth();
         $productos = Producto::with('categoria')->paginate(10);
         return view('admin.productos.index', compact('productos'));
     }
@@ -22,6 +30,7 @@ class ProductoController extends Controller
     // 🟢 Formulario de creación
     public function create()
     {
+        $this->checkAdminAuth();
         $categorias = Categoria::all();
         return view('admin.productos.create', compact('categorias'));
     }
@@ -29,6 +38,7 @@ class ProductoController extends Controller
     // 🟢 Guardar producto nuevo
     public function store(Request $request)
     {
+        $this->checkAdminAuth();
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
             'categoria_id' => 'required|exists:categorias,id',
@@ -51,6 +61,7 @@ class ProductoController extends Controller
     // 🟢 Formulario de edición
     public function edit(Producto $producto)
     {
+        $this->checkAdminAuth();
         $categorias = Categoria::all();
         return view('admin.productos.edit', compact('producto', 'categorias'));
     }
@@ -58,6 +69,7 @@ class ProductoController extends Controller
     // 🟢 Actualizar producto
     public function update(Request $request, Producto $producto)
     {
+        $this->checkAdminAuth();
         $request->validate([
             'nombre' => 'required|string|max:255',
             'categoria_id' => 'required|exists:categorias,id',
@@ -81,6 +93,12 @@ class ProductoController extends Controller
     // 🟢 Eliminar producto
     public function destroy(Producto $producto)
     {
+        $this->checkAdminAuth();
+        // Modificar esta parte para usar sesión en lugar de user('admin')
+        if (!session('admin_role') || session('admin_role') !== 'Administrador') {
+            return redirect()->route('admin.productos.index')->with('error', 'No tienes permiso para eliminar productos.');
+        }
+
         $producto->delete();
 
         return redirect()->route('admin.productos.index')
@@ -90,6 +108,7 @@ class ProductoController extends Controller
     // 🟢 Actualizar estado del producto
     public function updateEstado(Request $request, Producto $producto)
     {
+        $this->checkAdminAuth();
         $request->validate([
             'estado' => 'required|string|in:activo,inactivo,agotado',
         ]);
