@@ -1,0 +1,101 @@
+/* ===== HERO AISLADO ===== */
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  background: linear-gradient(135deg, #0f0f0f, #191919);
+  min-height: 90vh;
+  padding-top: 100px;
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-content {
+  max-width: 550px;
+  text-align: left;
+  padding: 1rem;
+  animation: fadeInUp 0.8s ease-out both;
+}
+
+.hero-content h1 {
+  font-size: 2.6rem;
+  color: var(--color-primary);
+  margin-bottom: 0.8rem;
+}
+
+.hero-content p {
+  font-size: 1.1rem;
+  color: var(--color-muted);
+}
+
+.hero-ctas {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-primary,
+.btn-ghost {
+  padding: 0.7rem 1.5rem;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.btn-primary:hover {
+  background-color: #5ac968;
+  transform: translateY(-3px);
+  box-shadow: 0 0 15px rgba(101, 207, 114, 0.4);
+}
+
+.btn-ghost {
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  background: transparent;
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+.btn-spacing {
+  height: 1.5rem;
+}
+
+.hero-art img {
+  max-width: 380px;
+  border-radius: 15px;
+  margin: 1rem;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Asegurar que el hero NO afecte lo siguiente */
+.hero + * {
+  margin-top: 0 !important;
+  clear: both;
+}
+
+/* ===== ANIMACIONES DEL HERO ===== */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
