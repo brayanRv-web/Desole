@@ -11,6 +11,7 @@
 
   <!-- Estilos -->
   <link rel="stylesheet" href="{{ asset('css/desole.css') }}"> <!-- Hace referencia al CSS desole.css de la carpeta public no la de resources --> 
+  <link rel="stylesheet" href="{{ asset('css/hero.css') }}">
   <link rel="icon" href="{{ asset('assets/favicon.ico') }}">
 </head>
 
