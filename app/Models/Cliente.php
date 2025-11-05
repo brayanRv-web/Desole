@@ -6,23 +6,34 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class Cliente extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
-    // Agregar estos campos al $fillable para completar:
+    protected $table = 'clientes';
+
     protected $fillable = [
-    'nombre', 'telefono', 'email', 'password', 'tipo',
-    'direccion', 'fecha_nacimiento', 'alergias', 'preferencias',
-    'puntos_fidelidad', 'nivel_fidelidad', 
-    'recibir_promociones', 'recibir_cumpleanos',
-    'recibir_whatsapp', 'recibir_email', 'recibir_sms', // ✅ NUEVOS
-    'consentimiento_notificaciones' // ✅ NUEVO
+        'nombre',
+        'telefono',
+        'email',
+        'password',
+        'direccion',
+        'colonia',
+        'referencias',
+        'fecha_nacimiento',
+        'alergias',
+        'preferencias',
+        'tipo',
+        'recibir_promociones',
+        'recibir_cumpleanos',
+        'notas'
     ];
 
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     protected $casts = [
@@ -30,9 +41,12 @@ class Cliente extends Authenticatable
         'fecha_nacimiento' => 'date',
         'ultima_visita' => 'date',
         'primera_visita' => 'date',
+        'recibir_promociones' => 'boolean',
+        'recibir_cumpleanos' => 'boolean',
     ];
+}
 
-    // ✅ RELACIÓN CON PEDIDOS
+    /* ✅ RELACIÓN CON PEDIDOS
     public function pedidos()
     {
         return $this->hasMany(Pedido::class);
@@ -53,4 +67,4 @@ class Cliente extends Authenticatable
     {
         return $query->where('ultima_visita', '<', now()->subMonth());
     }
-}
+}*/
