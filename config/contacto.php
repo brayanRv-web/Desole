@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'whatsapp' => '521234567890',
-    'telefono' => '1234567890',
-    'email' => 'contacto@desole.com',
+    'whatsapp' => '529614564697',
+    'telefono' => '+52 (961) 456-46-97',
+    'email' => 'info@desole.com',
 ];

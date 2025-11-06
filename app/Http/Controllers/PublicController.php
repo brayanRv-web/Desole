@@ -3,27 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Promocion;
+use App\Models\HeroImage;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
 {
-    public function welcome()
+     public function welcome()
     {
-        // ✅ La lógica que tenías en la vista ahora está aquí
         $promociones = Promocion::where('activa', 1)
             ->where('fecha_inicio', '<=', now())
             ->where('fecha_fin', '>=', now())
             ->orderBy('fecha_inicio', 'desc')
             ->get();
 
-        // ✅ Pasamos las variables a la vista
+        // Obtener imágenes para el carrusel del hero
+        $heroImages = HeroImage::where('activo', true)
+            ->where('tipo', 'hero')
+            ->orderBy('orden', 'asc')
+            ->get();
+
         return view('public.welcome', [
             'promociones' => $promociones,
-            'whatsapp_number' => '9614564697', // Agregar esta línea
-            'telefono' => '+52 (961) 456-46-97',    // Agregar esta línea
-            'email' => 'info@desole.com',        // Agregar esta línea
+            'heroImages' => $heroImages,
+            'whatsapp_number' => '9614564697',
+            'telefono' => '+52 (961) 456-46-97',
+            'email' => 'info@desole.com',
         ]);
-        
     }
 
     public function contacto()

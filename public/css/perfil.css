@@ -149,3 +149,16 @@ textarea.profile-input {
         width: 100%;
     }
 }
+
+/* Estilo para el main de páginas de cliente */
+.cliente-main {
+    min-height: calc(100vh - 80px);
+    background: var(--color-bg);
+}
+
+/* Asegurar que el contenido no quede detrás del navbar */
+.profile-section {
+    padding: 120px 20px 80px 20px;
+    min-height: 100vh;
+    background: var(--color-bg);
+}

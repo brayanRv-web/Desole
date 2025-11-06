@@ -7,16 +7,17 @@
     @if(isset($isProfilePage) && $isProfilePage)
       <!-- Navbar para Página de Perfil -->
       <div class="nav-links">
+         <li><a href="{{ url('/') }}#home"><i class="fas fa-home"></i> Inicio</a></li>
         <a href="{{ route('cliente.dashboard') }}" class="{{ request()->routeIs('cliente.dashboard') ? 'active' : '' }}">
-          <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+          <i class="fas fa-user me-1"></i>Mi perfil
         </a>
-        <a href="{{ route('cliente.perfil') }}" class="{{ request()->routeIs('cliente.perfil') ? 'active' : '' }}">
+       <!-- <a href="{{ route('cliente.perfil') }}" class="{{ request()->routeIs('cliente.perfil') ? 'active' : '' }}">
           <i class="fas fa-user me-1"></i>Mi Perfil
         </a>
         <a href="{{ route('cliente.pedidos') }}" class="{{ request()->routeIs('cliente.pedidos') ? 'active' : '' }}">
           <i class="fas fa-history me-1"></i>Mis Pedidos
         </a>
-        <!--<a href="{{ route('cliente.menu') }}" class="{{ request()->routeIs('cliente.menu') ? 'active' : '' }}"
+        <a href="{{ route('cliente.menu') }}" class="{{ request()->routeIs('cliente.menu') ? 'active' : '' }}"
           <i class="fas fa-utensils me-1"></i>Menú Completo
         </a>-->
       </div>
@@ -47,7 +48,7 @@
         <li><a href="{{ url('/') }}#contacto"><i class="fas fa-phone"></i> Contacto</a></li>
         
         @auth('cliente')
-          <li><a href="{{ route('cliente.perfil') }}"><i class="fas fa-user"></i> Mi Cuenta</a></li>
+          <li><a href="{{ route('cliente.dashboard') }}"><i class="fas fa-user"></i> Mi Cuenta</a></li>
         @endauth
       </ul>
 

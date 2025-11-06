@@ -221,7 +221,6 @@
     @endguest
 
     <!-- SECCIONES QUE SE MUESTRAN A TODOS -->
-    @include('public.secciones._especiales')
     @include('public.secciones._reseñas')
     @include('public.secciones._contacto')
   </main>

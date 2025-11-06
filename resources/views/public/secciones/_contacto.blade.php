@@ -45,9 +45,9 @@
             </div>
             <div class="horario-content">
                 <div class="horario-line">
-                    <span>Lunes - Viernes: 7:00 AM - 9:00 PM</span>
+                    <span>Lunes - Viernes: 7:00 PM - 12:00 PM</span>
                     <span class="horario-separator">|</span>
-                    <span>Sábado - Domingo: 8:00 AM - 10:00 PM</span>
+                    <span>Sábado - Domingo: 7:00 PM - 12:00 PM</span>
                 </div>
             </div>
         </div>
