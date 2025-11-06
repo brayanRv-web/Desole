@@ -53,6 +53,7 @@ Route::middleware(['auth:cliente'])->prefix('cliente')->name('cliente.')->group(
     Route::get('/menu', [App\Http\Controllers\ClienteController::class, 'menu'])->name('menu');
     Route::get('/pedidos', [App\Http\Controllers\ClienteController::class, 'pedidos'])->name('pedidos');
     Route::get('/perfil', [App\Http\Controllers\ClienteController::class, 'perfil'])->name('perfil');
+    Route::post('/perfil/actualizar', [App\Http\Controllers\ClienteController::class, 'actualizarPerfil'])->name('perfil.update');
 
     // Carrito y pedidos
     Route::post('/carrito/agregar', [App\Http\Controllers\ClienteController::class, 'agregarAlCarrito'])->name('carrito.agregar');

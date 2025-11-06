@@ -55,6 +55,45 @@ class ClienteController extends Controller
         return view('cliente.pedidos', compact('pedidos'));
     }
 
+    public function perfil()
+    {
+        $cliente = Auth::guard('cliente')->user();
+        // Agregar las variables que necesita welcome.blade.php
+        $promociones = Promocion::where('activa', 1)
+            ->where('fecha_inicio', '<=', now())
+            ->where('fecha_fin', '>=', now())
+            ->get();
+        
+        // Si welcome.blade.php necesita más variables, agrégalas aquí
+        $pedidosRecientes = Pedido::where('cliente_id', $cliente->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        return view('cliente.perfil', compact('cliente', 'promociones', 'pedidosRecientes'));
+    }
+
+    public function actualizarPerfil(Request $request)
+    {
+        $cliente = Auth::guard('cliente')->user();
+        
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'telefono' => 'required|string|max:20|unique:clientes,telefono,' . $cliente->id,
+            'direccion' => 'required|string|max:500',
+            'colonia' => 'required|string|max:255',
+            'fecha_nacimiento' => 'required|date',
+            'alergias' => 'nullable|string|max:500',
+            'preferencias' => 'nullable|string|max:500',
+            'referencias' => 'nullable|string|max:500',
+        ]);
+
+        $cliente->update($validated);
+
+        return redirect()->route('cliente.perfil')
+            ->with('success', 'Perfil actualizado correctamente');
+    }
+
     public function agregarAlCarrito(Request $request)
     {
         // Lógica del carrito (usando session o base de datos)
