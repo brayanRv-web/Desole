@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('public.welcome')
 
 @section('title', 'Dashboard - DÉSOLÉ')
 
@@ -20,7 +20,13 @@
                         <div class="col-md-4 text-end">
                             <div class="bg-white bg-opacity-25 rounded p-3 d-inline-block">
                                 <small class="d-block">Tu última visita</small>
-                                <strong>{{ $cliente->ultima_visita->format('d/m/Y') }}</strong>
+                                <strong>
+                                    @if($cliente->ultima_visita)
+                                        {{ $cliente->ultima_visita->format('d/m/Y') }}
+                                    @else
+                                        Hoy
+                                    @endif
+                                </strong>
                             </div>
                         </div>
                     </div>
@@ -38,7 +44,7 @@
                     <h5 class="mb-0">📦 Tus Pedidos Recientes</h5>
                 </div>
                 <div class="card-body">
-                    @if($pedidosRecientes->count() > 0)
+                    @if(isset($pedidosRecientes) && $pedidosRecientes->count() > 0)
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
@@ -110,10 +116,10 @@
             <!-- Promociones Activas -->
             <div class="card">
                 <div class="card-header bg-white">
-                    <h5 class="mb-0">🎁 Promociones Exclusivas</h5>
+                    <h5 class="mb-0">🎁 Promociones Activas</h5>
                 </div>
                 <div class="card-body">
-                    @if($promociones->count() > 0)
+                    @if(isset($promociones) && $promociones->count() > 0)
                         @foreach($promociones as $promocion)
                         <div class="promocion-item mb-3 p-3 border rounded">
                             <h6 class="text-primary mb-1">{{ $promocion->nombre }}</h6>
@@ -121,7 +127,11 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-success">
                                     <i class="fas fa-calendar me-1"></i>
-                                    Válida hasta: {{ $promocion->fecha_fin->format('d/m/Y') }}
+                                    @if($promocion->fecha_fin)
+                                        Válida hasta: {{ $promocion->fecha_fin->format('d/m/Y') }}
+                                    @else
+                                        Promoción permanente
+                                    @endif
                                 </small>
                                 @if($promocion->descuento)
                                     <span class="badge bg-danger">{{ $promocion->descuento }}% OFF</span>

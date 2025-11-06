@@ -24,7 +24,11 @@ class ClienteController extends Controller
             ->where('fecha_fin', '>=', now())
             ->get();
 
-        return view('cliente.dashboard', compact('cliente', 'pedidosRecientes', 'promociones'));
+            // Agregar la variable faltante
+        $whatsapp_number = "529614564697"; // Reemplaza con tu número real
+        $telefono = "529614564697"; 
+         $email = "info@desole.com";
+        return view('cliente.dashboard', compact('cliente', 'pedidosRecientes', 'promociones', 'whatsapp_number'));
     }
 
     public function menu()

@@ -10,10 +10,10 @@
         <!-- Contacto Minimalista con Iconos -->
         <div class="contact-minimal">
             <!-- WhatsApp -->
-            <div class="contact-item-minimal" onclick="window.open('https://wa.me/{{ $whatsapp_number }}?text=Hola%20DESOLE,%20me%20gustaría%20hacer%20un%20pedido', '_blank')">
+            <div class="contact-item-minimal" data-whatsapp="{{ config('contacto.whatsapp') }}">
                 <i class="fab fa-whatsapp contact-icon-minimal"></i>
                 <h5>WhatsApp</h5>
-                <a href="https://wa.me/{{ $whatsapp_number }}?text=Hola%20DESOLE,%20me%20gustaría%20hacer%20un%20pedido" target="_blank">
+                <a href="https://wa.me/{{ config('contacto.whatsapp') }}?text=Hola%20DESOLE,%20me%20gustaría%20hacer%20un%20pedido" target="_blank">
                     Ordenar ahora
                 </a>
             </div>
@@ -22,8 +22,8 @@
             <div class="contact-item-minimal">
                 <i class="fas fa-phone contact-icon-minimal"></i>
                 <h5>Teléfono</h5>
-                <a href="tel:{{ $telefono }}">
-                    {{ $telefono }}
+                <a href="tel:{{ config('contacto.telefono') }}">
+                    {{ config('contacto.telefono') }}
                 </a>
             </div>
 
@@ -31,8 +31,8 @@
             <div class="contact-item-minimal">
                 <i class="fas fa-envelope contact-icon-minimal"></i>
                 <h5>Email</h5>
-                <a href="mailto:{{ $email }}">
-                    {{ $email }}
+                <a href="mailto:{{ config('contacto.email') }}">
+                    {{ config('contacto.email') }}
                 </a>
             </div>
         </div>
@@ -92,9 +92,20 @@
 </section>
 
 <!-- Botón Flotante de WhatsApp Minimalista -->
-<a href="https://wa.me/{{ $whatsapp_number }}?text=Hola%20DESOLE,%20me%20gustaría%20hacer%20un%20pedido" 
+<a href="https://wa.me/{{ config('contacto.whatsapp') }}?text=Hola%20DESOLE,%20me%20gustaría%20hacer%20un%20pedido" 
    class="whatsapp-float-minimal" 
    target="_blank"
    title="Ordenar por WhatsApp">
    <i class="fab fa-whatsapp"></i>
 </a>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-whatsapp]').forEach(function(element) {
+        element.addEventListener('click', function() {
+            const whatsapp = this.getAttribute('data-whatsapp');
+            window.open('https://wa.me/' + whatsapp + '?text=Hola%20DESOLE,%20me%20gustaría%20hacer%20un%20pedido', '_blank');
+        });
+    });
+});
+</script>
