@@ -102,6 +102,23 @@
                             Precio de venta al público
                         </p>
                     </div>
+                    {{-- En la sección de Información Básica, después del precio --}}
+                    <div class="space-y-2">
+                        <label for="stock" class="block text-sm font-semibold text-green-300 flex items-center gap-2">
+                            <i class="fas fa-boxes text-xs"></i>
+                            Stock Disponible *
+                        </label>
+                        <input type="number" name="stock" id="stock"
+                            value="{{ old('stock', 0) }}"
+                            placeholder="0"
+                            min="0"
+                            required
+                            class="w-full border border-gray-600 bg-gray-700/50 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200">
+                        <p class="text-xs text-gray-400 flex items-center gap-1">
+                            <i class="fas fa-lightbulb text-xs"></i>
+                            Cantidad disponible para la venta
+                        </p>
+                    </div>
 
                     {{-- Estado --}}
                     <div class="space-y-2">

@@ -11,11 +11,12 @@ use App\Http\Controllers\Admin\CRMController;
 use App\Http\Controllers\Admin\ResenaController as AdminResenaController;
 use App\Http\Controllers\ResenaController;
 use App\Http\Controllers\PublicController;
-use App\Http\Controllers\RegisterController;  // ← Directamente en Controllers
-use App\Http\Controllers\LoginController;     // ← Directamente en Controllers  
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\Empleado\PedidoController as EmpleadoPedidoController;
 use App\Http\Controllers\Empleado\ProductoController as EmpleadoProductoController;
+
 // ===========================================================
 //                      RUTAS PÚBLICAS
 // ===========================================================
@@ -29,6 +30,13 @@ Route::get('/contacto', [PublicController::class, 'contacto'])->name('contacto')
 // Envío de reseñas públicas (clientes)
 Route::post('/reseñas', [ResenaController::class, 'store'])->name('reseñas.store');
 
+// ===========================================================
+//                RUTAS PÚBLICAS DE MENÚ
+// ===========================================================
+
+// Menú público (accesible sin autenticación) - ✅ CORREGIDO
+Route::get('/menu', [ClienteController::class, 'index'])->name('cliente.menu');
+Route::get('/producto/{producto}', [ClienteController::class, 'show'])->name('cliente.producto.show');
 
 // ===========================================================
 //                AUTENTICACIÓN DE CLIENTES
@@ -44,22 +52,30 @@ Route::middleware('guest:cliente')->group(function () {
 
 // ✅ LOGOUT (siempre accesible)
 Route::post('/logout-cliente', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout.cliente');
+
 // ===========================================================
 //                CLIENTE AUTENTICADO
 // ===========================================================
 
 Route::middleware(['auth:cliente'])->prefix('cliente')->name('cliente.')->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\ClienteController::class, 'dashboard'])->name('dashboard');
-    Route::get('/menu', [App\Http\Controllers\ClienteController::class, 'menu'])->name('menu');
-    Route::get('/pedidos', [App\Http\Controllers\ClienteController::class, 'pedidos'])->name('pedidos');
-    Route::get('/perfil', [App\Http\Controllers\ClienteController::class, 'perfil'])->name('perfil');
-    Route::post('/perfil/actualizar', [App\Http\Controllers\ClienteController::class, 'actualizarPerfil'])->name('perfil.update');
+    Route::get('/dashboard', [ClienteController::class, 'dashboard'])->name('dashboard');
+    Route::get('/menu', [ClienteController::class, 'menu'])->name('menu');
+    Route::get('/pedidos', [ClienteController::class, 'pedidos'])->name('pedidos');
+    Route::get('/perfil', [ClienteController::class, 'perfil'])->name('perfil');
+    Route::post('/perfil/actualizar', [ClienteController::class, 'actualizarPerfil'])->name('perfil.update');
 
     // Carrito y pedidos
-    Route::post('/carrito/agregar', [App\Http\Controllers\ClienteController::class, 'agregarAlCarrito'])->name('carrito.agregar');
-    Route::post('/carrito/actualizar', [App\Http\Controllers\ClienteController::class, 'actualizarCarrito'])->name('carrito.actualizar');
-    Route::post('/pedido/confirmar', [App\Http\Controllers\ClienteController::class, 'confirmarPedido'])->name('pedido.confirmar');
-});
+    Route::post('/carrito/agregar', [ClienteController::class, 'agregarAlCarrito'])->name('carrito.agregar');
+    Route::post('/carrito/actualizar', [ClienteController::class, 'actualizarCarrito'])->name('carrito.actualizar');
+    Route::post('/pedido/confirmar', [ClienteController::class, 'confirmarPedido'])->name('pedido.confirmar');
+    
+    Route::get('/carrito', [ClienteController::class, 'verCarrito'])->name('carrito.ver');
+    Route::post('/carrito/vaciar', [ClienteController::class, 'vaciarCarrito'])->name('carrito.vaciar');
+    Route::delete('/carrito/eliminar', [ClienteController::class, 'eliminarDelCarrito'])->name('carrito.eliminar');
+    Route::get('/carrito/info', [ClienteController::class, 'obtenerCarrito'])->name('carrito.info');
+    Route::get('/pedidos/{pedido}', [ClienteController::class, 'verPedido'])->name('pedidos.show');
+    Route::post('/pedidos/{pedido}/cancelar', [ClienteController::class, 'cancelarPedido'])->name('pedidos.cancelar');
+    });
 
 // ===========================================================
 //                LOGIN Y LOGOUT DEL ADMIN
@@ -111,6 +127,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/{producto}', [ProductoController::class, 'update'])->name('update');
         Route::delete('/{producto}', [ProductoController::class, 'destroy'])->name('destroy');
         Route::patch('/{producto}/estado', [ProductoController::class, 'updateEstado'])->name('updateEstado');
+        // ✅ NUEVA RUTA PARA ACTUALIZAR STOCK
+        Route::patch('/{producto}/stock', [ProductoController::class, 'updateStock'])->name('updateStock');
     });
 
     // ==================== PROMOCIONES ====================
@@ -147,7 +165,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/reportes', 'admin.reportes.index')->name('reportes.index');
     Route::view('/configuracion', 'admin.configuracion.index')->name('configuracion.index');
 });
-
 
 // ===========================================================
 //                PANEL DE EMPLEADO

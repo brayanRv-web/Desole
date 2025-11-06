@@ -19,17 +19,16 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
             $table->string('imagen')->nullable();
             $table->string('estado')->default('activo');
+            $table->integer('stock')->default(0)->after('precio');
+            $table->enum('estado_stock', ['disponible', 'agotado'])->default('disponible')->after('stock');
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     
     public function down(): void
     {
-        Schema::dropIfExists('productos');
+        Schema::table('productos', function (Blueprint $table) {
+        $table->dropColumn(['stock', 'estado_stock']);});
     }
 
 };

@@ -90,6 +90,9 @@
                             <i class="fas fa-dollar-sign mr-2"></i>Precio
                         </th>
                         <th class="px-6 py-4 text-left text-green-300 font-semibold text-sm uppercase tracking-wider">
+                            <i class="fas fa-boxes mr-2"></i>Stock
+                        </th>
+                        <th class="px-6 py-4 text-left text-green-300 font-semibold text-sm uppercase tracking-wider">
                             <i class="fas fa-circle mr-2"></i>Estado
                         </th>
                         <th class="px-6 py-4 text-center text-green-300 font-semibold text-sm uppercase tracking-wider">
@@ -140,6 +143,20 @@
                             <span class="text-lg font-bold text-green-400">
                                 ${{ number_format($producto->precio, 2) }}
                             </span>
+                        </td>
+
+                        <!-- En el tbody, agrega esta celda después del precio -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg font-bold {{ $producto->stock > 0 ? 'text-green-400' : 'text-red-400' }}">
+                                    {{ $producto->stock }}
+                                </span>
+                                @if($producto->stock <= 5 && $producto->stock > 0)
+                                    <span class="text-xs text-yellow-400 bg-yellow-500/20 px-2 py-1 rounded-full">
+                                        <i class="fas fa-exclamation-triangle"></i> Bajo stock
+                                    </span>
+                                @endif
+                            </div>
                         </td>
 
                         <!-- Status -->
