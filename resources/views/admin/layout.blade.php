@@ -81,9 +81,29 @@
 
                 <!-- Productos -->
                 <a href="{{ url('admin/productos') }}"
-                class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
-                    <i class="fas fa-box w-5 text-center"></i> <span>Productos</span>
-                </a>
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition relative">
+                        <i class="fas fa-box w-5 text-center"></i> 
+                        <span>Productos</span>
+                        
+                        <!-- Notificación de stock bajo -->
+                        @php
+                            // Obtener contador de stock bajo directamente
+                            $stockBajoCount = \App\Models\Producto::where('stock', '<=', 5)
+                                ->where('stock', '>', 0)
+                                ->count();
+                        @endphp
+                        
+                        @if($stockBajoCount > 0)
+                        <div class="absolute -top-1 -right-1">
+                            <div class="relative">
+                                <div class="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center animate-pulse">
+                                    <span class="text-white text-xs font-bold">{{ $stockBajoCount }}</span>
+                                </div>
+                                <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-400 rounded-full animate-ping"></div>
+                            </div>
+                        </div>
+                        @endif
+                    </a>
 
                 <!-- Pedidos -->
                 <a href="{{ url('admin/pedidos') }}"
@@ -124,6 +144,9 @@
                     <i class="fas fa-comments"></i> <span>Reseñas</span>
                 </a>
                 </nav>
+
+
+                
 
             <div class="mt-10 border-t border-green-800 pt-4 text-center text-xs text-gray-500">
                 <p>&copy; {{ date('Y') }} <span class="text-green-500">Désolé</span></p>

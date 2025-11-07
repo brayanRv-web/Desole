@@ -50,28 +50,55 @@
         </div>
     @endif
 
-    <!-- Products Counter -->
-    <div class="bg-gray-800/30 border border-green-700/20 rounded-xl p-4">
+    <!-- ✅ ALERTA DE STOCK BAJO - Solo muestra si hay productos con stock bajo -->
+    @if($stockBajo > 0)
+    <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-green-600/20 flex items-center justify-center">
-                    <i class="fas fa-boxes text-green-400"></i>
+                <div class="w-8 h-8 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                    <i class="fas fa-bell text-yellow-400"></i>
                 </div>
                 <div>
-                    <p class="text-gray-400 text-sm">Total de Productos</p>
-                    <p class="text-2xl font-bold text-white">{{ $productos->count() }}</p>
+                    <p class="text-yellow-400 font-semibold">⚠️ Alertas de Stock Bajo</p>
+                    <p class="text-yellow-300 text-sm">Tienes {{ $stockBajo }} producto(s) que necesitan reposición</p>
                 </div>
             </div>
-            <div class="text-right">
-                <p class="text-gray-400 text-sm">Activos</p>
-                <p class="text-lg font-semibold text-green-400">
-                    {{ $productos->where('estado', 'activo')->count() }}
-                </p>
+            <button onclick="toggleStockBajoList()" 
+                    class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                <i class="fas fa-list mr-1"></i> Ver Lista
+            </button>
+        </div>
+
+        <!-- Lista desplegable de productos con stock bajo -->
+        <div id="stockBajoList" class="mt-4 hidden">
+            <div class="grid gap-2">
+                @foreach($productosStockBajo as $producto)
+                <div class="flex items-center justify-between p-3 bg-yellow-500/5 rounded-lg border border-yellow-500/20">
+                    <div class="flex items-center gap-3">
+                        @if($producto->imagen)
+                        <img src="{{ asset('storage/' . $producto->imagen) }}" 
+                             class="w-8 h-8 rounded object-cover">
+                        @endif
+                        <div>
+                            <p class="text-white font-medium">{{ $producto->nombre }}</p>
+                            <p class="text-yellow-300 text-xs">
+                                {{ $producto->categoria->nombre ?? 'Sin categoría' }} • 
+                                <span class="font-bold">{{ $producto->stock }} unidades</span>
+                            </p>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.productos.edit', $producto) }}" 
+                       class="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded text-xs transition-colors">
+                        <i class="fas fa-edit mr-1"></i> Reponer
+                    </a>
+                </div>
+                @endforeach
             </div>
         </div>
     </div>
+    @endif
 
-    <!-- Products Table -->
+    <!-- ✅ TABLA DE PRODUCTOS (ORIGINAL) -->
     <div class="bg-gray-800/50 rounded-2xl border border-green-700/30 shadow-xl overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">
@@ -145,7 +172,7 @@
                             </span>
                         </td>
 
-                        <!-- En el tbody, agrega esta celda después del precio -->
+                        <!-- Stock -->
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center gap-2">
                                 <span class="text-lg font-bold {{ $producto->stock > 0 ? 'text-green-400' : 'text-red-400' }}">
@@ -208,7 +235,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center">
+                        <td colspan="7" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center justify-center text-gray-500">
                                 <i class="fas fa-box-open text-4xl mb-4 text-gray-600"></i>
                                 <h3 class="text-lg font-semibold text-gray-400 mb-2">No hay productos registrados</h3>
@@ -236,6 +263,51 @@
         @endif
     </div>
 </div>
+
+<script>
+// Toggle para mostrar/ocultar lista de stock bajo
+function toggleStockBajoList() {
+    const list = document.getElementById('stockBajoList');
+    if (list) {
+        list.classList.toggle('hidden');
+    }
+}
+
+// Mostrar notificación toast si hay stock bajo
+document.addEventListener('DOMContentLoaded', function() {
+    const stockBajoCount = <?php echo $stockBajo; ?>;
+    if (stockBajoCount > 0) {
+        showStockNotification(stockBajoCount);
+    }
+});
+
+function showStockNotification(count) {
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-yellow-500 text-white p-4 rounded-lg shadow-lg z-50 animate-bounce';
+    notification.innerHTML = `
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-yellow-600 flex items-center justify-center">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div>
+                <p class="font-semibold">⚠️ Stock Bajo</p>
+                <p class="text-sm">${count} producto(s) necesitan atención</p>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+</script>
 
 <style>
 .tooltip {
@@ -268,6 +340,33 @@
     border-top-color: rgba(0, 0, 0, 0.8);
     margin-bottom: -5px;
     z-index: 1000;
+}
+
+.animate-bounce {
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.animate-ping {
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+    75%, 100% {
+        transform: scale(2);
+        opacity: 0;
+    }
 }
 </style>
 @endsection

@@ -12,17 +12,25 @@ class ProductoController extends Controller
 {
     public function index()
     {
-        $productos = Producto::with('categoria')->get();
-        
-        // ✅ CONTADORES PARA EL DASHBOARD
-        $stockBajoCount = Producto::where('estado', 'activo')
-            ->where('stock', '<=', 5)
-            ->where('stock', '>', 0)
-            ->count();
-            
-        $agotadosCount = Producto::where('estado', 'agotado')->count();
+         $productos = Producto::with('categoria')->get();
+    
+    //  AGREGAR ESTADÍSTICAS DE STOCK
+    $stockBajo = Producto::where('stock', '<=', 5)->where('stock', '>', 0)->count();
+    $agotados = Producto::where('stock', 0)->count();
+    $totalProductos = $productos->count();
+    $productosStockBajo = Producto::with('categoria')
+        ->where('stock', '<=', 5)
+        ->where('stock', '>', 0)
+        ->orderBy('stock', 'asc')
+        ->get();
 
-        return view('admin.productos.index', compact('productos', 'stockBajoCount', 'agotadosCount'));
+    return view('admin.productos.index', compact(
+        'productos', 
+        'stockBajo', 
+        'agotados', 
+        'totalProductos',
+        'productosStockBajo'
+        ));
     }
 
     public function create()
@@ -57,7 +65,7 @@ class ProductoController extends Controller
         } else {
             $data['estado_stock'] = 'disponible';
             
-            // ✅ ENVIAR ALERTA SI EL STOCK ES BAJO AL CREAR
+            //  ENVIAR ALERTA SI EL STOCK ES BAJO AL CREAR
             if ($request->stock <= 5) {
                 // Se enviará después de crear el producto
             }
@@ -65,7 +73,7 @@ class ProductoController extends Controller
 
         $producto = Producto::create($data);
 
-        // ✅ ENVIAR ALERTA SI ES NECESARIO
+        //  ENVIAR ALERTA SI ES NECESARIO
         if ($producto->stock <= 5 && $producto->stock > 0) {
             $producto->enviarAlertaStock('bajo');
         }
@@ -116,7 +124,7 @@ class ProductoController extends Controller
 
         $producto->update($data);
 
-        // ✅ ENVIAR ALERTAS SI ES NECESARIO
+        // ENVIAR ALERTAS SI ES NECESARIO
         if ($request->stock == 0 && $stockAnterior > 0) {
             $producto->enviarAlertaStock('agotado');
         } elseif ($request->stock <= 5 && $stockAnterior > 5) {
@@ -165,7 +173,7 @@ class ProductoController extends Controller
 
         $producto->reponerStock($nuevoStock - $producto->stock);
 
-        // ✅ ENVIAR ALERTAS SI ES NECESARIO
+        //  ENVIAR ALERTAS SI ES NECESARIO
         if ($nuevoStock == 0 && $stockAnterior > 0) {
             $producto->enviarAlertaStock('agotado');
         } elseif ($nuevoStock <= 5 && $stockAnterior > 5) {
@@ -175,7 +183,7 @@ class ProductoController extends Controller
         return back()->with('success', 'Stock actualizado exitosamente.');
     }
 
-    // ✅ MÉTODO PARA VER STOCK BAJO
+    // MÉTODO PARA VER STOCK BAJO
     public function stockBajo()
     {
         $productos = Producto::with('categoria')
@@ -188,7 +196,7 @@ class ProductoController extends Controller
         return view('admin.productos.stock-bajo', compact('productos'));
     }
 
-    // ✅ MÉTODO PARA VER PRODUCTOS AGOTADOS
+    //  MÉTODO PARA VER PRODUCTOS AGOTADOS
     public function agotados()
     {
         $productos = Producto::with('categoria')
@@ -198,4 +206,21 @@ class ProductoController extends Controller
 
         return view('admin.productos.agotados', compact('productos'));
     }
+
+    /*public function dashboardStock()
+    {
+        $stockBajo = Producto::where('stock', '<=', 5)->where('stock', '>', 0)->count();
+        $agotados = Producto::where('stock', 0)->count();
+        $totalProductos = Producto::count();
+        $productosStockBajo = Producto::with('categoria')
+            ->where('stock', '<=', 5)
+            ->where('stock', '>', 0)
+            ->orderBy('stock', 'asc')
+            ->get();
+        
+        return view('admin.stock.dashboard', compact(
+            'stockBajo', 'agotados', 'totalProductos', 'productosStockBajo'
+        ));
+    }*/
+
 }
