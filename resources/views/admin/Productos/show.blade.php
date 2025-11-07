@@ -54,7 +54,6 @@
                         </div>
                     @endif
                 </div>
-
                 <!-- Additional Info -->
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-gray-900 rounded-xl p-4 text-center border border-gray-700/50">
