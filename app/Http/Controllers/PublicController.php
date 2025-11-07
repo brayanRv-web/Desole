@@ -17,7 +17,7 @@ class PublicController extends Controller
             ->get();
 
         // Obtener imágenes para el carrusel del hero
-        $heroImages = HeroImage::where('activo', true)
+        $heroImages = HeroImage::where('estado', true)
             ->where('tipo', 'hero')
             ->orderBy('orden', 'asc')
             ->get();

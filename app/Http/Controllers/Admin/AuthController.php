@@ -23,10 +23,10 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        // ✅ Buscar admin directamente en la tabla admins
+        //  Buscar admin directamente en la tabla admins
         $admin = Admin::where('email', $request->email)->first();
 
-        // ✅ Verificar contraseña con Hash::check()
+        
         if ($admin && Hash::check($request->password, $admin->password)) {
             if (!$admin->is_active) {
                 return back()->withErrors([
@@ -34,7 +34,10 @@ class AuthController extends Controller
                 ])->onlyInput('email');
             }
 
-            // ✅ Login manual - guardar en sesión SIN usar Auth
+            //  LIMPIAR SESIÓN DE CLIENTE ANTES DE INICIAR ADMIN
+            session()->forget(['user_id', 'cliente_id']); // Limpia sesión client
+
+            //  Login manual - guardar en sesión SIN usar Auth
             session(['admin_id' => $admin->id]);
             session(['admin_name' => $admin->name]);
             session(['admin_email' => $admin->email]);
@@ -53,8 +56,8 @@ class AuthController extends Controller
     {
         // ✅ Limpiar sesión de admin manualmente
         $request->session()->forget(['admin_id', 'admin_name', 'admin_email', 'admin_role']);
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        //$request->session()->invalidate();
+        //$request->session()->regenerateToken();
 
         return redirect()->route('admin.login')
             ->with('success', 'Sesión cerrada correctamente.');

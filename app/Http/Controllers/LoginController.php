@@ -44,7 +44,21 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Auth::guard('cliente')->logout();
-        $request->session()->invalidate();
+        
+        // Lista EXPLÍCITA de solo variables del cliente
+        $clienteSessionKeys = [
+            'user_id', 
+            'cliente_id', 
+            'cliente_nombre',
+            'cliente_email',
+            'cart', // si usas carrito en sesión
+            'pedido_actual' // si usas pedidos en sesión
+        ];
+        
+        foreach ($clienteSessionKeys as $key) {
+            $request->session()->forget($key);
+        }
+        
         $request->session()->regenerateToken();
 
         return redirect()->route('home')

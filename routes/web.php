@@ -78,7 +78,7 @@ Route::middleware(['auth:cliente'])->prefix('cliente')->name('cliente.')->group(
     });
 
 // ===========================================================
-//                LOGIN Y LOGOUT DEL ADMIN
+//                LOGIN Y LOGOUT DEL ADMIN (SIN PROTECCIÓN)
 // ===========================================================
 
 // Redirección genérica a login admin
@@ -86,16 +86,16 @@ Route::get('/login', function () {
     return redirect()->route('admin.login');
 })->name('login');
 
-// Autenticación de admin
+// Autenticación de admin (SIN middleware)
 Route::get('admin/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('admin/login', [AuthController::class, 'authenticate'])->name('admin.authenticate');
 Route::post('admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
 // ===========================================================
-//                GRUPO PRINCIPAL DEL ADMIN
+//                GRUPO PRINCIPAL DEL ADMIN (PROTEGIDO)
 // ===========================================================
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(function () { // ✅ AGREGAR MIDDLEWARE AQUÍ
 
     // Dashboard
     Route::get('/', [AdminController::class, 'dashboard']);
@@ -127,7 +127,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/{producto}', [ProductoController::class, 'update'])->name('update');
         Route::delete('/{producto}', [ProductoController::class, 'destroy'])->name('destroy');
         Route::patch('/{producto}/estado', [ProductoController::class, 'updateEstado'])->name('updateEstado');
-        // ✅ NUEVA RUTA PARA ACTUALIZAR STOCK
         Route::patch('/{producto}/stock', [ProductoController::class, 'updateStock'])->name('updateStock');
     });
 
@@ -165,6 +164,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::view('/reportes', 'admin.reportes.index')->name('reportes.index');
     Route::view('/configuracion', 'admin.configuracion.index')->name('configuracion.index');
 });
+
 
 // ===========================================================
 //                PANEL DE EMPLEADO
