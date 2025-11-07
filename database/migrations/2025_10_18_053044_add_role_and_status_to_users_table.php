@@ -10,22 +10,26 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            // Agregar campo role (admin, employee)
+   public function up(): void
+{
+    Schema::table('users', function (Blueprint $table) {
+        if (!Schema::hasColumn('users', 'role')) {
             $table->enum('role', ['admin', 'employee'])->default('employee');
-            
-            // Agregar campo is_active (boolean)
+        }
+
+        if (!Schema::hasColumn('users', 'is_active')) {
             $table->boolean('is_active')->default(true);
-            
-            // Agregar campo phone (opcional)
+        }
+
+        if (!Schema::hasColumn('users', 'phone')) {
             $table->string('phone', 20)->nullable();
-            
-            // Agregar campo address (opcional)
+        }
+
+        if (!Schema::hasColumn('users', 'address')) {
             $table->text('address')->nullable();
-        });
-    }
+        }
+    });
+}
 
     /**
      * Reverse the migrations.

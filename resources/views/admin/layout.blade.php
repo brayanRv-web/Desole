@@ -2,9 +2,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Désolé | Panel de Administración</title>
+    <title>Panel de Administración</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="{{ asset('assets/favicon.ico') }}">
     <script>
         tailwind.config = {
             theme: {
@@ -34,8 +35,8 @@
     <!-- Header Fijo -->
     <header class="bg-black text-green-400 px-6 py-4 flex justify-between items-center shadow-md border-b border-green-800 fixed top-0 left-0 right-0 z-30 h-16">
         <h1 class="text-2xl font-bold tracking-wide flex items-center gap-2">
-            <i class="fas fa-coffee"></i> <span class="text-white">Désolé</span>
-            <span class="text-green-500 font-semibold">Admin</span>
+            <i class=""></i> <span class="text-white">Désolé</span>
+            <span class="text-green-500 font-semibold">Administración</span>
         </h1>
 
         <div class="flex items-center gap-5">
@@ -52,7 +53,7 @@
             <button
                 class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-green-500/30 flex items-center gap-2"
                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                <i class="fas fa-door-closed"></i> Cerrar sesión
             </button>
         </div>
     </header>
@@ -69,14 +70,40 @@
                 <!-- Dashboard -->
                 <a href="{{ url('admin/') }}"
                 class="flex items-center gap-3 px-4 py-2 rounded-lg bg-green-600/20 text-green-400 transition">
-                    <i class="fas fa-tachometer-alt w-5 text-center"></i> <span>Dashboard</span>
+                    <i class="fas fa-tachometer-alt"></i> <span>Inicio</span>
+                </a>
+
+                <!-- Marketing y CRM -->
+                <a href="{{ url('admin/crm') }}"
+                class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
+                    <i class="fas fa-hands"></i> <span>CRM</span>
                 </a>
 
                 <!-- Productos -->
                 <a href="{{ url('admin/productos') }}"
-                class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
-                    <i class="fas fa-box w-5 text-center"></i> <span>Productos</span>
-                </a>
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition relative">
+                        <i class="fas fa-box w-5 text-center"></i> 
+                        <span>Productos</span>
+                        
+                        <!-- Notificación de stock bajo -->
+                        @php
+                            // Obtener contador de stock bajo directamente
+                            $stockBajoCount = \App\Models\Producto::where('stock', '<=', 5)
+                                ->where('stock', '>', 0)
+                                ->count();
+                        @endphp
+                        
+                        @if($stockBajoCount > 0)
+                        <div class="absolute -top-1 -right-1">
+                            <div class="relative">
+                                <div class="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center animate-pulse">
+                                    <span class="text-white text-xs font-bold">{{ $stockBajoCount }}</span>
+                                </div>
+                                <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-400 rounded-full animate-ping"></div>
+                            </div>
+                        </div>
+                        @endif
+                    </a>
 
                 <!-- Pedidos -->
                 <a href="{{ url('admin/pedidos') }}"
@@ -101,16 +128,28 @@
                    class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
                     <i class="fas fa-users w-5 text-center"></i> <span>Usuarios</span>
                 </a>
-
                 <!-- Reportes -->
                 <a href="{{ url('admin/reportes') }}"
                    class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
                     <i class="fas fa-chart-bar w-5 text-center"></i> <span>Reportes</span>
                 </a>
-            </nav>
+                <!-- Config -->
+                <a href="{{ url('admin/configuracion') }}"
+                   class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
+                    <i class="fas fa-gear"></i> <span>Configuración</span>
+                </a>
+                 <!-- Reseñas -->
+                <a href="{{ url('admin/reseñas') }}"
+                class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
+                    <i class="fas fa-comments"></i> <span>Reseñas</span>
+                </a>
+                </nav>
+
+
+                
 
             <div class="mt-10 border-t border-green-800 pt-4 text-center text-xs text-gray-500">
-                <p>&copy; {{ date('Y') }} <span class="text-green-500">Désolé Café</span></p>
+                <p>&copy; {{ date('Y') }} <span class="text-green-500">Désolé</span></p>
                 <p>Panel de Administración</p>
             </div>
         </aside>

@@ -3,104 +3,224 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Categoria;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
 {
-    // 🟢 ELIMINAR COMPLETAMENTE EL CONSTRUCTOR
-    // NO USAR CONSTRUCTOR CON MIDDLEWARE
-
-    // 🟢 Listado general
     public function index()
     {
-        $productos = Producto::with('categoria')->paginate(10);
-        return view('admin.productos.index', compact('productos'));
+         $productos = Producto::with('categoria')->get();
+    
+    //  AGREGAR ESTADÍSTICAS DE STOCK
+    $stockBajo = Producto::where('stock', '<=', 5)->where('stock', '>', 0)->count();
+    $agotados = Producto::where('stock', 0)->count();
+    $totalProductos = $productos->count();
+    $productosStockBajo = Producto::with('categoria')
+        ->where('stock', '<=', 5)
+        ->where('stock', '>', 0)
+        ->orderBy('stock', 'asc')
+        ->get();
+
+    return view('admin.productos.index', compact(
+        'productos', 
+        'stockBajo', 
+        'agotados', 
+        'totalProductos',
+        'productosStockBajo'
+        ));
     }
 
-    // 🟢 Formulario de creación
     public function create()
     {
         $categorias = Categoria::all();
         return view('admin.productos.create', compact('categorias'));
     }
 
-    // 🟢 Guardar producto nuevo
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'nombre' => 'required|string|max:255',
-            'categoria_id' => 'required|exists:categorias,id',
+            'descripcion' => 'nullable|string',
             'precio' => 'required|numeric|min:0',
-            'descripcion' => 'nullable|string|max:1000',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'stock' => 'required|integer|min:0',
+            'categoria_id' => 'required|exists:categorias,id',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'estado' => 'required|in:activo,inactivo,agotado'
         ]);
 
-        // Manejo de imagen
+        $data = $request->all();
+
+        // Manejar la imagen
         if ($request->hasFile('imagen')) {
-            $imagenPath = $request->file('imagen')->store('productos', 'public');
-            $validated['imagen'] = $imagenPath;
+            $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
 
-        Producto::create($validated);
+        // Ajustar estado_stock basado en el stock
+        if ($request->stock == 0) {
+            $data['estado_stock'] = 'agotado';
+            $data['estado'] = 'agotado';
+        } else {
+            $data['estado_stock'] = 'disponible';
+            
+            //  ENVIAR ALERTA SI EL STOCK ES BAJO AL CREAR
+            if ($request->stock <= 5) {
+                // Se enviará después de crear el producto
+            }
+        }
 
-        return redirect()->route('admin.productos.index')->with('success', '✅ Producto agregado correctamente.');
+        $producto = Producto::create($data);
+
+        //  ENVIAR ALERTA SI ES NECESARIO
+        if ($producto->stock <= 5 && $producto->stock > 0) {
+            $producto->enviarAlertaStock('bajo');
+        }
+
+        return redirect()->route('admin.productos.index')
+            ->with('success', 'Producto creado exitosamente.');
     }
 
-    // 🟢 Formulario de edición
     public function edit(Producto $producto)
     {
         $categorias = Categoria::all();
         return view('admin.productos.edit', compact('producto', 'categorias'));
     }
 
-    // 🟢 Actualizar producto
     public function update(Request $request, Producto $producto)
     {
         $request->validate([
             'nombre' => 'required|string|max:255',
-            'categoria_id' => 'required|exists:categorias,id',
-            'precio' => 'required|numeric|min:0',
             'descripcion' => 'nullable|string',
-            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'precio' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'categoria_id' => 'required|exists:categorias,id',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'estado' => 'required|in:activo,inactivo,agotado'
         ]);
 
-        $data = $request->only(['nombre', 'precio', 'categoria_id', 'descripcion']);
+        $stockAnterior = $producto->stock;
+        $data = $request->all();
 
+        // Manejar la imagen
         if ($request->hasFile('imagen')) {
+            if ($producto->imagen) {
+                Storage::disk('public')->delete($producto->imagen);
+            }
             $data['imagen'] = $request->file('imagen')->store('productos', 'public');
+        }
+
+        // Ajustar estado_stock basado en el stock
+        if ($request->stock == 0) {
+            $data['estado_stock'] = 'agotado';
+            $data['estado'] = 'agotado';
+        } else {
+            $data['estado_stock'] = 'disponible';
+            if ($producto->estado == 'agotado' && $request->stock > 0) {
+                $data['estado'] = 'activo';
+            }
         }
 
         $producto->update($data);
 
+        // ENVIAR ALERTAS SI ES NECESARIO
+        if ($request->stock == 0 && $stockAnterior > 0) {
+            $producto->enviarAlertaStock('agotado');
+        } elseif ($request->stock <= 5 && $stockAnterior > 5) {
+            $producto->enviarAlertaStock('bajo');
+        }
+
         return redirect()->route('admin.productos.index')
-                         ->with('success', 'Producto actualizado correctamente.');
+            ->with('success', 'Producto actualizado exitosamente.');
     }
 
-    // 🟢 Eliminar producto
+    public function updateEstado(Request $request, Producto $producto)
+    {
+        $request->validate([
+            'estado' => 'required|in:activo,inactivo,agotado'
+        ]);
+
+        $producto->update([
+            'estado' => $request->estado,
+            'estado_stock' => $request->estado == 'agotado' ? 'agotado' : 'disponible'
+        ]);
+
+        return back()->with('success', 'Estado del producto actualizado.');
+    }
+
     public function destroy(Producto $producto)
     {
-        $user = request()->user('admin');
-        if (!$user || !$user->hasRole('Administrador')) {
-            return redirect()->route('admin.productos.index')->with('error', 'No tienes permiso para eliminar productos.');
+        if ($producto->imagen) {
+            Storage::disk('public')->delete($producto->imagen);
         }
 
         $producto->delete();
 
         return redirect()->route('admin.productos.index')
-                         ->with('success', '🗑️ Producto eliminado correctamente.');
+            ->with('success', 'Producto eliminado exitosamente.');
     }
 
-    // 🟢 Actualizar estado del producto
-    public function updateEstado(Request $request, Producto $producto)
+    // Método para actualizar solo el stock
+    public function updateStock(Request $request, Producto $producto)
     {
         $request->validate([
-            'estado' => 'required|string|in:activo,inactivo,agotado',
+            'stock' => 'required|integer|min:0'
         ]);
 
-        $producto->update(['estado' => $request->estado]);
+        $stockAnterior = $producto->stock;
+        $nuevoStock = $request->stock;
 
-        return redirect()->back()->with('success', 'Estado del producto actualizado correctamente.');
+        $producto->reponerStock($nuevoStock - $producto->stock);
+
+        //  ENVIAR ALERTAS SI ES NECESARIO
+        if ($nuevoStock == 0 && $stockAnterior > 0) {
+            $producto->enviarAlertaStock('agotado');
+        } elseif ($nuevoStock <= 5 && $stockAnterior > 5) {
+            $producto->enviarAlertaStock('bajo');
+        }
+
+        return back()->with('success', 'Stock actualizado exitosamente.');
     }
+
+    // MÉTODO PARA VER STOCK BAJO
+    public function stockBajo()
+    {
+        $productos = Producto::with('categoria')
+            ->where('estado', 'activo')
+            ->where('stock', '<=', 5)
+            ->where('stock', '>', 0)
+            ->orderBy('stock', 'asc')
+            ->get();
+
+        return view('admin.productos.stock-bajo', compact('productos'));
+    }
+
+    //  MÉTODO PARA VER PRODUCTOS AGOTADOS
+    public function agotados()
+    {
+        $productos = Producto::with('categoria')
+            ->where('estado', 'agotado')
+            ->orderBy('nombre')
+            ->get();
+
+        return view('admin.productos.agotados', compact('productos'));
+    }
+
+    /*public function dashboardStock()
+    {
+        $stockBajo = Producto::where('stock', '<=', 5)->where('stock', '>', 0)->count();
+        $agotados = Producto::where('stock', 0)->count();
+        $totalProductos = Producto::count();
+        $productosStockBajo = Producto::with('categoria')
+            ->where('stock', '<=', 5)
+            ->where('stock', '>', 0)
+            ->orderBy('stock', 'asc')
+            ->get();
+        
+        return view('admin.stock.dashboard', compact(
+            'stockBajo', 'agotados', 'totalProductos', 'productosStockBajo'
+        ));
+    }*/
+
 }

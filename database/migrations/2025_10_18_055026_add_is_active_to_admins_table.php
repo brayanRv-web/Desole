@@ -1,40 +1,31 @@
 <?php
-// app/Models/Admin.php
+// database/migrations/2025_10_18_055026_add_is_active_to_admins_table.php
 
-namespace App\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-
-class Admin extends Authenticatable
+return new class extends Migration
 {
-    use HasFactory, Notifiable;
-
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'is_active', // ← Agregar este campo
-    ];
-
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    protected function casts(): array
+    /**
+     * Ejecuta la migración: agrega la columna 'is_active' a la tabla 'admins'.
+     */
+    public function up(): void
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'is_active' => 'boolean', // ← Agregar este cast
-        ];
+        Schema::table('admins', function (Blueprint $table) {
+            // Agrega columna 'is_active' tipo boolean con valor por defecto true
+            $table->boolean('is_active')->default(true);
+        });
     }
 
-    // Método para determinar si es admin del panel
-    public function isPanelAdmin(): bool
+    /**
+     * Revierte la migración: elimina la columna 'is_active'.
+     */
+    public function down(): void
     {
-        return true;
+        Schema::table('admins', function (Blueprint $table) {
+            // Elimina la columna 'is_active'
+            $table->dropColumn('is_active');
+        });
     }
-}
+};

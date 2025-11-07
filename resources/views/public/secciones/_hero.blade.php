@@ -29,7 +29,7 @@
       @endif
       <br>
       <i class="fas fa-map-marker-alt"></i> San Fernando · 
-      <i class="fas fa-motorcycle"></i> Delivery Disponible
+      <i class="fas fa-car"></i> Delivery Disponible
     </p>
     <div class="hero-ctas">
       <a href="#menu" class="btn-primary">

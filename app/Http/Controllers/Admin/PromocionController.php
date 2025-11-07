@@ -9,21 +9,34 @@ use Illuminate\Http\Request;
 
 class PromocionController extends Controller
 {
-public function index()
-{
-    // ✅ CARGAR LAS RELACIONES CORRECTAS
-    $promociones = Promocion::with(['productos', 'productosActivos'])->latest()->get();
-    return view('admin.promociones.index', compact('promociones'));
-}
+    /**
+     * Verificar que el admin esté autenticado
+     */
+    private function checkAdminAuth()
+    {
+        if (!session('admin_id')) {
+            return redirect()->route('admin.login')->send();
+        }
+    }
+
+    public function index()
+    {
+        $this->checkAdminAuth();
+        // ✅ CARGAR LAS RELACIONES CORRECTAS
+        $promociones = Promocion::with(['productos', 'productosActivos'])->latest()->get();
+        return view('admin.promociones.index', compact('promociones'));
+    }
 
     public function create()
     {
+        $this->checkAdminAuth();
         $productos = Producto::where('estado', 'activo')->get();
         return view('admin.promociones.create', compact('productos'));
     }
 
     public function store(Request $request)
     {
+        $this->checkAdminAuth();
         $request->validate([
             'nombre' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
@@ -58,6 +71,7 @@ public function index()
 
     public function edit(Promocion $promocione)
     {
+        $this->checkAdminAuth();
         $promocion = $promocione;
         $productos = Producto::where('estado', 'activo')->get();
         $productosSeleccionados = $promocion->productos->pluck('id')->toArray();
@@ -67,6 +81,7 @@ public function index()
 
     public function update(Request $request, Promocion $promocione)
     {
+        $this->checkAdminAuth();
         $promocion = $promocione;
 
         $request->validate([
@@ -103,8 +118,9 @@ public function index()
 
     public function destroy(Promocion $promocione)
     {
-        $user = request()->user('admin');
-        if (!$user || !$user->hasRole('Administrador')) {
+        $this->checkAdminAuth();
+        // Modificar para usar sesión en lugar de user('admin')
+        if (!session('admin_role') || session('admin_role') !== 'Administrador') {
             return redirect()->route('admin.promociones.index')->with('error', 'No tienes permiso para eliminar promociones.');
         }
 
@@ -115,8 +131,9 @@ public function index()
 
     public function toggleStatus(Promocion $promocione)
     {
-        $user = request()->user('admin');
-        if (!$user || !$user->hasRole('Administrador')) {
+        $this->checkAdminAuth();
+        // Modificar para usar sesión en lugar de user('admin')
+        if (!session('admin_role') || session('admin_role') !== 'Administrador') {
             return redirect()->back()->with('error', 'No tienes permiso para cambiar el estado de la promoción.');
         }
 

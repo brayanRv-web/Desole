@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('categorias', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('tipo')->nullable(); // Ejemplo: "Cafetería tradicional / gourmet"
+            $table->text('tipo')->nullable();
+            $table->string('icono')->nullable(); // 👈 NUEVO campo
+            $table->string('color')->nullable(); // 👈 NUEVO campo
+            $table->integer('orden')->default(0); // 👈 NUEVO campo
             $table->timestamps();
         });
     }

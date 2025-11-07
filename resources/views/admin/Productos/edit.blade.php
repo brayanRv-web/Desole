@@ -94,6 +94,19 @@
                                    class="w-full border border-gray-600 bg-gray-700/50 text-white pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200">
                         </div>
                     </div>
+                    {{-- En la columna izquierda, después del precio --}}
+                    <div class="space-y-2">
+                        <label for="stock" class="block text-sm font-semibold text-green-300 flex items-center gap-2">
+                            <i class="fas fa-boxes text-xs"></i>
+                            Stock Disponible
+                        </label>
+                        <input type="number" name="stock" id="stock"
+                            value="{{ old('stock', $producto->stock) }}"
+                            placeholder="0"
+                            min="0"
+                            required
+                            class="w-full border border-gray-600 bg-gray-700/50 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200">
+                    </div>
                 </div>
 
                 <!-- Right Column -->
