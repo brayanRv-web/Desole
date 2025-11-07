@@ -186,25 +186,23 @@
                             </div>
                         </td>
 
-                        <!-- Status -->
+                        <!-- Status - VERSIÓN CORREGIDA -->
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <form action="{{ route('admin.productos.updateEstado', $producto) }}" method="POST" class="inline-block">
+                            <form action="{{ route('admin.productos.updateEstado', $producto) }}" method="POST" id="form-estado-{{ $producto->id }}">
                                 @csrf
                                 @method('PATCH')
-                                <div class="relative inline-block text-left min-w-[140px]">
-                                    <button type="button" class="inline-flex items-center justify-between w-full px-4 py-2 rounded-xl border text-sm font-medium transition-all duration-200 hover:shadow-lg {{ $estadoColors[$producto->estado] ?? 'bg-gray-500/20 text-gray-400 border-gray-500' }}">
-                                        <div class="flex items-center gap-2">
-                                            <i class="{{ $estadoIcons[$producto->estado] ?? 'fas fa-circle' }} text-xs"></i>
-                                            <span>{{ ucfirst($producto->estado) }}</span>
-                                        </div>
-                                        <i class="fas fa-chevron-down text-xs ml-2"></i>
-                                    </button>
-                                    <select name="estado" onchange="this.form.submit()" 
-                                            class="absolute top-0 left-0 opacity-0 w-full h-full cursor-pointer">
-                                        <option value="activo" {{ $producto->estado == 'activo' ? 'selected' : '' }}>Activo</option>
-                                        <option value="inactivo" {{ $producto->estado == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
-                                        <option value="agotado" {{ $producto->estado == 'agotado' ? 'selected' : '' }}>Agotado</option>
+                                <div class="relative">
+                                    <select name="estado" 
+                                            data-producto-id="{{ $producto->id }}"
+                                            onchange="actualizarEstado(this)"
+                                            class="w-full px-4 py-2 rounded-xl border text-sm font-medium transition-all duration-200 cursor-pointer appearance-none bg-gray-800 text-white {{ $estadoColors[$producto->estado] ?? 'border-gray-500' }}">
+                                        <option value="activo" {{ $producto->estado == 'activo' ? 'selected' : '' }}>🟢 Activo</option>
+                                        <option value="inactivo" {{ $producto->estado == 'inactivo' ? 'selected' : '' }}>⚪ Inactivo</option>
+                                        <option value="agotado" {{ $producto->estado == 'agotado' ? 'selected' : '' }}>🔴 Agotado</option>
                                     </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                                        <i class="fas fa-chevron-down text-xs"></i>
+                                    </div>
                                 </div>
                             </form>
                         </td>
@@ -273,6 +271,15 @@ function toggleStockBajoList() {
     }
 }
 
+// Función para actualizar estado
+function actualizarEstado(selectElement) {
+    const productoId = selectElement.getAttribute('data-producto-id');
+    const form = document.getElementById(`form-estado-${productoId}`);
+    if (form && selectElement.value) {
+        form.submit();
+    }
+}
+
 // Mostrar notificación toast si hay stock bajo
 document.addEventListener('DOMContentLoaded', function() {
     const stockBajoCount = <?php echo $stockBajo; ?>;
@@ -307,6 +314,20 @@ function showStockNotification(count) {
         }
     }, 5000);
 }
+
+// Prevenir envíos vacíos
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('form[id^="form-estado-"]');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const select = this.querySelector('select[name="estado"]');
+            if (!select || !select.value) {
+                e.preventDefault();
+                alert('Por favor selecciona un estado válido');
+            }
+        });
+    });
+});
 </script>
 
 <style>

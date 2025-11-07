@@ -7,6 +7,7 @@ use App\Models\Producto;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class ProductoController extends Controller
 {
@@ -137,6 +138,9 @@ class ProductoController extends Controller
 
     public function updateEstado(Request $request, Producto $producto)
     {
+        Log::info('Datos recibidos:', $request->all());
+        Log::info('Producto:', ['id' => $producto->id, 'nombre' => $producto->nombre]);
+        
         $request->validate([
             'estado' => 'required|in:activo,inactivo,agotado'
         ]);
@@ -148,7 +152,6 @@ class ProductoController extends Controller
 
         return back()->with('success', 'Estado del producto actualizado.');
     }
-
     public function destroy(Producto $producto)
     {
         if ($producto->imagen) {

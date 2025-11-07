@@ -162,7 +162,31 @@
                             <img id="preview" class="w-32 h-32 object-cover rounded-lg mx-auto shadow-lg">
                         </div>
                     </div>
-                </div>
+
+                    {{-- Estado --}}
+                    <div class="space-y-2">
+                        <label for="estado" class="block text-sm font-semibold text-green-300 flex items-center gap-2">
+                            <i class="fas fa-circle text-xs"></i>
+                            Estado del Producto
+                        </label>
+                        <select name="estado" id="estado" required
+                                class="w-full border border-gray-600 bg-gray-700/50 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200">
+                            <option value="activo" {{ old('estado', $producto->estado) == 'activo' ? 'selected' : '' }} class="text-white">
+                                🟢 Activo
+                            </option>
+                            <option value="inactivo" {{ old('estado', $producto->estado) == 'inactivo' ? 'selected' : '' }} class="text-white">
+                                ⚪ Inactivo
+                            </option>
+                            <option value="agotado" {{ old('estado', $producto->estado) == 'agotado' ? 'selected' : '' }} class="text-white">
+                                🔴 Agotado
+                            </option>
+                        </select>
+                        <p class="text-xs text-gray-400 flex items-center gap-1">
+                            <i class="fas fa-info-circle text-xs"></i>
+                            El estado determina la visibilidad del producto para los clientes
+                        </p>
+                    </div>
+                                    </div>
             </div>
 
             {{-- Descripción --}}
