@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Promocion;
 use App\Models\HeroImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class PublicController extends Controller
 {
@@ -16,11 +17,16 @@ class PublicController extends Controller
             ->orderBy('fecha_inicio', 'desc')
             ->get();
 
-        // Obtener imágenes para el carrusel del hero
-        $heroImages = HeroImage::where('activo', true)
-            ->where('tipo', 'hero')
-            ->orderBy('orden', 'asc')
-            ->get();
+        // Obtener imágenes para el carrusel del hero (verificar existencia de la tabla)
+        if (Schema::hasTable('hero_images')) {
+            $heroImages = HeroImage::where('activo', true)
+                ->where('tipo', 'hero')
+                ->orderBy('orden', 'asc')
+                ->get();
+        } else {
+            // Evitar excepción en entornos donde la migración no se ha ejecutado
+            $heroImages = collect();
+        }
 
         return view('public.welcome', [
             'promociones' => $promociones,

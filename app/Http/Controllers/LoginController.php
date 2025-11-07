@@ -32,8 +32,8 @@ class LoginController extends Controller
             // Actualizar última visita
             Auth::guard('cliente')->user()->update(['ultima_visita' => now()]);
 
-            return redirect()->intended(route('cliente.dashboard'))
-                ->with('success', '¡Bienvenido de nuevo!');
+            return redirect()->route('home') // redirige a la página principal
+            ->with('success', '¡Bienvenido de nuevo!');
         }
 
         return back()->withErrors([
