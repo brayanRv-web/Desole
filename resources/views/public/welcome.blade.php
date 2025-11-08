@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- AOS Animation -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <!-- Swiper JS -->
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 
   <!-- Estilos -->
   <link rel="stylesheet" href="{{ asset('css/desole.css') }}"> 
@@ -20,6 +22,7 @@
 
   <!-- ELEMENTOS GLOBALES -->
   @include('public.secciones._navbar')
+  @include('public.secciones._productos-carousel')
   @include('public.secciones._hero')
   @include('public.secciones._menu')
 
