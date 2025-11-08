@@ -268,7 +268,7 @@
                                 @foreach($productos as $producto)
                                 @php
                                     $isSelected = in_array($producto->id, old('productos', $productosSeleccionados));
-                                    $isInactive = $producto->estado !== 'activo';
+                                    $isInactive = $producto->status !== 'activo';
                                 @endphp
                                 <label class="flex items-center gap-3 p-3 rounded-lg transition-colors cursor-pointer border
                                             {{ $isSelected ? 'bg-green-500/10 border-green-500/30' : 'bg-transparent border-transparent hover:bg-gray-600/30 hover:border-gray-500/50' }}
@@ -292,10 +292,10 @@
                                         <div class="text-sm text-gray-400 flex items-center gap-4 mt-1">
                                             <span><i class="fas fa-dollar-sign text-xs"></i> {{ number_format($producto->precio, 2) }}</span>
                                             <span class="text-xs px-2 py-1 rounded-full 
-                                                {{ $producto->estado === 'activo' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 
-                                                   ($producto->estado === 'inactivo' ? 'bg-gray-500/20 text-gray-400 border border-gray-500/30' : 
-                                                   'bg-red-500/20 text-red-400 border border-red-500/30') }}">
-                                                {{ ucfirst($producto->estado) }}
+                                                {{ $producto->status === 'activo' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 
+                                                   ($producto->status === 'inactivo' ? 'bg-gray-500/20 text-gray-400 border border-gray-500/30' : 
+                                                    'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30') }} ">
+                                                {{ ucfirst($producto->status) }}
                                             </span>
                                         </div>
                                         @if($isInactive)

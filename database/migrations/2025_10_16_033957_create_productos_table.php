@@ -18,9 +18,9 @@ return new class extends Migration
             $table->decimal('precio', 8, 2);
             $table->text('descripcion')->nullable();
             $table->string('imagen')->nullable();
-            $table->string('estado')->default('activo');
-            $table->integer('stock')->default(0)->after('precio');
-            $table->enum('estado_stock', ['disponible', 'agotado'])->default('disponible')->after('stock');
+            $table->string('status')->default('activo');
+            $table->integer('stock')->default(0);
+            $table->enum('estado_stock', ['disponible', 'agotado'])->default('disponible');
             $table->timestamps();
         });
     }

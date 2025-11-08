@@ -5,7 +5,7 @@
   </header>
 
   @php
-    $productos = \App\Models\Producto::where('estado', 'activo')->get();
+    $productos = \App\Models\Producto::where('status', 'activo')->get();
     $categorias = [
       'alitas' => $productos->filter(fn($p) => stripos($p->nombre, 'alita') !== false),
       'boneless' => $productos->filter(fn($p) => stripos($p->nombre, 'boneless') !== false),

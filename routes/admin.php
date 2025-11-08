@@ -11,7 +11,7 @@ Route::post('login', [AuthController::class, 'authenticate'])->name('admin.authe
 Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
 
 // Rutas protegidas
-Route::middleware('auth')->group(function () {
+Route::middleware('admin.auth')->group(function () {
     Route::get('dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::get('productos', [ProductoController::class, 'index'])->name('admin.productos.index');

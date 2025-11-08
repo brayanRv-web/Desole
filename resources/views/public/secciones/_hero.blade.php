@@ -43,7 +43,7 @@
 
   <div class="hero-art">
     @php
-      $productoDestacado = \App\Models\Producto::where('estado', 'activo')->inRandomOrder()->first();
+      $productoDestacado = \App\Models\Producto::where('status', 'activo')->inRandomOrder()->first();
     @endphp
     @if($productoDestacado && $productoDestacado->imagen)
       <img src="{{ asset('storage/' . $productoDestacado->imagen) }}" alt="{{ $productoDestacado->nombre }}" />

@@ -30,7 +30,7 @@ class AdminController extends Controller
 
         // Estadísticas de productos
         $totalProductos = Producto::count();
-        $productosActivos = Producto::where('estado', 'activo')->count();
+        $productosActivos = Producto::where('status', 'activo')->count();
         $productosRecientes = Producto::latest()->take(5)->get();
 
         // Estadísticas de usuarios

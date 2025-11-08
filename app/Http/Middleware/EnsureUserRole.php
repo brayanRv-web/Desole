@@ -1,7 +1,7 @@
 <?php
 // app/Middleware/EnsureUserRole.php
 
-namespace App\Middleware;
+namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

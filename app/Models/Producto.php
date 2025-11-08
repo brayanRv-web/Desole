@@ -12,7 +12,7 @@ class Producto extends Model
 
     protected $fillable = [
         'nombre', 'descripcion', 'precio', 'stock', 'estado_stock', 
-        'categoria_id', 'imagen', 'estado'
+        'categoria_id', 'imagen', 'status'
     ];
 
     protected $casts = [
@@ -29,7 +29,7 @@ class Producto extends Model
     // Scope para productos disponibles
     public function scopeDisponibles($query)
     {
-        return $query->where('estado', 'activo')
+        return $query->where('status', 'activo')
                     ->where('stock', '>', 0)
                     ->where('estado_stock', 'disponible');
     }
@@ -43,7 +43,7 @@ class Producto extends Model
         if ($this->stock <= 0) {
             $this->stock = 0;
             $this->estado_stock = 'agotado';
-            $this->estado = 'agotado';
+            $this->status = 'agotado';
             
             // ENVIAR ALERTA DE AGOTADO
             if ($stockAnterior > 0) {
@@ -69,7 +69,7 @@ class Producto extends Model
         
         if ($this->stock > 0 && $this->estado_stock == 'agotado') {
             $this->estado_stock = 'disponible';
-            $this->estado = 'activo';
+            $this->status = 'activo';
         }
         
         $this->save();
@@ -78,7 +78,7 @@ class Producto extends Model
     // Verificar si está disponible
     public function estaDisponible()
     {
-        return $this->estado == 'activo' && 
+        return $this->status == 'activo' && 
                $this->estado_stock == 'disponible' && 
                $this->stock > 0;
     }
@@ -104,7 +104,7 @@ class Producto extends Model
     public static function verificarStockBajo()
     {
         // Productos con stock bajo
-        $productosStockBajo = self::where('estado', 'activo')
+        $productosStockBajo = self::where('status', 'activo')
             ->where('stock', '<=', 5)
             ->where('stock', '>', 0)
             ->get();
@@ -114,7 +114,7 @@ class Producto extends Model
         }
 
         // Productos agotados
-        $productosAgotados = self::where('estado', 'agotado')
+        $productosAgotados = self::where('status', 'agotado')
             ->where('stock', 0)
             ->get();
 

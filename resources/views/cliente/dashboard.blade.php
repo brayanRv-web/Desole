@@ -110,8 +110,8 @@
                                         <td class="order-date">{{ $pedido->created_at->format('d/m/Y H:i') }}</td>
                                         <td class="order-total">${{ number_format($pedido->total, 2) }}</td>
                                         <td class="order-status">
-                                            <span class="status-badge status-{{ $pedido->estado }}">
-                                                {{ ucfirst($pedido->estado) }}
+                                            <span class="status-badge status-{{ $pedido->status }}">
+                                                {{ ucfirst($pedido->status) }}
                                             </span>
                                         </td>
                                         <td class="order-actions">

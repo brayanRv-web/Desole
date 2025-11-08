@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('productos', function (Blueprint $table) {
-            $table->timestamp('ultima_alerta_stock')->nullable()->after('estado');
+            $table->timestamp('ultima_alerta_stock')->nullable()->after('status');
         });
     }
 

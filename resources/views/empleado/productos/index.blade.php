@@ -88,14 +88,14 @@
                                 @csrf
                                 @method('PATCH')
                                 <div class="relative inline-block text-left min-w-[140px]">
-                                    <button type="button" class="inline-flex items-center justify-between w-full px-4 py-2 rounded-xl border text-sm font-medium transition-all duration-200 hover:shadow-lg {{ $estadoColors[$producto->estado] ?? 'bg-gray-500/20 text-gray-400 border-gray-500' }}">
-                                        <div class="flex items-center gap-2"><i class="{{ $estadoIcons[$producto->estado] ?? 'fas fa-circle' }} text-xs"></i><span>{{ ucfirst($producto->estado) }}</span></div>
+                                    <button type="button" class="inline-flex items-center justify-between w-full px-4 py-2 rounded-xl border text-sm font-medium transition-all duration-200 hover:shadow-lg {{ $estadoColors[$producto->status] ?? 'bg-gray-500/20 text-gray-400 border-gray-500' }}">
+                                        <div class="flex items-center gap-2"><i class="{{ $estadoIcons[$producto->status] ?? 'fas fa-circle' }} text-xs"></i><span>{{ ucfirst($producto->status) }}</span></div>
                                         <i class="fas fa-chevron-down text-xs ml-2"></i>
                                     </button>
                                     <select name="estado" onchange="this.form.submit()" class="absolute top-0 left-0 opacity-0 w-full h-full cursor-pointer">
-                                        <option value="activo" {{ $producto->estado == 'activo' ? 'selected' : '' }}>Activo</option>
-                                        <option value="inactivo" {{ $producto->estado == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
-                                        <option value="agotado" {{ $producto->estado == 'agotado' ? 'selected' : '' }}>Agotado</option>
+                                        <option value="activo" {{ $producto->status == 'activo' ? 'selected' : '' }}>Activo</option>
+                                        <option value="inactivo" {{ $producto->status == 'inactivo' ? 'selected' : '' }}>Inactivo</option>
+                                        <option value="agotado" {{ $producto->status == 'agotado' ? 'selected' : '' }}>Agotado</option>
                                     </select>
                                 </div>
                             </form>

@@ -10,18 +10,26 @@ return new class extends Migration
     public function up()
     {
         Schema::table('pedidos', function (Blueprint $table) {
-            $table->foreignId('cliente_id')
-                  ->nullable()
-                  ->constrained('clientes')
-                  ->onDelete('set null');
+            if (!Schema::hasColumn('pedidos', 'cliente_id')) {
+                $table->foreignId('cliente_id')
+                      ->nullable()
+                      ->constrained('clientes')
+                      ->onDelete('set null');
+            }
         });
     }
 
     public function down()
     {
         Schema::table('pedidos', function (Blueprint $table) {
-            $table->dropForeign(['cliente_id']);
-            $table->dropColumn('cliente_id');
+            if (Schema::hasColumn('pedidos', 'cliente_id')) {
+                try {
+                    $table->dropForeign(['cliente_id']);
+                } catch (\Throwable $e) {
+                    // ignorar si no existe la FK con ese nombre
+                }
+                $table->dropColumn('cliente_id');
+            }
         });
     }
 };

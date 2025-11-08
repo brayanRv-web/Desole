@@ -171,13 +171,13 @@
                         </label>
                         <select name="estado" id="estado" required
                                 class="w-full border border-gray-600 bg-gray-700/50 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200">
-                            <option value="activo" {{ old('estado', $producto->estado) == 'activo' ? 'selected' : '' }} class="text-white">
+                            <option value="activo" {{ old('status', $producto->status) == 'activo' ? 'selected' : '' }} class="text-white">
                                 🟢 Activo
                             </option>
-                            <option value="inactivo" {{ old('estado', $producto->estado) == 'inactivo' ? 'selected' : '' }} class="text-white">
+                            <option value="inactivo" {{ old('status', $producto->status) == 'inactivo' ? 'selected' : '' }} class="text-white">
                                 ⚪ Inactivo
                             </option>
-                            <option value="agotado" {{ old('estado', $producto->estado) == 'agotado' ? 'selected' : '' }} class="text-white">
+                            <option value="agotado" {{ old('status', $producto->status) == 'agotado' ? 'selected' : '' }} class="text-white">
                                 🔴 Agotado
                             </option>
                         </select>

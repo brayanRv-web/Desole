@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -11,8 +11,6 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        // ✅ ELIMINAR completamente Auth::check() y Auth::guard()
-        // Solo mostrar el formulario de login
         return view('admin.login');
     }
 
@@ -23,8 +21,10 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        //  Buscar admin directamente en la tabla admins
-        $admin = Admin::where('email', $request->email)->first();
+        // Buscar usuario con rol de empleado en la tabla users
+        $admin = User::where('email', $request->email)
+                    ->where('role', 'employee')
+                    ->first();
 
         
         if ($admin && Hash::check($request->password, $admin->password)) {

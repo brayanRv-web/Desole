@@ -10,6 +10,8 @@ use App\Models\Cliente as ClienteModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ClienteController extends Controller
 {   
@@ -18,15 +20,15 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        $productos = Producto::where('estado', 'activo')
+        $productos = Producto::where('status', 'activo')
             ->where('stock', '>', 0)
             ->with('categoria')
             ->orderBy('nombre')
             ->get();
 
-        $categorias = Categoria::where('estado', 'activo')
+        $categorias = Categoria::where('status', 'activo')
             ->whereHas('productos', function($query) {
-                $query->where('estado', 'activo')->where('stock', '>', 0);
+                $query->where('status', 'activo')->where('stock', '>', 0);
             })
             ->get();
 
@@ -44,7 +46,7 @@ class ClienteController extends Controller
 
         $productosRelacionados = Producto::where('categoria_id', $producto->categoria_id)
             ->where('id', '!=', $producto->id)
-            ->where('estado', 'activo')
+            ->where('status', 'activo')
             ->where('stock', '>', 0)
             ->take(4)
             ->get();
@@ -89,8 +91,8 @@ class ClienteController extends Controller
     public function menu()
     {
         $categorias = Categoria::with(['productos' => function($query) {
-            $query->where('estado', 'activo')->where('stock', '>', 0);
-        }])->where('estado', 'activo')->get();
+            $query->where('status', 'activo')->where('stock', '>', 0);
+        }])->where('status', 'activo')->get();
 
         $promociones = Promocion::where('activa', true)
             ->where('fecha_inicio', '<=', now())
@@ -274,7 +276,7 @@ class ClienteController extends Controller
     {
         $cliente = Auth::guard('cliente')->user();
         $carrito = session()->get('carrito', []);
-        
+
         if (empty($carrito)) {
             return response()->json([
                 'success' => false,
@@ -282,7 +284,7 @@ class ClienteController extends Controller
             ], 422);
         }
 
-        // Validar stock antes de procesar el pedido
+        // Validar stock antes de procesar el pedido (solo validación, no reservar ni descontar)
         foreach ($carrito as $item) {
             $producto = Producto::find($item['id']);
             if (!$producto || $producto->stock < $item['cantidad']) {
@@ -293,43 +295,35 @@ class ClienteController extends Controller
             }
         }
 
-        // Crear el pedido
+        // Preparar items para guardar como JSON
+        $itemsForPedido = [];
+        foreach ($carrito as $item) {
+            $itemsForPedido[] = [
+                'producto_id' => $item['id'],
+                'nombre' => $item['nombre'],
+                'cantidad' => $item['cantidad'],
+                'precio' => $item['precio']
+            ];
+        }
+
+        // Crear el pedido sin tocar stock. El stock se descontará cuando el empleado marque el pedido como 'listo'.
         try {
             $pedido = Pedido::create([
                 'cliente_id' => $cliente->id,
+                'cliente_nombre' => $cliente->nombre ?? ($request->cliente_nombre ?? null),
+                'cliente_telefono' => $cliente->telefono ?? ($request->cliente_telefono ?? null),
+                'direccion' => $cliente->direccion ?? ($request->direccion ?? null),
                 'total' => $this->calcularTotalCarrito($carrito),
-                'estado' => 'pendiente',
-                'metodo_pago' => $request->metodo_pago ?? 'efectivo',
-                'direccion_entrega' => $cliente->direccion,
-                'notas' => $request->notas
+                'status' => 'pendiente',
+                'items' => $itemsForPedido,
             ]);
 
-            // Agregar productos al pedido y actualizar stock
-            foreach ($carrito as $item) {
-                $pedido->productos()->attach($item['id'], [
-                    'cantidad' => $item['cantidad'],
-                    'precio_unitario' => $item['precio']
-                ]);
-
-                // Actualizar stock del producto
-                $producto = Producto::find($item['id']);
-                $producto->stock -= $item['cantidad'];
-                
-                // Actualizar estado automáticamente si stock llega a 0
-                if ($producto->stock <= 0) {
-                    $producto->estado = 'agotado';
-                    $producto->estado_stock = 'agotado';
-                }
-                
-                $producto->save();
-            }
-
-            // Limpiar carrito
+            // Limpiar carrito (ya no descontamos stock aquí)
             session()->forget('carrito');
 
             return response()->json([
                 'success' => true,
-                'message' => 'Pedido confirmado exitosamente. Número de pedido: #' . $pedido->id,
+                'message' => 'Pedido creado correctamente. Número de pedido: #' . $pedido->id,
                 'pedido_id' => $pedido->id,
                 'redirect_url' => route('cliente.pedidos')
             ]);
@@ -337,7 +331,7 @@ class ClienteController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al procesar el pedido: ' . $e->getMessage()
+                'message' => 'Error al crear el pedido: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -434,10 +428,11 @@ class ClienteController extends Controller
     /**
      * Cancelar pedido (si está pendiente)
      */
-    public function cancelarPedido(Pedido $pedido)
+    public function cancelarPedido(Request $request, Pedido $pedido)
     {
         // Verificar que el pedido pertenezca al cliente autenticado
         if ($pedido->cliente_id !== Auth::guard('cliente')->user()->id) {
+            $request->session()->flash('error', 'No tienes permiso para cancelar este pedido');
             return response()->json([
                 'success' => false,
                 'message' => 'No tienes permiso para cancelar este pedido'
@@ -445,36 +440,37 @@ class ClienteController extends Controller
         }
 
         // Solo se pueden cancelar pedidos pendientes
-        if ($pedido->estado !== 'pendiente') {
+        if ($pedido->status !== 'pendiente') {
+            $request->session()->flash('error', 'Solo se pueden cancelar pedidos pendientes');
             return response()->json([
                 'success' => false,
                 'message' => 'Solo se pueden cancelar pedidos pendientes'
             ], 422);
         }
 
+        DB::beginTransaction();
         try {
-            // Devolver stock de los productos
-            foreach ($pedido->productos as $producto) {
-                $producto->stock += $producto->pivot->cantidad;
-                
-                // Si el producto estaba agotado, reactivarlo
-                if ($producto->estado === 'agotado' && $producto->stock > 0) {
-                    $producto->estado = 'activo';
-                    $producto->estado_stock = 'disponible';
-                }
-                
-                $producto->save();
+            // Devolver stock y actualizar estado
+            if ($pedido->stock_descontado) {
+                $pedido->incrementarStock();
             }
 
             // Actualizar estado del pedido
-            $pedido->update(['estado' => 'cancelado']);
+            $pedido->update([
+                'status' => 'cancelado'
+            ]);
 
+            DB::commit();
+            $request->session()->flash('success', 'Pedido cancelado exitosamente');
             return response()->json([
                 'success' => true,
                 'message' => 'Pedido cancelado exitosamente'
             ]);
 
         } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error cancelando pedido: ' . $e->getMessage());
+            $request->session()->flash('error', 'Error al cancelar el pedido');
             return response()->json([
                 'success' => false,
                 'message' => 'Error al cancelar el pedido: ' . $e->getMessage()

@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hero_images', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        // Hacer idempotente: solo crear si no existe la tabla (evita errores en entornos con tabla manual)
+        if (!Schema::hasTable('hero_images')) {
+            Schema::create('hero_images', function (Blueprint $table) {
+                $table->id();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

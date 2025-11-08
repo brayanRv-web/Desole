@@ -12,11 +12,23 @@ return new class extends Migration
     public function up()
     {
         Schema::table('productos', function (Blueprint $table) {
-            $table->integer('stock')->default(0)->after('precio');
-            $table->enum('estado_stock', ['disponible', 'agotado'])->default('disponible')->after('stock');
-            
-            // También asegurarnos de que el campo estado tenga el valor 'agotado'
-            $table->enum('estado', ['activo', 'inactivo', 'agotado'])->default('activo')->change();
+            // Agregar columnas solo si no existen (idempotente)
+            if (!Schema::hasColumn('productos', 'stock')) {
+                $table->integer('stock')->default(0)->after('precio');
+            }
+
+            if (!Schema::hasColumn('productos', 'estado_stock')) {
+                $table->enum('estado_stock', ['disponible', 'agotado'])->default('disponible')->after('stock');
+            }
+
+            // Intentar actualizar el enum 'estado' solo si la columna existe. Algunos drivers requieren doctrine/dbal para change().
+            if (Schema::hasColumn('productos', 'estado')) {
+                try {
+                    $table->enum('estado', ['activo', 'inactivo', 'agotado'])->default('activo')->change();
+                } catch (\Throwable $e) {
+                    // Ignorar si no es posible cambiar (ej. falta doctrine/dbal) y continuar
+                }
+            }
         });
     }
 
@@ -26,9 +38,20 @@ return new class extends Migration
     public function down()
     {
         Schema::table('productos', function (Blueprint $table) {
-            $table->dropColumn(['stock', 'estado_stock']);
-            // Revertir el campo estado a su estado original si es necesario
-            $table->enum('estado', ['activo', 'inactivo'])->default('activo')->change();
+            if (Schema::hasColumn('productos', 'stock')) {
+                $table->dropColumn('stock');
+            }
+            if (Schema::hasColumn('productos', 'estado_stock')) {
+                $table->dropColumn('estado_stock');
+            }
+
+            if (Schema::hasColumn('productos', 'estado')) {
+                try {
+                    $table->enum('estado', ['activo', 'inactivo'])->default('activo')->change();
+                } catch (\Throwable $e) {
+                    // Ignorar si no se puede revertir el enum
+                }
+            }
         });
     }
 };

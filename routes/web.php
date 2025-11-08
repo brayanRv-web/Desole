@@ -170,7 +170,7 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(functi
 //                PANEL DE EMPLEADO
 // ===========================================================
 
-Route::middleware(['auth', \App\Middleware\EnsureUserRole::class . ':employee'])
+Route::middleware(['auth', \App\Http\Middleware\EnsureUserRole::class . ':employee'])
     ->prefix('empleado')
     ->name('empleado.')
     ->group(function () {
@@ -180,6 +180,7 @@ Route::middleware(['auth', \App\Middleware\EnsureUserRole::class . ':employee'])
         // Pedidos
         Route::get('/pedidos', [EmpleadoPedidoController::class, 'index'])->name('pedidos.index');
         Route::get('/pedidos/{pedido}', [EmpleadoPedidoController::class, 'show'])->name('pedidos.show');
+    Route::patch('/pedidos/{pedido}/status', [EmpleadoPedidoController::class, 'updateStatus'])->name('pedidos.updateStatus');
 
         // Productos
         Route::prefix('productos')->name('productos.')->group(function () {

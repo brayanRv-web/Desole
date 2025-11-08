@@ -14,7 +14,7 @@ class HeroImage extends Model
         'titulo',
         'subtitulo', 
         'orden',
-        'estado',
+        'activo',
         'tipo' // 'hero' o 'carrusel'
     ];
 
