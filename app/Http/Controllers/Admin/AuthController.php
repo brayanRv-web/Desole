@@ -21,9 +21,9 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        // Buscar usuario con rol de empleado en la tabla users
+        // Buscar usuario con rol de admin o empleado en la tabla users
         $admin = User::where('email', $request->email)
-                    ->where('role', 'employee')
+                    ->whereIn('role', ['admin', 'employee'])
                     ->first();
 
         

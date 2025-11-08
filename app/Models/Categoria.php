@@ -16,7 +16,7 @@ class Categoria extends Model
         'icono', 
         'color', 
         'orden',
-        'estado' // ✅ NUEVO CAMPO
+        'status' // Campo actualizado de 'estado' a 'status'
     ];
 
     protected $casts = [
@@ -26,7 +26,7 @@ class Categoria extends Model
     // ✅ SCOPE PARA CATEGORÍAS ACTIVAS
     public function scopeActivas($query)
     {
-        return $query->where('estado', 'activo');
+        return $query->where('status', 'activo');
     }
 
     // ✅ SCOPE PARA CATEGORÍAS CON PRODUCTOS DISPONIBLES
@@ -48,18 +48,18 @@ class Categoria extends Model
     // ✅ MÉTODO PARA VERIFICAR SI LA CATEGORÍA ESTÁ ACTIVA
     public function estaActiva()
     {
-        return $this->estado === 'activo';
+        return $this->status === 'activo';
     }
 
     // ✅ MÉTODO PARA ACTIVAR CATEGORÍA
     public function activar()
     {
-        $this->update(['estado' => 'activo']);
+        $this->update(['status' => 'activo']);
     }
 
     // ✅ MÉTODO PARA DESACTIVAR CATEGORÍA
     public function desactivar()
     {
-        $this->update(['estado' => 'inactivo']);
+        $this->update(['status' => 'inactivo']);
     }
 }

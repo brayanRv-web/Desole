@@ -34,9 +34,9 @@ Route::post('/reseñas', [ResenaController::class, 'store'])->name('reseñas.sto
 //                RUTAS PÚBLICAS DE MENÚ
 // ===========================================================
 
-// Menú público (accesible sin autenticación) - ✅ CORREGIDO
-Route::get('/menu', [ClienteController::class, 'index'])->name('cliente.menu');
-Route::get('/producto/{producto}', [ClienteController::class, 'show'])->name('cliente.producto.show');
+// Menú público (accesible sin autenticación)
+Route::get('/menu', [MenuController::class, 'index'])->name('public.menu');
+Route::get('/producto/{producto}', [MenuController::class, 'show'])->name('public.producto.show');
 
 // ===========================================================
 //                AUTENTICACIÓN DE CLIENTES

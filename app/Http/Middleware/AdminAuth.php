@@ -14,9 +14,9 @@ class AdminAuth
                 ->with('error', 'Por favor inicia sesión como administrador');
         }
 
-        // Verificar si el usuario existe, está activo y es empleado
+        // Verificar si el usuario existe, está activo y tiene el rol correcto
         $admin = \App\Models\User::where('id', session('admin_id'))
-                                ->where('role', 'employee')
+                                ->whereIn('role', ['admin', 'employee'])
                                 ->where('is_active', true)
                                 ->first();
         if (!$admin || !$admin->is_active) {
