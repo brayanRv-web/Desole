@@ -62,6 +62,8 @@ Route::middleware(['auth:cliente'])->prefix('cliente')->name('cliente.')->group(
     Route::get('/dashboard', [ClienteController::class, 'dashboard'])->name('dashboard');
     Route::get('/menu', [ClienteController::class, 'menu'])->name('menu');
     Route::get('/pedidos', [ClienteController::class, 'pedidos'])->name('pedidos');
+    Route::get('/pedidos/{pedido}', [ClienteController::class, 'verPedido'])->name('pedidos.show');
+    Route::post('/pedidos/{pedido}/cancelar', [ClienteController::class, 'cancelarPedido'])->name('pedidos.cancelar');
     Route::get('/perfil', [ClienteController::class, 'perfil'])->name('perfil');
     Route::post('/perfil/actualizar', [ClienteController::class, 'actualizarPerfil'])->name('perfil.update');
 

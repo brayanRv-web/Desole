@@ -11,12 +11,7 @@
                 <h1 class="text-4xl font-bold text-green-400 mb-4">Nuestro Menú</h1>
                 <p class="text-gray-400">Explora nuestra deliciosa selección de platos y bebidas preparados con los mejores ingredientes.</p>
             </div>
-            <div class="cart-summary fixed top-4 right-4">
-                <button class="cart-btn" id="cartBtn" type="button">
-                    <i class="fas fa-shopping-cart text-xl"></i>
-                    <span class="cart-count">0</span>
-                </button>
-            </div>
+
         </div>
 
         <!-- Filtros de Categoría -->
@@ -624,117 +619,74 @@ document.addEventListener('DOMContentLoaded', () => {
     max-width: 400px;
 }
 
-/* Modal del carrito */
+/* Estilos para el modal del carrito */
 .modal-carrito {
-    @apply fixed inset-0 flex items-center justify-center z-[100];
-    background-color: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(4px);
+    @apply fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-10 px-4;
 }
 
 .modal-content {
-    @apply bg-zinc-800 rounded-xl shadow-2xl w-full mx-4 transform transition-all duration-300 ease-out;
-    max-width: 500px;
-    max-height: 80vh;
-    animation: modalSlideIn 0.3s ease-out;
+    @apply bg-zinc-800 rounded-lg shadow-xl max-w-md w-full mx-auto overflow-hidden;
+    max-height: calc(100vh - 4rem);
 }
 
 .modal-header {
-    @apply p-6 border-b border-zinc-700 flex justify-between items-center bg-zinc-800/95 backdrop-blur sticky top-0 z-10;
-}
-
-.modal-header h3 {
-    @apply text-2xl font-bold text-green-400;
-}
-
-.modal-header button {
-    @apply w-8 h-8 flex items-center justify-center rounded-full hover:bg-zinc-700 transition-colors;
+    @apply p-4 border-b border-zinc-700 flex justify-between items-center sticky top-0 bg-zinc-800 z-10;
 }
 
 .modal-body {
-    @apply p-6 overflow-y-auto;
-    max-height: calc(80vh - 180px);
+    @apply p-4 overflow-y-auto;
+    max-height: calc(100vh - 16rem);
 }
 
 .cart-item {
-    @apply flex items-center justify-between py-4 border-b border-zinc-700 last:border-0;
+    @apply flex items-center justify-between py-3 border-b border-zinc-700 last:border-0;
 }
 
 .cart-item-info {
-    @apply flex-1 mr-4;
+    @apply flex-1;
 }
 
 .cart-item-title {
-    @apply text-white font-medium text-lg mb-1;
+    @apply text-white font-medium;
 }
 
 .cart-item-price {
-    @apply text-sm text-green-400 font-medium;
+    @apply text-sm text-gray-400;
 }
 
 .cart-item-controls {
-    @apply flex items-center gap-3;
+    @apply flex items-center gap-2;
 }
 
 .quantity-btn {
-    @apply w-8 h-8 rounded-lg bg-zinc-700 hover:bg-zinc-600 text-white transition-colors flex items-center justify-center;
-}
-
-.quantity-btn[disabled] {
-    @apply opacity-50 cursor-not-allowed hover:bg-zinc-700;
+    @apply p-1 rounded bg-zinc-700 hover:bg-zinc-600 text-white transition-colors;
 }
 
 .delete-btn {
-    @apply w-8 h-8 rounded-lg flex items-center justify-center text-red-400 hover:bg-red-400/10 hover:text-red-300 transition-colors;
+    @apply p-1 text-red-400 hover:text-red-300 transition-colors;
 }
 
 /* Animaciones */
-@keyframes modalSlideIn {
+@keyframes slideIn {
     from {
-        transform: scale(0.95) translateY(10px);
+        transform: translateY(-100%);
         opacity: 0;
     }
     to {
-        transform: scale(1) translateY(0);
+        transform: translateY(0);
         opacity: 1;
     }
-}
-
-@keyframes modalSlideOut {
-    from {
-        transform: scale(1) translateY(0);
-        opacity: 1;
-    }
-    to {
-        transform: scale(0.95) translateY(10px);
-        opacity: 0;
-    }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
 }
 
 @keyframes slideInRight {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-.modal-carrito {
-    animation: fadeIn 0.2s ease-out;
-}
-
-.modal-carrito.hiding {
-    animation: fadeOut 0.2s ease-out forwards;
-}
-
-.modal-carrito.hiding .modal-content {
-    animation: modalSlideOut 0.2s ease-out forwards;
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 .notification-slide {
@@ -943,11 +895,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.cerrarModalCarrito = function() {
         const modalCarrito = document.getElementById('modal-carrito');
         if (modalCarrito) {
-            modalCarrito.classList.add('hiding');
-            setTimeout(() => {
-                modalCarrito.classList.remove('hiding');
-                modalCarrito.classList.add('hidden');
-            }, 200);
+            modalCarrito.classList.add('hidden');
         }
     };
 
