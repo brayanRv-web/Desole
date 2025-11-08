@@ -16,6 +16,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\Empleado\PedidoController as EmpleadoPedidoController;
 use App\Http\Controllers\Empleado\ProductoController as EmpleadoProductoController;
+use App\Http\Controllers\MenuController;
 
 // ===========================================================
 //                      RUTAS PÚBLICAS
@@ -35,8 +36,8 @@ Route::post('/reseñas', [ResenaController::class, 'store'])->name('reseñas.sto
 // ===========================================================
 
 // Menú público (accesible sin autenticación)
-Route::get('/menu', [MenuController::class, 'index'])->name('public.menu');
-Route::get('/producto/{producto}', [MenuController::class, 'show'])->name('public.producto.show');
+Route::get('/menu', [MenuController::class, 'index'])->name('menu');
+Route::get('/producto/{producto}', [MenuController::class, 'show'])->name('producto.show');
 
 // ===========================================================
 //                AUTENTICACIÓN DE CLIENTES

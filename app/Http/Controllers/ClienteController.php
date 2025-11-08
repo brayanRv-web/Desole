@@ -90,16 +90,24 @@ class ClienteController extends Controller
      */
     public function menu()
     {
-        $categorias = Categoria::with(['productos' => function($query) {
-            $query->where('status', 'activo')->where('stock', '>', 0);
-        }])->where('status', 'activo')->get();
+        $productos = Producto::where('status', 'activo')
+            ->where('stock', '>', 0)
+            ->orderBy('nombre')
+            ->get();
+
+        $categorias = Categoria::where('status', 'activo')
+            ->whereHas('productos', function($query) {
+                $query->where('status', 'activo')
+                      ->where('stock', '>', 0);
+            })
+            ->get();
 
         $promociones = Promocion::where('activa', true)
             ->where('fecha_inicio', '<=', now())
             ->where('fecha_fin', '>=', now())
             ->get();
 
-        return view('cliente.menu', compact('categorias', 'promociones'));
+        return view('cliente.menu', compact('productos', 'categorias', 'promociones'));
     }
 
     /**

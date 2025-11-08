@@ -52,11 +52,6 @@
               <p class="producto-desc">{{ Str::limit($producto->descripcion, 80) }}</p>
               <div class="producto-precio">${{ number_format($producto->precio, 2) }}</div>
               
-              <button class="btn-whatsapp" 
-                      data-producto="{{ $producto->nombre }}"
-                      data-precio="{{ $producto->precio }}">
-                <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
-              </button>
             </div>
           </div>
           @endforeach

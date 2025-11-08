@@ -49,7 +49,7 @@
                 <!-- Navigation Links -->
                 <div class="hidden md:flex items-center space-x-6">
                     <a href="{{ route('home') }}" class="text-gray-300 hover:text-white transition">Inicio</a>
-                    <a href="{{ route('public.menu') }}" class="text-gray-300 hover:text-white transition">Menú</a>
+                    <a href="{{ route('menu') }}" class="text-gray-300 hover:text-white transition">Menú</a>
                     <a href="#" class="text-gray-300 hover:text-white transition">Nosotros</a>
                     <a href="#" class="text-gray-300 hover:text-white transition">Contacto</a>
                 </div>
@@ -81,7 +81,7 @@
         <div class="container mx-auto px-4 py-4">
             <div class="flex flex-col space-y-4">
                 <a href="{{ route('home') }}" class="text-gray-300 hover:text-white transition">Inicio</a>
-                <a href="{{ route('public.menu') }}" class="text-gray-300 hover:text-white transition">Menú</a>
+                <a href="{{ route('menu') }}" class="text-gray-300 hover:text-white transition">Menú</a>
                 <a href="#" class="text-gray-300 hover:text-white transition">Nosotros</a>
                 <a href="#" class="text-gray-300 hover:text-white transition">Contacto</a>
             </div>

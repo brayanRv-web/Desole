@@ -32,12 +32,12 @@
       <i class="fas fa-car"></i> Delivery Disponible
     </p>
     <div class="hero-ctas">
-      <a href="#menu" class="btn-primary">
+      <a href="{{ route('menu') }}" class="btn-primary">
         <i class="fas fa-utensils"></i> Ver Menú
       </a>
-      <button id="quick-order" class="btn-ghost">
+      <a href="https://wa.me/{{ $whatsapp_number ?? '9614564697' }}" target="_blank" class="btn-ghost">
         <i class="fab fa-whatsapp"></i> Ordenar por WhatsApp
-      </button>
+      </a>
     </div>
   </div>
 

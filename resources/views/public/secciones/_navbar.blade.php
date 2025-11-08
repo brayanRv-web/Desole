@@ -39,7 +39,7 @@
         @auth('cliente')
           <li><a href="{{ route('cliente.menu') }}"><i class="fas fa-utensils"></i> Menú Completo</a></li>
         @else
-          <li><a href="{{ url('/') }}#menu"><i class="fas fa-utensils"></i> Menú</a></li>
+          <li><a href="{{ route('menu') }}"><i class="fas fa-utensils"></i> Menú</a></li>
         @endauth
         
         <li><a href="{{ url('/') }}#promociones"><i class="fas fa-gift"></i> Promociones</a></li>
