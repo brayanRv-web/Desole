@@ -147,7 +147,7 @@
                             <i class="fas fa-utensils"></i>
                             <span>Ver Menú y Ordenar</span>
                         </a>
-                        <a href="{{ route('cliente.pedidos') }}" class="action-btn secondary">
+                        <a href="{{ route('cliente.pedidos.index') }}" class="action-btn secondary">
                             <i class="fas fa-history"></i>
                             <span>Historial de Pedidos</span>
                         </a>

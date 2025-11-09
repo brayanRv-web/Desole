@@ -32,15 +32,11 @@
 }
 
 .btn-cantidad {
+    padding: 0.25rem 0.75rem;
     background: #3f3f46;
     color: white;
-    border: none;
-    width: 30px;
-    height: 30px;
+    border: 1px solid #52525b;
     border-radius: 0.375rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     transition: all 0.2s;
 }
 
@@ -54,12 +50,63 @@
 }
 
 .btn-eliminar {
-    color: #f87171;
+    padding: 0.5rem;
+    color: #ef4444;
     transition: all 0.2s;
 }
 
 .btn-eliminar:hover {
-    color: #ef4444;
+    color: #dc2626;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #3f3f46;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    background: rgba(63, 63, 70, 0.3);
+}
+
+.cart-item:last-child {
+    margin-bottom: 0;
+}
+
+.cart-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 0.375rem;
+    margin-right: 1rem;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.25rem;
+}
+
+.cart-item-price {
+    color: #65cf72;
+    font-size: 0.875rem;
+}
+
+.cart-item-stock {
+    color: #d4d4d8;
+    font-size: 0.875rem;
+}
+
+.cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 1rem;
 }
 
 .empty-cart {
@@ -69,60 +116,13 @@
 
 .empty-cart i {
     font-size: 4rem;
-    color: #6b7280;
+    color: #52525b;
     margin-bottom: 1rem;
-}
-
-.cart-item {
-    display: grid;
-    grid-template-columns: auto 1fr auto auto;
-    gap: 1rem;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid #3f3f46;
-}
-
-.cart-item:last-child {
-    border-bottom: none;
-}
-
-.cart-item-image {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 0.5rem;
-}
-
-.cart-item-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.cart-item-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: white;
-}
-
-.cart-item-price {
-    color: #9ca3af;
-}
-
-.cart-item-stock {
-    font-size: 0.875rem;
-    color: #6b7280;
-}
-
-.cart-item-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
 }
 
 .cart-summary {
     margin-top: 2rem;
-    padding-top: 2rem;
+    padding-top: 1rem;
     border-top: 1px solid #3f3f46;
 }
 

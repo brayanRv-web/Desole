@@ -14,7 +14,17 @@ class PublicController extends Controller
     {
         $this->catalogService = $catalogService;
     }
-     public function welcome()
+
+    protected function getActivePromociones()
+    {
+        return \App\Models\Promocion::query()
+            ->activa()
+            ->with('productosActivos')
+            ->orderBy('fecha_inicio')
+            ->get();
+    }
+
+    public function welcome()
     {
         $promociones = $this->getActivePromociones();
 

@@ -135,53 +135,37 @@ function incrementarCantidad() {
 function agregarAlCarrito() {
     let cantidad = parseInt(document.getElementById('cantidad').value);
     
-    axios.post('{{ route("cliente.carrito.agregar") }}', {
-        producto_id: {{ $producto->id }},
+    const producto = {
+        id: {{ $producto->id }},
+        nombre: "{{ $producto->nombre }}",
+        precio: {{ $producto->precio }},
+        stock: {{ $producto->stock }},
+        @if($producto->imagen)
+        imagen: "{{ asset('storage/' . $producto->imagen) }}",
+        @endif
         cantidad: cantidad
-    })
-    .then(response => {
-        if (response.data.success) {
-            // Actualizar la interfaz
-            actualizarInterfazCarrito(response.data);
-            
-            // Mostrar mensaje de éxito
-            Swal.fire({
-                title: '¡Agregado!',
-                text: response.data.message,
-                icon: 'success',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#718096',
-                confirmButtonText: 'Ir al Carrito',
-                cancelButtonText: 'Seguir Comprando'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '{{ route("cliente.carrito") }}';
-                }
-            });
-        }
-    })
-    .catch(error => {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: error.response.data.message || 'Error al agregar al carrito'
-        });
-    });
-}
+    };
 
-function actualizarInterfazCarrito(data) {
-    // Actualizar contador del carrito en el navbar
-    const cartCount = document.getElementById('cart-count');
-    if (cartCount) {
-        cartCount.textContent = data.carrito_count;
-        
-        // Ocultar si está vacío
-        if (data.carrito_count === 0) {
-            cartCount.classList.add('hidden');
-        } else {
-            cartCount.classList.remove('hidden');
-        }
+    // Agregar al carrito usando la clase Carrito
+    if (window.carrito) {
+        window.carrito.agregar(producto);
+
+        Swal.fire({
+            title: '¡Agregado!',
+            text: 'El producto se agregó al carrito',
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#718096',
+            confirmButtonText: 'Ver Carrito',
+            cancelButtonText: 'Seguir Comprando'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.carrito.mostrarCarritoResumen();
+            }
+        });
+    } else {
+        console.error('El objeto carrito no está inicializado');
     }
 }
 </script>

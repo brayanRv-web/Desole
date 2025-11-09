@@ -8,6 +8,7 @@ use App\Models\Categoria;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
 
 class CatalogService
 {
@@ -28,6 +29,22 @@ class CatalogService
     public function getActivePromociones(): Collection
     {
         return $this->activePromocionesQuery()->get();
+    }
+
+    /**
+     * Get count of active promotions
+     */
+    public function getActivePromocionesCount(): int
+    {
+        return $this->activePromocionesQuery()->count();
+    }
+
+    /**
+     * Get count of valid active promotions
+     */
+    public function getValidActivePromocionesCount(): int
+    {
+        return $this->getActivePromociones()->filter->esValida()->count();
     }
 
     /**
@@ -77,7 +94,7 @@ class CatalogService
     /**
      * Get filtered products by category
      */
-    public function getProductosByCategoria(?int $categoriaId = null, bool $withCategoria = false): Collection
+    public function getProductosByCategoria(?int $categoriaId = null, bool $withCategoria = false): Builder
     {
         $query = $this->availableProductosQuery();
         
@@ -89,7 +106,7 @@ class CatalogService
             $query->where('categoria_id', $categoriaId);
         }
         
-        return $query->orderBy('nombre')->get();
+        return $query->orderBy('nombre');
     }
 
     /**

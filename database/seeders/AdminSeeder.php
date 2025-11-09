@@ -3,20 +3,34 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\User; //Se cambio a User
+use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class AdminSeeder extends Seeder
 {
     public function run()
     {
-        User::create([
-            'name' => 'Administrador',
-            'email' => 'admin@desole.com',
-            'password' => Hash::make('password123'), // Cambia esta contraseña
-            'role' => 'admin', //Cambio a admin a minusculas
-            'is_active' => true,  //se agrega este campo para ver si esta activo el usuario
-        ]);
+        // Crear el administrador principal en la tabla admins
+        Admin::updateOrCreate(
+            ['email' => 'admin@desole.com'],
+            [
+                'name' => 'Administrador',
+                'password' => Hash::make('password123'),
+                'is_active' => true,
+            ]
+        );
+
+        // Crear un empleado en la tabla users
+        User::updateOrCreate(
+            ['email' => 'empleado@desole.com'],
+            [
+                'name' => 'Empleado',
+                'password' => Hash::make('password123'),
+                'role' => 'employee',
+                'is_active' => true,
+            ]
+        );
 
         $this->command->info('✅ Administrador creado:');
         $this->command->info('📧 Email: admin@desole.com');

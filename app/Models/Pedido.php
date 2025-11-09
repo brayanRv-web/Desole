@@ -14,12 +14,14 @@ class Pedido extends Model
     protected $table = 'pedidos';
 
     protected $fillable = [
+        'cliente_id',
         'cliente_nombre',
         'cliente_telefono',
         'direccion',
         'total',
-        'status',
+        'estado',
         'items',
+        'notas',
         'tiempo_estimado',
         'stock_descontado'
     ];
@@ -28,6 +30,16 @@ class Pedido extends Model
         'items' => 'array',
         'total' => 'decimal:2',
         'stock_descontado' => 'boolean',
+        'estado' => 'string'
+    ];
+
+    const ESTADO_PENDIENTE = 'pendiente';
+    const ESTADO_EN_PROCESO = 'en_proceso';
+    const ESTADO_COMPLETADO = 'completado';
+    const ESTADO_CANCELADO = 'cancelado';
+
+    protected $attributes = [
+        'estado' => self::ESTADO_PENDIENTE
     ];
 
     /**

@@ -4,15 +4,16 @@ namespace App\Services;
 
 use App\Models\Pedido;
 use App\Models\Producto;
+use App\Contracts\OrderServiceInterface;
+use App\Contracts\CartServiceInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Collection;
 
-class OrderService
+class OrderService implements OrderServiceInterface
 {
-    protected CartService $cartService;
+    protected CartServiceInterface $cartService;
 
-    public function __construct(CartService $cartService)
+    public function __construct(CartServiceInterface $cartService)
     {
         $this->cartService = $cartService;
     }
@@ -20,30 +21,24 @@ class OrderService
     /**
      * Validar disponibilidad de productos para un pedido
      */
-    public function validateStock(array $items): array
+    public function validateStock(array $items): bool
     {
         foreach ($items as $item) {
             $producto = Producto::find($item['id']);
             if (!$producto || $producto->stock < $item['cantidad']) {
-                return [
-                    'success' => false,
-                    'message' => 'El producto "' . ($producto->nombre ?? $item['nombre']) . '" ya no está disponible en la cantidad solicitada.'
-                ];
+                return false;
             }
         }
-
-        return ['success' => true];
+        return true;
     }
 
     /**
      * Crear un nuevo pedido
      */
-    public function create(array $data, array $cartItems): ?Pedido
+    public function create(array $data, array $cartItems): Pedido
     {
-        // Validar stock antes de procesar
-        $stockValidation = $this->validateStock($cartItems);
-        if (!$stockValidation['success']) {
-            throw new \Exception($stockValidation['message']);
+        if (!$this->validateStock($cartItems)) {
+            throw new \Exception('Algunos productos no están disponibles en la cantidad solicitada.');
         }
 
         return DB::transaction(function () use ($data, $cartItems) {
@@ -53,9 +48,13 @@ class OrderService
                 'cliente_telefono' => $data['cliente_telefono'],
                 'direccion' => $data['direccion'],
                 'total' => $this->cartService->calculateTotal($cartItems),
-                'status' => 'pendiente',
+                'estado' => 'pendiente',
                 'items' => $this->cartService->itemsForPedido($cartItems),
+                'notas' => $data['notas'] ?? null
             ]);
+
+            // Descontar stock
+            $pedido->decrementarStock();
 
             // Limpiar carrito después de crear el pedido
             $this->cartService->clear();
@@ -67,13 +66,10 @@ class OrderService
     /**
      * Cancelar un pedido
      */
-    public function cancel(Pedido $pedido): array
+    public function cancel(Pedido $pedido): bool
     {
-        if ($pedido->status !== 'pendiente') {
-            return [
-                'success' => false,
-                'message' => 'Solo se pueden cancelar pedidos pendientes'
-            ];
+        if ($pedido->estado !== 'pendiente') {
+            return false;
         }
 
         try {
@@ -81,134 +77,42 @@ class OrderService
                 if ($pedido->stock_descontado) {
                     $pedido->incrementarStock();
                 }
-
-                $pedido->update(['status' => 'cancelado']);
+                $pedido->update(['estado' => 'cancelado']);
             });
-
-            return [
-                'success' => true,
-                'message' => 'Pedido cancelado exitosamente'
-            ];
-
+            return true;
         } catch (\Exception $e) {
             Log::error('Error cancelando pedido: ' . $e->getMessage());
-            return [
-                'success' => false,
-                'message' => 'Error al cancelar el pedido: ' . $e->getMessage()
-            ];
+            return false;
         }
     }
 
     /**
-     * Marcar pedido como en preparación
+     * Obtener pedidos activos (pendientes y en proceso)
      */
-    public function startPreparation(Pedido $pedido): array
+    public function getActivePedidos(): array
     {
-        if ($pedido->status !== 'pendiente') {
-            return [
-                'success' => false,
-                'message' => 'Solo se pueden preparar pedidos pendientes'
-            ];
-        }
-
-        try {
-            DB::transaction(function () use ($pedido) {
-                $pedido->decrementarStock();
-                $pedido->update([
-                    'status' => 'en_preparacion',
-                    'tiempo_estimado' => now()->addMinutes(30)
-                ]);
-            });
-
-            return [
-                'success' => true,
-                'message' => 'Pedido en preparación'
-            ];
-
-        } catch (\Exception $e) {
-            Log::error('Error al iniciar preparación: ' . $e->getMessage());
-            return [
-                'success' => false,
-                'message' => 'Error al iniciar preparación: ' . $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Marcar pedido como listo
-     */
-    public function complete(Pedido $pedido): array
-    {
-        if ($pedido->status !== 'en_preparacion') {
-            return [
-                'success' => false,
-                'message' => 'Solo se pueden completar pedidos en preparación'
-            ];
-        }
-
-        try {
-            $pedido->update(['status' => 'listo']);
-
-            return [
-                'success' => true,
-                'message' => 'Pedido marcado como listo'
-            ];
-
-        } catch (\Exception $e) {
-            Log::error('Error al completar pedido: ' . $e->getMessage());
-            return [
-                'success' => false,
-                'message' => 'Error al completar pedido: ' . $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Marcar pedido como entregado
-     */
-    public function deliver(Pedido $pedido): array
-    {
-        if ($pedido->status !== 'listo') {
-            return [
-                'success' => false,
-                'message' => 'Solo se pueden entregar pedidos listos'
-            ];
-        }
-
-        try {
-            $pedido->update(['status' => 'entregado']);
-
-            return [
-                'success' => true,
-                'message' => 'Pedido marcado como entregado'
-            ];
-
-        } catch (\Exception $e) {
-            Log::error('Error al marcar pedido como entregado: ' . $e->getMessage());
-            return [
-                'success' => false,
-                'message' => 'Error al marcar pedido como entregado: ' . $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Obtener pedidos pendientes y en preparación ordenados por fecha
-     */
-    public function getActivePedidos(): Collection
-    {
-        return Pedido::whereIn('status', ['pendiente', 'en_preparacion'])
+        return Pedido::whereIn('estado', ['pendiente', 'en_proceso'])
             ->orderBy('created_at', 'asc')
-            ->get();
+            ->get()
+            ->toArray();
     }
 
     /**
      * Obtener pedidos listos para entregar
      */
-    public function getReadyPedidos(): Collection
+    public function getReadyPedidos(): array
     {
-        return Pedido::where('status', 'listo')
+        return Pedido::where('estado', 'completado')
             ->orderBy('created_at', 'asc')
-            ->get();
+            ->get()
+            ->toArray();
+    }
+
+    /**
+     * Validar que el carrito no esté vacío
+     */
+    public function validateCartNotEmpty(array $cart): bool
+    {
+        return !empty($cart);
     }
 }

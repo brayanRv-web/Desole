@@ -3,9 +3,10 @@
 namespace App\Services;
 
 use App\Models\Producto;
+use App\Contracts\CartServiceInterface;
 use Illuminate\Support\Facades\Session;
 
-class CartService
+class CartService implements CartServiceInterface
 {
     protected string $sessionKey = 'carrito';
 
@@ -120,5 +121,20 @@ class CartService
             ];
         }
         return $items;
+    }
+
+    public function validateStock(array $items): bool
+    {
+        foreach ($items as $item) {
+            if (!isset($item['producto_id']) || !isset($item['cantidad'])) {
+                return false;
+            }
+
+            $producto = Producto::find($item['producto_id']);
+            if (!$producto || $producto->stock < $item['cantidad']) {
+                return false;
+            }
+        }
+        return true;
     }
 }

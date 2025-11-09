@@ -23,7 +23,12 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Llamar al seeder de categorías
-        $this->call(CategoriaSeeder::class);
+        // Llamar a los seeders
+        $this->call([
+            AdminSeeder::class,
+            CategoriaSeeder::class,
+            ClienteSeeder::class,
+            ProductoSeeder::class,
+        ]);
     }
 }

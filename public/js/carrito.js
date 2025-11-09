@@ -7,19 +7,39 @@ class Carrito {
     }
 
     setupEventListeners() {
-        const cartBtn = document.getElementById('cart-toggle');
+        const cartBtn = document.getElementById('cartBtn');
         if (cartBtn) {
             cartBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.mostrarCarritoResumen();
             });
             console.log('Event listener del carrito configurado');
+        } else {
+            console.error('No se encontró el botón del carrito con ID: cartBtn');
         }
+
+        // Delegación de eventos para botones de agregar al carrito
+        document.addEventListener('click', (e) => {
+            const addButton = e.target.closest('[data-agregar-producto]');
+            if (addButton) {
+                e.preventDefault();
+                const productoCard = addButton.closest('[data-producto-id]');
+                if (productoCard) {
+                    const producto = {
+                        id: parseInt(productoCard.dataset.productoId),
+                        nombre: productoCard.dataset.nombre,
+                        precio: parseFloat(productoCard.dataset.precio),
+                        stock: parseInt(productoCard.dataset.stock)
+                    };
+                    this.agregar(producto);
+                }
+            }
+        });
 
         // Agregar listener para cerrar modal al hacer clic fuera
         document.addEventListener('click', (e) => {
             const modalCarrito = document.getElementById('modal-carrito');
-            if (modalCarrito && !modalCarrito.classList.contains('hidden') && !e.target.closest('.modal-content')) {
+            if (modalCarrito && !modalCarrito.classList.contains('hidden') && e.target === modalCarrito) {
                 this.cerrarModal();
             }
         });
@@ -81,7 +101,7 @@ class Carrito {
 
     actualizarContador() {
         const contador = this.items.reduce((total, item) => total + item.cantidad, 0);
-        const contadorElement = document.querySelector('#cart-count');
+        const contadorElement = document.querySelector('.cart-count');
         if (contadorElement) {
             contadorElement.textContent = contador;
         }
@@ -224,20 +244,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Función global para agregar al carrito
-window.agregarAlCarrito = function(productoId) {
-    const productoElement = document.querySelector(`[data-producto-id="${productoId}"]`);
-    if (!productoElement) {
-        console.error('No se encontró el elemento del producto');
-        return;
-    }
-
-    const producto = {
-        id: productoId,
-        nombre: productoElement.dataset.nombre,
-        precio: parseFloat(productoElement.dataset.precio),
-        stock: parseInt(productoElement.dataset.stock)
-    };
-    
-    window.carrito.agregar(producto);
-};

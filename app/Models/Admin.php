@@ -16,7 +16,6 @@ class Admin extends Authenticatable
         'email',
         'password',
         'is_active',
-        'role',
     ];
 
     protected $hidden = [
@@ -32,18 +31,12 @@ class Admin extends Authenticatable
             'is_active' => 'boolean',
         ];
     }
-    
-    /**
-     * Convenience helper to check role
-     */
-    public function hasRole(string $role): bool
-    {
-        return isset($this->role) && strcasecmp($this->role, $role) === 0;
-    }
 
-    // Método para determinar si es admin del panel
+    /**
+     * Verifica si el usuario puede acceder al panel de administración
+     */
     public function isPanelAdmin(): bool
     {
-        return true;
+        return $this->is_active;
     }
 }

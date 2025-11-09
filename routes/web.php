@@ -14,6 +14,8 @@ use App\Http\Controllers\PublicController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Cliente\ClienteController;
+use App\Http\Controllers\Cliente\CarritoController;
+use App\Http\Controllers\Cliente\PedidoController;
 use App\Http\Controllers\Empleado\PedidoController as EmpleadoPedidoController;
 use App\Http\Controllers\Empleado\ProductoController as EmpleadoProductoController;
 use App\Http\Controllers\MenuController;
@@ -61,23 +63,28 @@ Route::post('/logout-cliente', [App\Http\Controllers\LoginController::class, 'lo
 Route::middleware(['auth:cliente'])->prefix('cliente')->name('cliente.')->group(function () {
     Route::get('/dashboard', [ClienteController::class, 'dashboard'])->name('dashboard');
     Route::get('/menu', [ClienteController::class, 'menu'])->name('menu');
-    Route::get('/pedidos', [ClienteController::class, 'pedidos'])->name('pedidos');
-    Route::get('/pedidos/{pedido}', [ClienteController::class, 'verPedido'])->name('pedidos.show');
-    Route::post('/pedidos/{pedido}/cancelar', [ClienteController::class, 'cancelarPedido'])->name('pedidos.cancelar');
+    // Perfil
     Route::get('/perfil', [ClienteController::class, 'perfil'])->name('perfil');
     Route::post('/perfil/actualizar', [ClienteController::class, 'actualizarPerfil'])->name('perfil.update');
 
-    // Carrito y pedidos
-    Route::post('/carrito/agregar', [ClienteController::class, 'agregarAlCarrito'])->name('carrito.agregar');
-    Route::post('/carrito/actualizar', [ClienteController::class, 'actualizarCarrito'])->name('carrito.actualizar');
-    Route::post('/pedido/confirmar', [ClienteController::class, 'confirmarPedido'])->name('pedido.confirmar');
-    
-    Route::get('/carrito', [ClienteController::class, 'verCarrito'])->name('carrito.ver');
-    Route::post('/carrito/vaciar', [ClienteController::class, 'vaciarCarrito'])->name('carrito.vaciar');
-    Route::delete('/carrito/eliminar', [ClienteController::class, 'eliminarDelCarrito'])->name('carrito.eliminar');
-    Route::get('/carrito/info', [ClienteController::class, 'obtenerCarrito'])->name('carrito.info');
-    Route::get('/pedidos/{pedido}', [ClienteController::class, 'verPedido'])->name('pedidos.show');
-    Route::post('/pedidos/{pedido}/cancelar', [ClienteController::class, 'cancelarPedido'])->name('pedidos.cancelar');
+    // Carrito
+    Route::prefix('carrito')->name('carrito.')->group(function () {
+        Route::get('/', [CarritoController::class, 'index'])->name('index');
+        Route::post('/add', [CarritoController::class, 'add'])->name('add');
+        Route::put('/update', [CarritoController::class, 'update'])->name('update');
+        Route::delete('/remove', [CarritoController::class, 'remove'])->name('remove');
+        Route::delete('/clear', [CarritoController::class, 'clear'])->name('clear');
+        Route::get('/info', [CarritoController::class, 'getInfo'])->name('info');
+        Route::get('/confirmar', [CarritoController::class, 'confirmar'])->name('confirmar');
+        Route::post('/procesar', [CarritoController::class, 'procesar'])->name('procesar');
+    });
+
+    // Pedidos
+    Route::prefix('pedidos')->name('pedidos.')->group(function () {
+        Route::get('/', [PedidoController::class, 'index'])->name('index');
+        Route::get('/{pedido}', [PedidoController::class, 'show'])->name('show');
+        Route::post('/{pedido}/cancelar', [PedidoController::class, 'cancelar'])->name('cancelar');
+    });
     });
 
 // ===========================================================

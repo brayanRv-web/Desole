@@ -1,7 +1,7 @@
 <header class="nav-wrap">
   <nav class="nav">
     <a class="brand" href="{{ url('/') }}">
-      <img src="{{ asset('uploads/banners/logo.png') }}" alt="DESOLE" class="logo" />
+      <span style="font-size: 1.5rem; font-weight: bold; color: #fff;">DÉSOLÉ</span>
     </a>
 
     @if(isset($isProfilePage) && $isProfilePage)
@@ -11,21 +11,24 @@
         <a href="{{ route('cliente.dashboard') }}" class="{{ request()->routeIs('cliente.dashboard') ? 'active' : '' }}">
           <i class="fas fa-user me-1"></i>Mi perfil
         </a>
-       <!-- <a href="{{ route('cliente.perfil') }}" class="{{ request()->routeIs('cliente.perfil') ? 'active' : '' }}">
-          <i class="fas fa-user me-1"></i>Mi Perfil
+        <a href="{{ route('cliente.menu') }}" class="{{ request()->routeIs('cliente.menu') ? 'active' : '' }}">
+          <i class="fas fa-utensils me-1"></i>Menú Completo
         </a>
-        <a href="{{ route('cliente.pedidos') }}" class="{{ request()->routeIs('cliente.pedidos') ? 'active' : '' }}">
+        <a href="{{ route('cliente.pedidos.index') }}" class="{{ request()->routeIs('cliente.pedidos.*') ? 'active' : '' }}">
           <i class="fas fa-history me-1"></i>Mis Pedidos
         </a>
-        <a href="{{ route('cliente.menu') }}" class="{{ request()->routeIs('cliente.menu') ? 'active' : '' }}"
-          <i class="fas fa-utensils me-1"></i>Menú Completo
-        </a>-->
       </div>
 
       <div class="nav-buttons">
-        <form method="POST" action="{{ route('logout.cliente') }}">
+        <!-- Botón del carrito -->
+        <button id="cartBtn" class="cart-btn" aria-label="Abrir carrito">
+          <i class="fas fa-shopping-cart"></i>
+          <span id="cart-count" class="cart-count">0</span>
+        </button>
+        
+        <form method="POST" action="{{ route('logout.cliente') }}" style="display: inline;">
           @csrf
-          <button type="submit" class="cart-btn logout-nav-btn" title="Cerrar Sesión">
+          <button type="submit" class="logout-btn" title="Cerrar Sesión">
             <i class="fas fa-sign-out-alt"></i>
           </button>
         </form>
@@ -61,8 +64,9 @@
             <i class="fas fa-user-plus"></i> Registrarse
           </a>
         @else
-          <button id="cart-toggle" class="cart-btn" aria-label="Abrir carrito">
-            <i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span>
+          <button id="cartBtn" class="cart-btn" aria-label="Abrir carrito">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-count" class="cart-count">0</span>
           </button>
           <form method="POST" action="{{ route('logout.cliente') }}" style="display: inline;">
             @csrf
