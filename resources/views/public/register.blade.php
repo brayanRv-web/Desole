@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Registro - DÉSOLÉ Cafetería nocturna</title>
+  <title>Registro</title>
   <meta name="description" content="Regístrate en DÉSOLÉ - Cafetería nocturna. Alitas, pizzadogs, frappés y promociones nocturnas." />
 
   <!-- Font Awesome -->
@@ -31,12 +31,12 @@
     }
 
     .register-container {
-      background: #2a2a2a;
+      background: #1a1a1a;
       border-radius: 20px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
       overflow: hidden;
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
       margin-top: 20px;
     }
 
@@ -58,11 +58,11 @@
     }
 
     .register-form {
-      padding: 30px;
+      padding: 35px;
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 22px;
       position: relative;
     }
 
@@ -75,30 +75,34 @@
 
     .form-control {
       width: 100%;
-      padding: 12px 16px;
+      padding: 14px 18px;
       border: 2px solid #444;
       border-radius: 10px;
-      font-size: 16px;
-      background-color: #1f1f1f;
+      font-size: 17px;
+      background-color: #1a1a1a;
       color: #fff;
+      transition: border-color 0.3s ease;
     }
 
     .form-control::placeholder {
-      color: #aaa;
+      color: #c0c0c0;
+      font-size: 15px;
     }
 
     .form-control:focus {
       outline: none;
       border-color: #65CF72;
-      background-color: #252525;
-      box-shadow: none; /* 🔹 Sin brillo */
+      background-color: #1a1a1a;
     }
 
-    /* Íconos de ver/ocultar */
+    .form-control.error {
+      border-color: #ff6b6b !important;
+    }
+
     .toggle-password {
       position: absolute;
       right: 15px;
-      top: 45px;
+      top: 48px;
       cursor: pointer;
       color: #bbb;
     }
@@ -109,12 +113,12 @@
 
     .btn-register {
       width: 100%;
-      padding: 14px;
+      padding: 15px;
       background: #65CF72;
       color: #1c1c1c;
       border: none;
       border-radius: 10px;
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 700;
       cursor: pointer;
     }
@@ -125,7 +129,7 @@
 
     .login-link {
       text-align: center;
-      margin-top: 20px;
+      margin-top: 25px;
       color: #ccc;
     }
 
@@ -148,7 +152,7 @@
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      gap: 18px;
     }
 
     @media (max-width: 480px) {
@@ -171,78 +175,79 @@
         <p>Comunidad cafetera con beneficios exclusivos</p>
       </div>
 
-      <form class="register-form" method="POST" action="{{ route('register') }}">
+      <!-- 🔹 Desactivamos la validación HTML5 -->
+      <form class="register-form" method="POST" action="{{ route('register') }}" novalidate>
         @csrf
 
         <div class="form-group">
           <label for="nombre"><i class="fas fa-user"></i> Nombre completo</label>
-          <input type="text" id="nombre" name="nombre" class="form-control" value="{{ old('nombre') }}" required autofocus>
+          <input type="text" id="nombre" name="nombre" class="form-control" value="{{ old('nombre') }}" placeholder="Ej: Juan Pérez López">
           @error('nombre') <div class="error-message">{{ $message }}</div> @enderror
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label for="email"><i class="fas fa-envelope"></i> Email</label>
-            <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" required>
+            <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="Ej: juanperez@gmail.com">
             @error('email') <div class="error-message">{{ $message }}</div> @enderror
           </div>
 
           <div class="form-group">
             <label for="telefono"><i class="fas fa-phone"></i> Teléfono</label>
-            <input type="tel" id="telefono" name="telefono" class="form-control" value="{{ old('telefono') }}" required>
+            <input type="tel" id="telefono" name="telefono" class="form-control" value="{{ old('telefono') }}" placeholder="Ej: 9617654321">
             @error('telefono') <div class="error-message">{{ $message }}</div> @enderror
           </div>
         </div>
 
         <div class="form-group">
           <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección completa</label>
-          <input type="text" id="direccion" name="direccion" class="form-control" value="{{ old('direccion') }}" required>
+          <input type="text" id="direccion" name="direccion" class="form-control" value="{{ old('direccion') }}" placeholder="Ej: Calle Reforma 123, CDMX">
           @error('direccion') <div class="error-message">{{ $message }}</div> @enderror
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label for="colonia"><i class="fas fa-location-dot"></i> Colonia</label>
-            <input type="text" id="colonia" name="colonia" class="form-control" value="{{ old('colonia') }}" required>
+            <input type="text" id="colonia" name="colonia" class="form-control" value="{{ old('colonia') }}" placeholder="Ej: Roma Norte">
             @error('colonia') <div class="error-message">{{ $message }}</div> @enderror
           </div>
 
           <div class="form-group">
             <label for="fecha_nacimiento"><i class="fas fa-cake-candles"></i> Fecha de nacimiento</label>
-            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" value="{{ old('fecha_nacimiento') }}" required>
+            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" value="{{ old('fecha_nacimiento') }}">
             @error('fecha_nacimiento') <div class="error-message">{{ $message }}</div> @enderror
           </div>
         </div>
 
         <div class="form-group">
           <label for="referencias"><i class="fas fa-map-pin"></i> Referencias de domicilio</label>
-          <input type="text" id="referencias" name="referencias" class="form-control" value="{{ old('referencias') }}" placeholder="Ej: Casa color azul, junto a...">
+          <input type="text" id="referencias" name="referencias" class="form-control" value="{{ old('referencias') }}" placeholder="Ej: Casa azul, frente a tienda Oxxo">
           @error('referencias') <div class="error-message">{{ $message }}</div> @enderror
         </div>
 
         <div class="form-group">
           <label for="alergias"><i class="fas fa-heart"></i> Alergias alimenticias</label>
-          <input type="text" id="alergias" name="alergias" class="form-control" value="{{ old('alergias') }}" placeholder="Ej: Sin gluten, alergia a nueces...">
+          <input type="text" id="alergias" name="alergias" class="form-control" value="{{ old('alergias') }}" placeholder="Ej: Alergia a nueces, sin gluten, etc.">
           @error('alergias') <div class="error-message">{{ $message }}</div> @enderror
         </div>
 
         <div class="form-group">
           <label for="preferencias"><i class="fas fa-star"></i> Preferencias alimenticias</label>
-          <input type="text" id="preferencias" name="preferencias" class="form-control" value="{{ old('preferencias') }}" placeholder="Ej: Vegano, sin azúcar, etc.">
+          <input type="text" id="preferencias" name="preferencias" class="form-control" value="{{ old('preferencias') }}" placeholder="Ej: Vegano, sin azúcar, bajo en grasa...">
           @error('preferencias') <div class="error-message">{{ $message }}</div> @enderror
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label for="password"><i class="fas fa-lock"></i> Contraseña</label>
-            <input type="password" id="password" name="password" class="form-control" required>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Mínimo 8 caracteres">
             <span id="togglePassword" class="toggle-password"><i class="fas fa-eye"></i></span>
             @error('password') <div class="error-message">{{ $message }}</div> @enderror
           </div>
 
           <div class="form-group">
             <label for="password_confirmation"><i class="fas fa-lock"></i> Confirmar contraseña</label>
-            <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required>
+            <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Repite tu contraseña">
             <span id="togglePasswordConfirm" class="toggle-password"><i class="fas fa-eye"></i></span>
           </div>
         </div>
@@ -258,15 +263,15 @@
     </div>
   </section>
 
-  <!-- Script mostrar/ocultar contraseña -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+
+      // --- Mostrar / ocultar contraseña ---
       function toggleVisibility(buttonId, inputId) {
         const toggle = document.getElementById(buttonId);
         const input = document.getElementById(inputId);
         const icon = toggle.querySelector('i');
-
-        toggle.addEventListener('click', function() {
+        toggle.addEventListener('click', function () {
           const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
           input.setAttribute('type', type);
           icon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
@@ -275,6 +280,60 @@
 
       toggleVisibility('togglePassword', 'password');
       toggleVisibility('togglePasswordConfirm', 'password_confirmation');
+
+      // --- Validaciones personalizadas ---
+      const form = document.querySelector('.register-form');
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        let valido = true;
+
+        // Eliminar errores previos
+        form.querySelectorAll('.error-message.js').forEach(el => el.remove());
+        form.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+
+        const inputs = form.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+          const valor = input.value.trim();
+          if (!valor) {
+            valido = false;
+            mostrarError(input, 'No puedes dejar vacío este campo');
+            input.classList.add('error');
+          }
+        });
+
+        // Validar contraseña
+        const password = document.getElementById('password');
+        const confirm = document.getElementById('password_confirmation');
+        const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+        if (password.value.trim() && !regexPassword.test(password.value)) {
+          valido = false;
+          mostrarError(password, 'Debe contener al menos una mayúscula, una minúscula, un número y un símbolo');
+          password.classList.add('error');
+        }
+
+        if (password.value !== confirm.value) {
+          valido = false;
+          mostrarError(confirm, 'Las contraseñas no coinciden');
+          confirm.classList.add('error');
+        }
+
+        // Autocompletar campos vacíos de alergias/preferencias
+        const alergias = document.getElementById('alergias');
+        const preferencias = document.getElementById('preferencias');
+        if (alergias.value.trim() === '') alergias.value = 'NINGUNA';
+        if (preferencias.value.trim() === '') preferencias.value = 'NINGUNA';
+
+        if (valido) form.submit();
+      });
+
+      function mostrarError(input, mensaje) {
+        const error = document.createElement('div');
+        error.classList.add('error-message', 'js');
+        error.textContent = mensaje;
+        input.insertAdjacentElement('afterend', error);
+      }
     });
   </script>
 </body>

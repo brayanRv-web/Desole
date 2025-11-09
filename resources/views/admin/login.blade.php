@@ -56,7 +56,7 @@
                     Email
                 </label>
                 <input id="email" type="email" name="email" value="{{ old('email') }}" 
-                       placeholder="admin@desole.com" 
+                       placeholder="tucorreo@gmail.com" 
                        class="w-full px-4 py-3 rounded-xl transition-all duration-200 login-input"
                        required autofocus>
             </div>
@@ -68,7 +68,7 @@
                 </label>
                 <div class="password-container">
                     <input id="password" type="password" name="password" 
-                           placeholder="••••••••" 
+                           placeholder="•••••••••••••••" 
                            class="w-full px-4 py-3 pr-10 rounded-xl transition-all duration-200 login-input"
                            required>
                     <button type="button" class="password-toggle" id="togglePassword">

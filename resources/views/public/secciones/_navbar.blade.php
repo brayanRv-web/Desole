@@ -43,7 +43,6 @@
         @endauth
         
         <li><a href="{{ url('/') }}#promociones"><i class="fas fa-gift"></i> Promociones</a></li>
-        <li><a href="{{ url('/') }}#especiales"><i class="fas fa-star"></i> Especiales</a></li>
         <li><a href="{{ url('/') }}#reseñas"><i class="fas fa-comment"></i> Reseñas</a></li>
         <li><a href="{{ url('/') }}#contacto"><i class="fas fa-phone"></i> Contacto</a></li>
         

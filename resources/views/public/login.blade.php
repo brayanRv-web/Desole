@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Iniciar Sesión - DÉSOLÉ Cafetería nocturna</title>
+  <title>Iniciar Sesión</title>
   <meta name="description" content="Inicia sesión en DÉSOLÉ - Cafetería nocturna. Alitas, pizzadogs, frappés y promociones nocturnas." />
 
   <!-- Font Awesome -->
@@ -123,6 +123,12 @@
     box-shadow: 0 0 0 3px rgba(101, 207, 114, 0.2);
   }
 
+  .form-control::placeholder {
+    color: #c0c0c0; /* 🔹 Más visible */
+    font-size: 15px;
+  }
+
+
   /* ==============================
      ÍCONO MOSTRAR CONTRASEÑA
   ============================== */
@@ -213,9 +219,6 @@
 </head>
 
 <body data-theme="default">
-  <!-- INCLUIR EL NAVBAR -->
- 
-
   <section class="login-section">
     <div class="login-container">
       <div class="login-header">
@@ -234,7 +237,7 @@
         
         <div class="form-group">
           <label for="email"><i class="fas fa-envelope"></i> Email</label>
-          <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" required autofocus>
+          <input type="email" id="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="tucorreo@gmail.com" required autofocus>
           @error('email')
             <div class="error-message">{{ $message }}</div>
           @enderror
@@ -242,7 +245,7 @@
         
         <div class="form-group" style="position: relative;">
   <label for="password"><i class="fas fa-lock"></i> Contraseña</label>
-  <input type="password" id="password" name="password" class="form-control" required>
+  <input type="password" id="password" name="password" class="form-control" placeholder="•••••••••••••••" required>
   
   <!-- Ícono para mostrar/ocultar -->
   <span id="togglePassword" 
