@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,12 +22,16 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        // Buscar usuario con rol de admin o empleado en la tabla users
-        $admin = User::where('email', $request->email)
-                    ->whereIn('role', ['admin', 'employee'])
-                    ->first();
+        // Primero buscar en la tabla `admins` (panel admins)
+        $admin = Admin::where('email', $request->email)->first();
 
-        
+        // Si no existe en admins, buscar en users (system users con role admin/employee)
+        if (!$admin) {
+            $admin = User::where('email', $request->email)
+                        ->whereIn('role', ['admin', 'employee'])
+                        ->first();
+        }
+
         if ($admin && Hash::check($request->password, $admin->password)) {
             if (!$admin->is_active) {
                 return back()->withErrors([

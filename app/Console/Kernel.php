@@ -14,6 +14,8 @@ class Kernel extends ConsoleKernel
     {
         // Verificar stock bajo cada hora
         $schedule->command('stock:verificar')->hourly();
+        // Enviar recordatorios/promociones CRM semanalmente (puedes cambiar a daily()/monthly())
+        $schedule->command('crm:enviar-recordatorios')->weekly();
     }
 
     /**

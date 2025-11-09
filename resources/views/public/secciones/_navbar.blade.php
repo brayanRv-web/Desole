@@ -23,10 +23,6 @@
       </div>
 
       <div class="nav-buttons">
-        <button class="cart-btn" id="cartBtn" type="button" title="Ver carrito">
-          <i class="fas fa-shopping-cart text-xl"></i>
-          <span class="cart-count">0</span>
-        </button>
         <form method="POST" action="{{ route('logout.cliente') }}">
           @csrf
           <button type="submit" class="cart-btn logout-nav-btn" title="Cerrar Sesión">

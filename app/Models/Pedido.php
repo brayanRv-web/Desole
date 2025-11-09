@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\Cliente;
 
 class Pedido extends Model
 {
@@ -79,6 +80,14 @@ class Pedido extends Model
                 'stock_descontado' => true
             ]);
         });
+    }
+
+    /**
+     * Relación con cliente
+     */
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'cliente_id');
     }
 
     /**

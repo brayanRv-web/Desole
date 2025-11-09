@@ -13,7 +13,7 @@ use App\Http\Controllers\ResenaController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\Empleado\PedidoController as EmpleadoPedidoController;
 use App\Http\Controllers\Empleado\ProductoController as EmpleadoProductoController;
 use App\Http\Controllers\MenuController;

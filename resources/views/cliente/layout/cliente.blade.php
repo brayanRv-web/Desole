@@ -139,9 +139,9 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/carrito.js') }}"></script>
     <script>
-        // Clase para manejar el carrito
-        class Carrito {
+            window.Carrito = class {
             constructor() {
                 console.log('Inicializando carrito');
                 this.items = JSON.parse(localStorage.getItem('carrito')) || [];
@@ -352,12 +352,15 @@
                 // Implementar lógica de procesamiento de pedido
                 alert('Implementaremos el procesamiento del pedido próximamente');
             }
-        }
+        };
+        
 
-        // Inicializar carrito cuando el DOM esté listo
+        // Inicializar carrito cuando el DOM esté listo (solo si no existe)
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Inicializando carrito...');
-            window.carrito = new Carrito();
+            if (!window.carrito) {
+                window.carrito = new window.Carrito();
+            }
         });
 
         // Función global para agregar al carrito

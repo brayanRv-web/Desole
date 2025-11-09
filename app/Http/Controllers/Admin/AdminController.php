@@ -8,10 +8,18 @@ use App\Models\User;
 use App\Models\Admin;
 use App\Models\Promocion;
 use App\Models\Horario;
+use App\Services\CatalogService;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    protected $catalogService;
+
+    public function __construct(CatalogService $catalogService) 
+    {
+        $this->catalogService = $catalogService;
+    }
+
     /**
      * Verificar que el admin esté autenticado
      
@@ -45,23 +53,13 @@ class AdminController extends Controller
 
         // Estadísticas de promociones
         $totalPromociones = Promocion::count();
-        $promocionesActivadas = Promocion::where('activa', true)->count();
-        
+        $promocionesActivadas = $this->catalogService->getActivePromocionesCount();
+
         // Calcular promociones válidas
-        $totalPromocionesValidas = Promocion::where('activa', true)
-            ->get()
-            ->filter(function($promocion) {
-                return $promocion->esValida();
-            })
-            ->count();
-            
-        // Calcular promociones con problemas
-        $promocionesConProblemas = Promocion::where('activa', true)
-            ->get()
-            ->filter(function($promocion) {
-                return !$promocion->esValida();
-            })
-            ->count();
+        $totalPromocionesValidas = $this->catalogService->getValidActivePromocionesCount();
+
+        // Calcular promociones con problemas 
+        $promocionesConProblemas = $this->catalogService->getActivePromocionesCount() - $this->catalogService->getValidActivePromocionesCount();
 
         // Estadísticas de horarios
         $horarios = Horario::ordenados()->get();

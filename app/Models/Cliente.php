@@ -44,15 +44,16 @@ class Cliente extends Authenticatable
         'recibir_promociones' => 'boolean',
         'recibir_cumpleanos' => 'boolean',
     ];
-}
 
-    /* ✅ RELACIÓN CON PEDIDOS
+    /**
+     * Relación con pedidos
+     */
     public function pedidos()
     {
-        return $this->hasMany(Pedido::class);
+        return $this->hasMany(\App\Models\Pedido::class);
     }
 
-    // ✅ SCOPES ÚTILES
+    // Scopes útiles para CRM
     public function scopeRegistrados($query)
     {
         return $query->where('tipo', 'registrado');
@@ -67,4 +68,4 @@ class Cliente extends Authenticatable
     {
         return $query->where('ultima_visita', '<', now()->subMonth());
     }
-}*/
+}

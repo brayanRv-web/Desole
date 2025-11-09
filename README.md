@@ -59,3 +59,34 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Notas CRM (automatización y recordatorios)
+
+Hice algunos cambios para mejorar el flujo del CRM y la automatización de correos:
+
+- Se añadió una notificación de bienvenida a clientes (`App\Notifications\WelcomeClienteNotification`) y ahora se envía al registrarse.
+- Se añadió una notificación para promociones (`App\Notifications\PromoReminderNotification`).
+- Se añadió un comando artisan `crm:enviar-recordatorios` (`App\Console\Commands\SendCrmReminders`) que envía correos a clientes que aceptaron promociones.
+- El comando está programado semanalmente en `app/Console/Kernel.php`. En desarrollo puedes probarlo con:
+
+```powershell
+php artisan crm:enviar-recordatorios --mensaje="Mensaje de prueba"
+```
+
+Notas de despliegue:
+- Asegúrate de configurar correctamente las variables de correo en `.env` (MAIL_MAILER, MAIL_HOST, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, MAIL_FROM_ADDRESS).
+- Para ejecutar el scheduler en producción usa `php artisan schedule:work` o configura cron que llame a `php artisan schedule:run` cada minuto.
+
+Colas (recomendado para producción)
+
+Se añadieron Jobs para enviar correos en background. Pasos rápidos para habilitar colas con driver `database`:
+
+```powershell
+# Ejecutar migraciones (incluye la migración de jobs añadida al repo)
+php artisan migrate
+
+# Correr worker en desarrollo (cola 'emails')
+php artisan queue:work --queue=emails
+```
+
+Si prefieres Redis, configura `QUEUE_CONNECTION=redis` en `.env` y ejecuta `php artisan queue:work`.

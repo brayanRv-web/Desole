@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Cliente;
 
 use App\Models\Producto;
 use App\Models\Pedido;
@@ -12,9 +12,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Services\CartService;
+use App\Services\OrderService;
 
 class ClienteController extends Controller
 {   
+    protected CartService $cartService;
+    protected OrderService $orderService;
+
+    public function __construct(CartService $cartService, OrderService $orderService)
+    {
+        $this->cartService = $cartService;
+        $this->orderService = $orderService;
+    }
     /**
      * Mostrar menú público (accesible sin autenticación)
      */
@@ -66,10 +77,7 @@ class ClienteController extends Controller
             ->take(3)
             ->get();
             
-        $promociones = Promocion::where('activa', true)
-            ->where('fecha_inicio', '<=', now())
-            ->where('fecha_fin', '>=', now())
-            ->get();
+        $promociones = $this->getActivePromociones();
 
         $whatsapp_number = "529614564697";
         $telefono = "529614564697"; 
@@ -102,10 +110,7 @@ class ClienteController extends Controller
             })
             ->get();
 
-        $promociones = Promocion::where('activa', true)
-            ->where('fecha_inicio', '<=', now())
-            ->where('fecha_fin', '>=', now())
-            ->get();
+        $promociones = $this->getActivePromociones();
 
         return view('cliente.menu', compact('productos', 'categorias', 'promociones'));
     }
@@ -129,12 +134,7 @@ class ClienteController extends Controller
     public function perfil()
     {
         $cliente = Auth::guard('cliente')->user();
-        
-        $promociones = Promocion::where('activa', true)
-            ->where('fecha_inicio', '<=', now())
-            ->where('fecha_fin', '>=', now())
-            ->get();
-        
+        $promociones = $this->getActivePromociones();
         $pedidosRecientes = Pedido::where('cliente_id', $cliente->id)
             ->orderBy('created_at', 'desc')
             ->limit(3)
@@ -185,52 +185,21 @@ class ClienteController extends Controller
             'producto_id' => 'required|exists:productos,id',
             'cantidad' => 'required|integer|min:1'
         ]);
+        $productoId = (int) $request->producto_id;
+        $cantidad = (int) $request->cantidad;
 
-        $producto = Producto::findOrFail($request->producto_id);
+        $result = $this->cartService->add($productoId, $cantidad);
 
-        // Verificar stock disponible
-        if ($producto->stock < $request->cantidad) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Stock insuficiente. Solo quedan ' . $producto->stock . ' unidades.'
-            ], 422);
+        if (!$result['success']) {
+            return response()->json(['success' => false, 'message' => $result['message']], 422);
         }
-
-        $carrito = session()->get('carrito', []);
-        $productoId = $request->producto_id;
-        $cantidad = $request->cantidad;
-
-        if(isset($carrito[$productoId])) {
-            $nuevaCantidad = $carrito[$productoId]['cantidad'] + $cantidad;
-            
-            // Verificar stock nuevamente con la cantidad total
-            if ($producto->stock < $nuevaCantidad) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Stock insuficiente. No puedes agregar más de ' . $producto->stock . ' unidades.'
-                ], 422);
-            }
-            
-            $carrito[$productoId]['cantidad'] = $nuevaCantidad;
-        } else {
-            $carrito[$productoId] = [
-                'id' => $producto->id,
-                'nombre' => $producto->nombre,
-                'precio' => $producto->precio,
-                'cantidad' => $cantidad,
-                'imagen' => $producto->imagen,
-                'stock_disponible' => $producto->stock
-            ];
-        }
-
-        session()->put('carrito', $carrito);
 
         return response()->json([
             'success' => true,
-            'message' => 'Producto agregado al carrito',
-            'carrito_count' => array_sum(array_column($carrito, 'cantidad')),
-            'carrito_total' => $this->calcularTotalCarrito($carrito),
-            'producto_agregado' => $producto->nombre
+            'message' => $result['message'] ?? 'Producto agregado al carrito',
+            'carrito_count' => $this->cartService->count(),
+            'carrito_total' => $this->cartService->calculateTotal($result['cart'] ?? null),
+            'producto_agregado' => $result['producto_agregado'] ?? null
         ]);
     }
 
@@ -243,37 +212,20 @@ class ClienteController extends Controller
             'producto_id' => 'required|exists:productos,id',
             'cantidad' => 'required|integer|min:0'
         ]);
+        $productoId = (int) $request->producto_id;
+        $cantidad = (int) $request->cantidad;
 
-        $carrito = session()->get('carrito', []);
-        $productoId = $request->producto_id;
-        $cantidad = $request->cantidad;
+        $result = $this->cartService->update($productoId, $cantidad);
 
-        // Verificar stock si la cantidad es mayor a 0
-        if ($cantidad > 0) {
-            $producto = Producto::findOrFail($productoId);
-            if ($producto->stock < $cantidad) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Stock insuficiente. Solo quedan ' . $producto->stock . ' unidades.'
-                ], 422);
-            }
+        if (!$result['success']) {
+            return response()->json(['success' => false, 'message' => $result['message']], 422);
         }
-
-        if ($cantidad <= 0) {
-            unset($carrito[$productoId]);
-            $mensaje = 'Producto eliminado del carrito';
-        } else {
-            $carrito[$productoId]['cantidad'] = $cantidad;
-            $mensaje = 'Carrito actualizado';
-        }
-
-        session()->put('carrito', $carrito);
 
         return response()->json([
             'success' => true,
-            'message' => $mensaje,
-            'carrito_count' => array_sum(array_column($carrito, 'cantidad')),
-            'carrito_total' => $this->calcularTotalCarrito($carrito)
+            'message' => $result['message'] ?? 'Carrito actualizado',
+            'carrito_count' => $this->cartService->count(),
+            'carrito_total' => $this->cartService->calculateTotal($result['cart'] ?? null)
         ]);
     }
 
@@ -283,7 +235,7 @@ class ClienteController extends Controller
     public function confirmarPedido(Request $request)
     {
         $cliente = Auth::guard('cliente')->user();
-        $carrito = session()->get('carrito', []);
+        $carrito = $this->cartService->getCart();
 
         if (empty($carrito)) {
             return response()->json([
@@ -292,42 +244,13 @@ class ClienteController extends Controller
             ], 422);
         }
 
-        // Validar stock antes de procesar el pedido (solo validación, no reservar ni descontar)
-        foreach ($carrito as $item) {
-            $producto = Producto::find($item['id']);
-            if (!$producto || $producto->stock < $item['cantidad']) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'El producto "' . $item['nombre'] . '" ya no está disponible en la cantidad solicitada.'
-                ], 422);
-            }
-        }
-
-        // Preparar items para guardar como JSON
-        $itemsForPedido = [];
-        foreach ($carrito as $item) {
-            $itemsForPedido[] = [
-                'producto_id' => $item['id'],
-                'nombre' => $item['nombre'],
-                'cantidad' => $item['cantidad'],
-                'precio' => $item['precio']
-            ];
-        }
-
-        // Crear el pedido sin tocar stock. El stock se descontará cuando el empleado marque el pedido como 'listo'.
         try {
-            $pedido = Pedido::create([
+            $pedido = $this->orderService->create([
                 'cliente_id' => $cliente->id,
                 'cliente_nombre' => $cliente->nombre ?? ($request->cliente_nombre ?? null),
                 'cliente_telefono' => $cliente->telefono ?? ($request->cliente_telefono ?? null),
                 'direccion' => $cliente->direccion ?? ($request->direccion ?? null),
-                'total' => $this->calcularTotalCarrito($carrito),
-                'status' => 'pendiente',
-                'items' => $itemsForPedido,
-            ]);
-
-            // Limpiar carrito (ya no descontamos stock aquí)
-            session()->forget('carrito');
+            ], $carrito);
 
             return response()->json([
                 'success' => true,
@@ -349,8 +272,8 @@ class ClienteController extends Controller
      */
     public function verCarrito()
     {
-        $carrito = session()->get('carrito', []);
-        $total = $this->calcularTotalCarrito($carrito);
+        $carrito = $this->cartService->getCart();
+        $total = $this->cartService->calculateTotal($carrito);
 
         return view('cliente.carrito', compact('carrito', 'total'));
     }
@@ -360,7 +283,7 @@ class ClienteController extends Controller
      */
     public function vaciarCarrito()
     {
-        session()->forget('carrito');
+        $this->cartService->clear();
 
         return response()->json([
             'success' => true,
@@ -375,19 +298,14 @@ class ClienteController extends Controller
      */
     public function eliminarDelCarrito(Request $request)
     {
-        $carrito = session()->get('carrito', []);
-        $productoId = $request->producto_id;
-
-        if (isset($carrito[$productoId])) {
-            unset($carrito[$productoId]);
-            session()->put('carrito', $carrito);
-        }
+        $productoId = (int) $request->producto_id;
+        $result = $this->cartService->remove($productoId);
 
         return response()->json([
             'success' => true,
-            'message' => 'Producto eliminado del carrito',
-            'carrito_count' => array_sum(array_column($carrito, 'cantidad')),
-            'carrito_total' => $this->calcularTotalCarrito($carrito)
+            'message' => $result['message'] ?? 'Producto eliminado del carrito',
+            'carrito_count' => $this->cartService->count(),
+            'carrito_total' => $this->cartService->calculateTotal($result['cart'] ?? null)
         ]);
     }
 
@@ -396,27 +314,19 @@ class ClienteController extends Controller
      */
     public function obtenerCarrito()
     {
-        $carrito = session()->get('carrito', []);
+        $carrito = $this->cartService->getCart();
 
         return response()->json([
             'success' => true,
             'carrito' => $carrito,
-            'carrito_count' => array_sum(array_column($carrito, 'cantidad')),
-            'carrito_total' => $this->calcularTotalCarrito($carrito)
+            'carrito_count' => $this->cartService->count(),
+            'carrito_total' => $this->cartService->calculateTotal($carrito)
         ]);
     }
 
     /**
-     * Calcular total del carrito
+     * NOTE: cart total logic moved to App\Services\CartService
      */
-    private function calcularTotalCarrito($carrito)
-    {
-        $total = 0;
-        foreach($carrito as $item) {
-            $total += $item['precio'] * $item['cantidad'];
-        }
-        return $total;
-    }
 
     /**
      * Ver detalle de un pedido específico
@@ -428,9 +338,26 @@ class ClienteController extends Controller
             abort(403, 'No tienes permiso para ver este pedido');
         }
 
-        $pedido->load('productos');
+        // Construir mapa de productos a partir de los items del pedido
+        $items = $pedido->items ?? [];
+        $productoIds = collect($items)->pluck('producto_id')->filter()->values()->all();
+        $productos = [];
+        if (!empty($productoIds)) {
+            $productos = Producto::whereIn('id', $productoIds)->get()->keyBy('id');
+        }
 
-        return view('cliente.pedidos.show', compact('pedido'));
+        return view('cliente.pedidos.show', compact('pedido', 'productos'));
+    }
+
+    /**
+     * Obtener promociones activas (reutilizable)
+     */
+    private function getActivePromociones()
+    {
+        return Promocion::where('activa', true)
+            ->where('fecha_inicio', '<=', now())
+            ->where('fecha_fin', '>=', now())
+            ->get();
     }
 
     /**
@@ -447,42 +374,14 @@ class ClienteController extends Controller
             ], 403);
         }
 
-        // Solo se pueden cancelar pedidos pendientes
-        if ($pedido->status !== 'pendiente') {
-            $request->session()->flash('error', 'Solo se pueden cancelar pedidos pendientes');
-            return response()->json([
-                'success' => false,
-                'message' => 'Solo se pueden cancelar pedidos pendientes'
-            ], 422);
-        }
+        $result = $this->orderService->cancel($pedido);
 
-        DB::beginTransaction();
-        try {
-            // Devolver stock y actualizar estado
-            if ($pedido->stock_descontado) {
-                $pedido->incrementarStock();
-            }
-
-            // Actualizar estado del pedido
-            $pedido->update([
-                'status' => 'cancelado'
-            ]);
-
-            DB::commit();
-            $request->session()->flash('success', 'Pedido cancelado exitosamente');
-            return response()->json([
-                'success' => true,
-                'message' => 'Pedido cancelado exitosamente'
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Error cancelando pedido: ' . $e->getMessage());
-            $request->session()->flash('error', 'Error al cancelar el pedido');
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al cancelar el pedido: ' . $e->getMessage()
-            ], 500);
+        if ($result['success']) {
+            $request->session()->flash('success', $result['message']);
+            return response()->json($result);
+        } else {
+            $request->session()->flash('error', $result['message']);
+            return response()->json($result, 422);
         }
     }
 }

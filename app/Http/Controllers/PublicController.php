@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Promocion;
 use App\Models\HeroImage;
 use Illuminate\Http\Request;
+use App\Services\CatalogService;
 
 class PublicController extends Controller
 {
+    protected CatalogService $catalogService;
+
+    public function __construct(CatalogService $catalogService)
+    {
+        $this->catalogService = $catalogService;
+    }
      public function welcome()
     {
-        $promociones = Promocion::where('activa', 1)
-            ->where('fecha_inicio', '<=', now())
-            ->where('fecha_fin', '>=', now())
-            ->orderBy('fecha_inicio', 'desc')
-            ->get();
+        $promociones = $this->getActivePromociones();
 
         // Obtener imágenes para el carrusel del hero
         // Usar columna 'activo' (boolean) en la tabla hero_images

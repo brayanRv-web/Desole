@@ -5,10 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Promocion;
 use App\Models\Producto;
+use App\Services\CatalogService;
 use Illuminate\Http\Request;
 
 class PromocionController extends Controller
 {
+    protected $catalogService;
+
+    public function __construct(CatalogService $catalogService)
+    {
+        $this->catalogService = $catalogService;
+    }
     public function index()
     {
         // ✅ CARGAR LAS RELACIONES CORRECTAS
@@ -18,7 +25,7 @@ class PromocionController extends Controller
 
     public function create()
     {
-        $productos = Producto::where('estado', 'activo')->get();
+        $productos = $this->catalogService->getAvailableProductosForAdmin();
         return view('admin.promociones.create', compact('productos'));
     }
 
@@ -59,7 +66,7 @@ class PromocionController extends Controller
     public function edit(Promocion $promocione)
     {
         $promocion = $promocione;
-        $productos = Producto::where('estado', 'activo')->get();
+        $productos = $this->catalogService->getAvailableProductosForAdmin();
         $productosSeleccionados = $promocion->productos->pluck('id')->toArray();
 
         return view('admin.promociones.edit', compact('promocion', 'productos', 'productosSeleccionados'));
