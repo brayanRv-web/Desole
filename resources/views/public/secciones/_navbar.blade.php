@@ -11,15 +11,6 @@
         <a href="{{ route('cliente.dashboard') }}" class="{{ request()->routeIs('cliente.dashboard') ? 'active' : '' }}">
           <i class="fas fa-user me-1"></i>Mi perfil
         </a>
-       <!-- <a href="{{ route('cliente.perfil') }}" class="{{ request()->routeIs('cliente.perfil') ? 'active' : '' }}">
-          <i class="fas fa-user me-1"></i>Mi Perfil
-        </a>
-        <a href="{{ route('cliente.pedidos') }}" class="{{ request()->routeIs('cliente.pedidos') ? 'active' : '' }}">
-          <i class="fas fa-history me-1"></i>Mis Pedidos
-        </a>
-        <a href="{{ route('cliente.menu') }}" class="{{ request()->routeIs('cliente.menu') ? 'active' : '' }}"
-          <i class="fas fa-utensils me-1"></i>Menú Completo
-        </a>-->
       </div>
 
       <div class="nav-buttons">

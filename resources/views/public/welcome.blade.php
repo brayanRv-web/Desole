@@ -12,11 +12,9 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
   <link rel="stylesheet" href="{{ asset('css/desole.css') }}"> 
   <link rel="stylesheet" href="{{ asset('css/hero.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/menu.css') }}">
   <link rel="icon" href="{{ asset('assets/favicon.ico') }}">
 </head>
 <body data-theme="default">
@@ -28,59 +26,30 @@
     <!-- ==================== CONTENIDO PARA VISITANTES ==================== -->
     @guest('cliente')
     
-    <!-- SECCIÓN PRODUCTOS DESTACADOS (SOLO 4 PARA NO REGISTRADOS) -->
-    <section id="destacados" class="destacados-section">
-      <div class="container">
-        <h2 class="section-title" data-aos="fade-up">Nuestros Favoritos</h2>
-        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
-          Una probadita de lo que te espera al registrarte
-        </p>
-        
-        <div class="productos-grid">
-          @php
-            // VERSIÓN SEGURA - sin filtro de disponible
-            $productosDestacados = App\Models\Producto::inRandomOrder()->limit(4)->get();
-          @endphp
-          
-          @foreach($productosDestacados as $producto)
-          <div class="producto-card" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-            <div class="producto-img">
-              <img src="{{ asset($producto->imagen ?? 'assets/placeholder-food.jpg') }}" alt="{{ $producto->nombre }}">
-            </div>
-            <div class="producto-info">
-              <h3>{{ $producto->nombre }}</h3>
-              <p class="producto-desc">{{ Str::limit($producto->descripcion, 80) }}</p>
-              <div class="producto-precio">${{ number_format($producto->precio, 2) }}</div>
-              
-              <button class="btn-whatsapp" 
-                      data-producto="{{ $producto->nombre }}"
-                      data-precio="{{ $producto->precio }}">
-                <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
-              </button>
-            </div>
-          </div>
-          @endforeach
+    
+
+    <!-- Modal de Autenticación -->
+    <div id="authModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <i class="fas fa-lock"></i>
+          <h3>Para continuar comprando</h3>
         </div>
-        
-        <div class="cta-registro" data-aos="fade-up">
-          <div class="cta-content">
-            <h3>¿Quieres ver el menú completo?</h3>
-            <p>Regístrate y disfruta de:</p>
-            <ul>
-              <li><i class="fas fa-check"></i> Menú completo con todas las categorías</li>
-              <li><i class="fas fa-check"></i> Carrito de compras integrado</li>
-              <li><i class="fas fa-check"></i> Promociones exclusivas para miembros</li>
-              <li><i class="fas fa-check"></i> Seguimiento de pedidos en tiempo real</li>
-              <li><i class="fas fa-check"></i> Programa de fidelidad con puntos</li>
-            </ul>
-            <a href="{{ route('register') }}" class="btn btn-primary">
-              <i class="fas fa-user-plus"></i> Registrarme y ver menú completo
-            </a>
-            <p class="cta-small">¿Ya tienes cuenta? <a href="{{ route('login.cliente') }}">Inicia sesión aquí</a></p>
-          </div>
+        <p>Necesitas tener una cuenta en DÉSOLÉ para agregar productos al carrito</p>
+        <div class="auth-options">
+          <a href="{{ route('login.cliente') }}" class="btn btn-primary">
+            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+          </a>
+          <a href="{{ route('register') }}" class="btn btn-ghost">
+            <i class="fas fa-user-plus"></i> Crear Cuenta
+          </a>
         </div>
+        <p class="modal-footer">Al registrarte aceptas nuestros <a href="#">Términos y Condiciones</a></p>
       </div>
-    </section>
+    </div>
+
+    @include('public.secciones._menu')
 
     <!-- PROMOCIONES TEASER -->
     <section id="promociones" class="promociones-section">
@@ -155,7 +124,6 @@
       <div class="container">
         <h2 class="section-title" data-aos="fade-up">Menú Completo</h2>
         
-        <!-- VERSIÓN SEGURA - sin categorías por ahora -->
         @php
           $productosCompletos = App\Models\Producto::all();
         @endphp
@@ -227,6 +195,8 @@
 
   <!-- Scripts -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="{{ asset('js/hero-carousel.js') }}"></script>
+  <script src="{{ asset('js/auth-modals.js') }}"></script>
   <script src="{{ asset('js/cart.js') }}"></script>
   <script src="{{ asset('js/cliente-carrito.js') }}"></script>
 </body>

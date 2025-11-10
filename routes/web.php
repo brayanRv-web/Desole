@@ -34,7 +34,7 @@ Route::post('/reseñas', [ResenaController::class, 'store'])->name('reseñas.sto
 //                RUTAS PÚBLICAS DE MENÚ
 // ===========================================================
 
-// Menú público (accesible sin autenticación) - ✅ CORREGIDO
+// Menú público (accesible sin autenticación) -  CORREGIDO
 Route::get('/menu', [ClienteController::class, 'index'])->name('cliente.menu');
 Route::get('/producto/{producto}', [ClienteController::class, 'show'])->name('cliente.producto.show');
 
@@ -50,7 +50,7 @@ Route::middleware('guest:cliente')->group(function () {
     Route::post('/login-cliente', [App\Http\Controllers\LoginController::class, 'login']);
 });
 
-// ✅ LOGOUT (siempre accesible)
+// LOGOUT (siempre accesible)
 Route::post('/logout-cliente', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout.cliente');
 
 // ===========================================================
@@ -95,7 +95,7 @@ Route::post('admin/logout', [AuthController::class, 'logout'])->name('admin.logo
 //                GRUPO PRINCIPAL DEL ADMIN (PROTEGIDO)
 // ===========================================================
 
-Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(function () { // ✅ AGREGAR MIDDLEWARE AQUÍ
+Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(function () { //  AGREGAR MIDDLEWARE AQUÍ
 
     // Dashboard
     Route::get('/', [AdminController::class, 'dashboard']);

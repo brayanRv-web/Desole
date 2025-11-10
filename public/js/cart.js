@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const updateCartCount = () => {
         const count = cart.reduce((t, i) => t + i.quantity, 0);
-        document.getElementById('cart-count').textContent = count;
+        // COMENTA ESTA LÍNEA:
+        // document.getElementById('cart-count').textContent = count;
     };
 
     const showNotification = msg => {
@@ -57,7 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    updateCartCount();
+    // COMENTA ESTA LÍNEA:
+    // updateCartCount();
 
     // Scroll suave
     document.querySelectorAll('a[href^="#"]').forEach(link => {
@@ -78,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Alternar menú
             navLinks.classList.toggle('active');
             hamburger.classList.toggle('active');
-            ñ
+            
             // Ocultar carrito cuando el menú está abierto (opcional)
             if (navLinks.classList.contains('active')) {
                 cartBtn.style.display = 'none';
@@ -96,4 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // COMENTA ESTA LÍNEA:
+    // loadCartItems();
 });

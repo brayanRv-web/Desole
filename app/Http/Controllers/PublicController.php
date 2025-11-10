@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Promocion;
 use App\Models\HeroImage;
+use App\Models\Producto; // ✅ AGREGAR ESTA LÍNEA
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
@@ -22,9 +23,17 @@ class PublicController extends Controller
             ->orderBy('orden', 'asc')
             ->get();
 
+        // ✅ AGREGAR ESTA CONSULTA PARA LOS PRODUCTOS TEASER
+        $productosTeaser = Producto::with('categoria')
+            ->where('estado', 'activo')
+            ->inRandomOrder()
+            ->limit(4)
+            ->get();
+
         return view('public.welcome', [
             'promociones' => $promociones,
             'heroImages' => $heroImages,
+            'productosTeaser' => $productosTeaser, // ✅ AGREGAR ESTA LÍNEA
             'whatsapp_number' => '9614564697',
             'telefono' => '+52 (961) 456-46-97',
             'email' => 'info@desole.com',
@@ -34,17 +43,11 @@ class PublicController extends Controller
     public function contacto()
     {
         $data = [
-            'whatsapp_number' => '9614564697', // Reemplaza con el número real
+            'whatsapp_number' => '9614564697',
             'telefono' => '+52 (961) 456-46-97',
             'email' => 'info@desole.com',
-            // Si tienes modelo Horario, lo puedes agregar después:
-            // 'horario' => Horario::all(),
         ];
         
         return view('public.contacto', $data);
     }
-    
-    // Más adelante puedes agregar otros métodos aquí
-    // public function menu() { ... }
-    // public function contacto() { ... }
 }
