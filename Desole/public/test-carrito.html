@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Carrito</title>
+</head>
+<body>
+    <h1>Test Endpoint Carrito</h1>
+    <button onclick="testCarrito()">Enviar Test</button>
+    <pre id="result"></pre>
+
+    <script>
+        function testCarrito() {
+            const testData = {
+                carrito: [
+                    {
+                        id: 1,
+                        nombre: 'Producto Test',
+                        precio: 100,
+                        cantidad: 1,
+                        stock: 10,
+                        imagen: null
+                    }
+                ]
+            };
+
+            console.log('📤 Enviando:', testData);
+            
+            fetch('/cliente/carrito/finalizar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                },
+                body: JSON.stringify(testData)
+            })
+            .then(res => {
+                console.log('Status:', res.status);
+                return res.text();
+            })
+            .then(text => {
+                document.getElementById('result').textContent = text;
+                console.log('📥 Respuesta:', text);
+            })
+            .catch(err => {
+                document.getElementById('result').textContent = 'Error: ' + err.message;
+                console.error('❌', err);
+            });
+        }
+    </script>
+</body>
+</html>

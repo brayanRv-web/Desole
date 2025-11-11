@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="csrf-token" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DÉSOLÉ - Cafetería nocturna</title>
+  <meta name="description" content="DESOLE - Cafetería nocturna. Alitas, pizzadogs, frappés y promociones nocturnas. Pedidos por WhatsApp o en línea." />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="http://localhost:8000/css/desole.css"> 
+  <link rel="stylesheet" href="http://localhost:8000/css/hero.css">
+  <link rel="stylesheet" href="http://localhost:8000/css/carrito.css">
+  <link rel="icon" href="http://localhost:8000/assets/favicon.ico">
+</head>
+<body data-theme="default">
+  <!-- ELEMENTOS ESTRUCTURALES GLOBALES -->
+   <header class="nav-wrap">
+  <nav class="nav">
+    <a class="brand" href="http://localhost:8000">
+      <span style="font-size: 1.5rem; font-weight: bold; color: #fff;">DÉSOLÉ</span>
+    </a>
+
+          <!-- Navbar Original Público -->
+      <ul class="nav-links">
+        <li><a href="http://localhost:8000#home"><i class="fas fa-home"></i> Inicio</a></li>
+        
+                  <li><a href="http://localhost:8000/menu"><i class="fas fa-utensils"></i> Menú</a></li>
+                
+        <li><a href="http://localhost:8000#promociones"><i class="fas fa-gift"></i> Promociones</a></li>
+        <li><a href="http://localhost:8000#especiales"><i class="fas fa-star"></i> Especiales</a></li>
+        <li><a href="http://localhost:8000#reseñas"><i class="fas fa-comment"></i> Reseñas</a></li>
+        <li><a href="http://localhost:8000#contacto"><i class="fas fa-phone"></i> Contacto</a></li>
+        
+              </ul>
+
+      <div class="nav-actions">
+                  <a href="http://localhost:8000/login-cliente" class="login-btn">
+            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+          </a>
+          <a href="http://localhost:8000/registro" class="register-btn">
+            <i class="fas fa-user-plus"></i> Registrarse
+          </a>
+                
+        <button id="mobile-menu-btn" class="hamburger" aria-label="Abrir menú móvil">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      </nav>
+</header>   <section id="home" class="hero">
+  <div class="hero-content">
+    <h1>DÉSOLÉ - Cafetería Nocturna</h1>
+    <p>
+      <i class="fas fa-clock"></i>
+      
+              Pedidos 8:00 AM - 10:00 PM
+            <br>
+      <i class="fas fa-map-marker-alt"></i> San Fernando · 
+      <i class="fas fa-car"></i> Delivery Disponible
+    </p>
+    <div class="hero-ctas">
+      <a href="http://localhost:8000/menu" class="btn-primary">
+        <i class="fas fa-utensils"></i> Ver Menú
+      </a>
+      <a href="https://wa.me/9614564697" target="_blank" class="btn-ghost">
+        <i class="fab fa-whatsapp"></i> Ordenar por WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-art">
+              <img src="http://localhost:8000/uploads/productos/alitas.jpg" alt="Especialidades DESOLE" />
+      </div>
+</section>
+
+  <main>
+
+    <!-- SECCIÓN PRODUCTOS DESTACADOS (VISIBLE PARA TODOS) -->
+    <section id="destacados" class="destacados-section">
+      <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Nuestros Favoritos</h2>
+        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
+          Una probadita de lo que te espera en nuestro menú
+        </p>
+        
+        <div class="productos-grid">
+                    <div class="producto-card" data-aos="fade-up" data-aos-delay="0">
+            <div class="producto-img">
+              <img src="http://localhost:8000/assets/placeholder.svg" alt="Café Americano">
+            </div>
+            <div class="producto-info">
+              <h3>Café Americano</h3>
+              <p class="producto-desc">Café negro recién preparado con granos premium</p>
+              <div class="producto-precio">$3.99</div>
+              
+            </div>
+          </div>
+                    <div class="producto-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="producto-img">
+              <img src="http://localhost:8000/assets/placeholder.svg" alt="Mini Empanadas">
+            </div>
+            <div class="producto-info">
+              <h3>Mini Empanadas</h3>
+              <p class="producto-desc">Variedad de empanadas de carne y pollo (3 unidades)</p>
+              <div class="producto-precio">$7.99</div>
+              
+            </div>
+          </div>
+                    <div class="producto-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="producto-img">
+              <img src="http://localhost:8000/assets/placeholder.svg" alt="Sandwich Club Nocturno">
+            </div>
+            <div class="producto-info">
+              <h3>Sandwich Club Nocturno</h3>
+              <p class="producto-desc">Triple sandwich con pollo, tocino, jamón, queso, lechuga y tomate</p>
+              <div class="producto-precio">$13.99</div>
+              
+            </div>
+          </div>
+                    <div class="producto-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="producto-img">
+              <img src="http://localhost:8000/assets/placeholder.svg" alt="Nachos con Queso">
+            </div>
+            <div class="producto-info">
+              <h3>Nachos con Queso</h3>
+              <p class="producto-desc">Nachos crujientes con queso fundido y guacamole</p>
+              <div class="producto-precio">$8.99</div>
+              
+            </div>
+          </div>
+                  </div>
+        
+                <div class="cta-registro" data-aos="fade-up">
+          <div class="cta-content">
+            <h3>¿Quieres ver el menú completo?</h3>
+            <p>Regístrate y disfruta de:</p>
+            <ul>
+              <li><i class="fas fa-check"></i> Menú completo con todas las categorías</li>
+              <li><i class="fas fa-check"></i> Carrito de compras integrado</li>
+              <li><i class="fas fa-check"></i> Promociones exclusivas para miembros</li>
+              <li><i class="fas fa-check"></i> Seguimiento de pedidos en tiempo real</li>
+              <li><i class="fas fa-check"></i> Programa de fidelidad con puntos</li>
+            </ul>
+            <a href="http://localhost:8000/registro" class="btn btn-primary">
+              <i class="fas fa-user-plus"></i> Registrarme y ver menú completo
+            </a>
+            <p class="cta-small">¿Ya tienes cuenta? <a href="http://localhost:8000/login-cliente">Inicia sesión aquí</a></p>
+          </div>
+        </div>
+              </div>
+    </section>
+
+    <!-- PROMOCIONES TEASER -->
+    <section id="promociones" class="promociones-section">
+      <h2 class="promociones-title">Promociones Activas</h2>
+      
+              <div class="no-promociones">
+          <i class="fas fa-tags"></i>
+          <p>Por el momento no hay promociones activas</p>
+          <p>Vuelve pronto para descubrir nuestras ofertas especiales</p>
+        </div>
+          </section>
+
+  <!-- ==================== CONTENIDO PARA CLIENTES REGISTRADOS ==================== -->
+  
+    <!-- SECCIONES QUE SE MUESTRAN A TODOS -->
+    <section id="reseñas" class="reseñas-section">
+    <div class="container">
+        <!-- Header Section más compacto -->
+        <div class="text-center mb-6">
+            <h2 class="section-title">Reseñas de Nuestros Clientes</h2>
+            <p class="section-subtitle">Tu opinión es muy importante para nosotros</p>
+        </div>
+
+        
+        <!-- Stats y Formulario - Diseño más compacto -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card form-reseña-card shadow-lg border-0">
+                    <div class="card-body p-4"> <!-- Reducido de p-5 a p-4 -->
+                        <div class="row align-items-center">
+                            <!-- Stats Column más compacta -->
+                            <div class="col-md-4 mb-4 mb-md-0"> <!-- Reducido de col-md-5 a col-md-4 -->
+                                <div class="text-center">
+                                    <div class="promedio-calificacion mb-3">
+                                        <div class="display-4 fw-bold text-warning mb-1">0.0</div> <!-- Reducido de display-1 a display-4 -->
+                                        <div class="estrellas-promedio mb-2">
+                                                                                                                                                <span class="text-secondary">☆</span>
+                                                                                                                                                                                                <span class="text-secondary">☆</span>
+                                                                                                                                                                                                <span class="text-secondary">☆</span>
+                                                                                                                                                                                                <span class="text-secondary">☆</span>
+                                                                                                                                                                                                <span class="text-secondary">☆</span>
+                                                                                                                                    </div>
+                                        <p class="text-muted small">Basado en 0 reseñas</p> <!-- Texto más pequeño -->
+                                    </div>
+                                    
+                                    <div class="distribucion-calificaciones">
+                                                                                                                                <div class="d-flex align-items-center mb-1"> <!-- Reducido espacio -->
+                                                <span class="text-warning me-1 small">5★</span> <!-- Texto más pequeño -->
+                                                <div class="progress flex-grow-1 mx-1 distribucion-progress">
+                                                    <div class="progress-bar bg-warning distribucion-progress-bar" 
+                                                         data-width="0.00"></div>
+                                                </div>
+                                                <span class="text-muted small">0</span>
+                                            </div>
+                                                                                                                                <div class="d-flex align-items-center mb-1"> <!-- Reducido espacio -->
+                                                <span class="text-warning me-1 small">4★</span> <!-- Texto más pequeño -->
+                                                <div class="progress flex-grow-1 mx-1 distribucion-progress">
+                                                    <div class="progress-bar bg-warning distribucion-progress-bar" 
+                                                         data-width="0.00"></div>
+                                                </div>
+                                                <span class="text-muted small">0</span>
+                                            </div>
+                                                                                                                                <div class="d-flex align-items-center mb-1"> <!-- Reducido espacio -->
+                                                <span class="text-warning me-1 small">3★</span> <!-- Texto más pequeño -->
+                                                <div class="progress flex-grow-1 mx-1 distribucion-progress">
+                                                    <div class="progress-bar bg-warning distribucion-progress-bar" 
+                                                         data-width="0.00"></div>
+                                                </div>
+                                                <span class="text-muted small">0</span>
+                                            </div>
+                                                                                                                                <div class="d-flex align-items-center mb-1"> <!-- Reducido espacio -->
+                                                <span class="text-warning me-1 small">2★</span> <!-- Texto más pequeño -->
+                                                <div class="progress flex-grow-1 mx-1 distribucion-progress">
+                                                    <div class="progress-bar bg-warning distribucion-progress-bar" 
+                                                         data-width="0.00"></div>
+                                                </div>
+                                                <span class="text-muted small">0</span>
+                                            </div>
+                                                                                                                                <div class="d-flex align-items-center mb-1"> <!-- Reducido espacio -->
+                                                <span class="text-warning me-1 small">1★</span> <!-- Texto más pequeño -->
+                                                <div class="progress flex-grow-1 mx-1 distribucion-progress">
+                                                    <div class="progress-bar bg-warning distribucion-progress-bar" 
+                                                         data-width="0.00"></div>
+                                                </div>
+                                                <span class="text-muted small">0</span>
+                                            </div>
+                                                                            </div>
+                                </div>
+                            </div>
+
+                            <!-- Form Column más compacto -->
+                            <div class="col-md-8"> <!-- Aumentado de col-md-7 a col-md-8 -->
+                                <h5 class="card-title text-center mb-3 text-white"> <!-- Reducido de h4 a h5 -->
+                                    <i class="fas fa-edit me-2"></i>Comparte Tu Experiencia
+                                </h5>
+                                
+                                <form id="form-reseña" action="http://localhost:8000/rese%C3%B1as" method="POST">
+                                    <input type="hidden" name="_token" value="" autocomplete="off">                                    
+                                    <!-- Campos en una sola fila para ahorrar espacio -->
+                                    <div class="row g-2 mb-3"> <!-- Reducido espacio -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="nombre" class="form-label small"> 
+                                                    <i class="fas fa-user me-1"></i> Tu Nombre *
+                                                </label>
+                                                <input type="text" class="form-control"
+                                                       id="nombre" name="nombre" 
+                                                       placeholder="Tu nombre" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="email" class="form-label small">
+                                                <i class="fas fa-envelope me-1"></i>
+                                                    Email (opcional)
+                                                </label>
+                                                <input type="email" class="form-control" 
+                                                       id="email" name="email" 
+                                                       placeholder="tu@email.com">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Calificación más compacta -->
+                                    <div class="form-group mb-3"> <!-- Reducido espacio -->
+                                        <label class="form-label small mb-2"> <!-- Texto más pequeño -->
+                                            <i class="fas fa-star me-1"></i>Tu Calificación *
+                                        </label>
+                                        <div class="estrellas-form-container text-center">
+                                            <div class="estrellas-form">
+                                                                                                    <input type="radio" id="star5" name="calificacion" value="5" required>
+                                                    <label for="star5" title="5 estrellas">★</label>
+                                                                                                    <input type="radio" id="star4" name="calificacion" value="4" required>
+                                                    <label for="star4" title="4 estrellas">★</label>
+                                                                                                    <input type="radio" id="star3" name="calificacion" value="3" required>
+                                                    <label for="star3" title="3 estrellas">★</label>
+                                                                                                    <input type="radio" id="star2" name="calificacion" value="2" required>
+                                                    <label for="star2" title="2 estrellas">★</label>
+                                                                                                    <input type="radio" id="star1" name="calificacion" value="1" required>
+                                                    <label for="star1" title="1 estrellas">★</label>
+                                                                                            </div>
+                                            <div class="text-calificacion mt-1"> <!-- Reducido espacio -->
+                                                <small class="text-muted" id="texto-calificacion"> Selecciona una calificación</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Comentario más compacto -->
+                                    <div class="form-group mb-3"> <!-- Reducido espacio -->
+                                        <label for="comentario" class="form-label small"> <!-- Texto más pequeño -->
+                                            <i class="fas fa-comment me-1"></i> Tu Comentario *
+                                        </label>
+                                        <textarea class="form-control" id="comentario" name="comentario" 
+                                                  rows="3" placeholder="Cuéntanos tu experiencia..."
+                                                  required></textarea>
+                                        <div class="d-flex justify-content-between mt-1"> <!-- Reducido espacio -->
+                                            <small class="text-muted">Mín. 10 caracteres</small> <!-- Texto más corto -->
+                                            <small class="text-muted"><span id="contador-caracteres">0</span>/500</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Botón más compacto -->
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-enviar-reseña btn-sm px-4"> <!-- Reducido a btn-sm -->
+                                            Publicar Reseña
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reseñas Existentes -->
+                <!-- Estado vacío más compacto -->
+        <div class="row mt-5"> <!-- Reducido espacio -->
+            <div class="col-12 text-center">
+                <div class="card form-reseña-card">
+                    <div class="card-body py-4"> <!-- Reducido padding -->
+                        <i class="fas fa-comments display-6 text-muted mb-3"></i> <!-- Icono más pequeño -->
+                        <h5 class="text-white mb-2">Aún no hay reseñas</h5> <!-- Texto más pequeño -->
+                        <p class="text-muted mb-0">Sé el primero en compartir tu experiencia</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+            </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Animación para las barras de progreso
+    function animarBarrasProgreso() {
+        const progressBars = document.querySelectorAll('.distribucion-progress-bar');
+        progressBars.forEach(bar => {
+            const width = bar.getAttribute('data-width');
+            setTimeout(() => {
+                bar.style.width = width + '%';
+            }, 300);
+        });
+    }
+    animarBarrasProgreso();
+
+    // 2. Contador de caracteres
+    const comentario = document.getElementById('comentario');
+    const contador = document.getElementById('contador-caracteres');
+    
+    if (comentario && contador) {
+        comentario.addEventListener('input', function() {
+            contador.textContent = this.value.length;
+            
+            if (this.value.length < 10) {
+                contador.classList.add('text-danger');
+                contador.classList.remove('text-muted');
+            } else {
+                contador.classList.remove('text-danger');
+                contador.classList.add('text-muted');
+            }
+        });
+    }
+    
+    // 3. Texto descriptivo para calificación
+    const estrellas = document.querySelectorAll('input[name="calificacion"]');
+    const textoCalificacion = document.getElementById('texto-calificacion');
+    
+    const textosCalificacion = {
+        1: 'Muy Malo - No lo recomiendo',
+        2: 'Malo - Podría mejorar',
+        3: 'Regular - Cumple lo básico',
+        4: 'Bueno - Lo recomiendo',
+        5: 'Excelente - ¡Increíble!'
+    };
+    
+    estrellas.forEach(estrella => {
+        estrella.addEventListener('change', function() {
+            textoCalificacion.textContent = textosCalificacion[this.value];
+            textoCalificacion.classList.remove('text-muted');
+            textoCalificacion.classList.add('text-warning');
+        });
+    });
+    
+    // 4. Validación del formulario
+    const form = document.getElementById('form-reseña');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const nombre = document.getElementById('nombre').value.trim();
+            const comentario = document.getElementById('comentario').value.trim();
+            const calificacion = document.querySelector('input[name="calificacion"]:checked');
+            
+            let errores = [];
+            
+            if (!nombre) {
+                errores.push('El nombre es obligatorio');
+            }
+            
+            if (!calificacion) {
+                errores.push('Debes seleccionar una calificación');
+            }
+            
+            if (!comentario) {
+                errores.push('El comentario es obligatorio');
+            } else if (comentario.length < 10) {
+                errores.push('El comentario debe tener al menos 10 caracteres');
+            } else if (comentario.length > 500) {
+                errores.push('El comentario no puede tener más de 500 caracteres');
+            }
+            
+            if (errores.length > 0) {
+                e.preventDefault();
+                alert('Por favor corrige los siguientes errores:\n\n• ' + errores.join('\n• '));
+            }
+        });
+    }
+    
+    // 5. Efecto hover en cards de reseñas
+    const reseñaCards = document.querySelectorAll('.reseña-card');
+    reseñaCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-4px)'; // Reducido para nuevo diseño
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>    <section id="contacto" class="contact-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="contact-title">Contáctanos</h2>
+                <p class="contact-subtitle">Estamos aquí para servirte</p>
+            </div>
+        </div>
+
+        <!-- Contacto Minimalista con Iconos -->
+        <div class="contact-minimal">
+            <!-- WhatsApp -->
+            <div class="contact-item-minimal" data-whatsapp="529614564697">
+                <i class="fab fa-whatsapp contact-icon-minimal"></i>
+                <h5>WhatsApp</h5>
+                <a href="https://wa.me/529614564697?text=Hola%20DESOLE,%20me%20gustaría%20hacer%20un%20pedido" target="_blank">
+                    Ordenar ahora
+                </a>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="contact-item-minimal">
+                <i class="fas fa-phone contact-icon-minimal"></i>
+                <h5>Teléfono</h5>
+                <a href="tel:+52 (961) 456-46-97">
+                    +52 (961) 456-46-97
+                </a>
+            </div>
+
+            <!-- Email -->
+            <div class="contact-item-minimal">
+                <i class="fas fa-envelope contact-icon-minimal"></i>
+                <h5>Email</h5>
+                <a href="mailto:info@desole.com">
+                    info@desole.com
+                </a>
+            </div>
+        </div>
+
+        <!-- Horario Compacto -->
+        <div class="horario-compact">
+            <div class="horario-header">
+                <i class="fas fa-clock"></i>
+                <h5>Horario de Atención</h5>
+            </div>
+            <div class="horario-content">
+                <div class="horario-line">
+                    <span>Lunes - Viernes: 7:00 PM - 12:00 PM</span>
+                    <span class="horario-separator">|</span>
+                    <span>Sábado - Domingo: 7:00 PM - 12:00 PM</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mapa con Animación -->
+        <div class="mapa-animado">
+            <div class="mapa-header">
+                <i class="fas fa-map-marker-alt"></i>
+                <h5>Nuestra Ubicación</h5>
+            </div>
+            <div class="map-container-minimal">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d337.47763374956827!2d-93.20833979079931!3d16.869780574649454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2smx!4v1762201718722!5m2!1ses-419!2smx&z=16" 
+                    width="100%" 
+                    height="200" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy">
+                </iframe>
+            </div>
+            <p class="text-center mt-3" style="color: var(--color-muted); font-size: 0.9rem;">
+                Visítanos en nuestra cafetería
+            </p>
+        </div>
+
+        <!-- Redes Sociales al Final -->
+        <div class="social-section">
+            <p class="social-title">Síguenos en redes sociales</p>
+            <div class="social-links-minimal">
+                <a href="https://www.facebook.com/share/1FPD5T2i9E/?mibextid=wwXIfr" class="social-link-minimal" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.instagram.com/desole_cafe?igsh=M2M2a3VsaTR6OG12" class="social-link-minimal" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="social-link-minimal" title="TikTok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Botón Flotante de WhatsApp Minimalista -->
+<a href="https://wa.me/529614564697?text=Hola%20DESOLE,%20me%20gustaría%20hacer%20un%20pedido" 
+   class="whatsapp-float-minimal" 
+   target="_blank"
+   title="Ordenar por WhatsApp">
+   <i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-whatsapp]').forEach(function(element) {
+        element.addEventListener('click', function() {
+            const whatsapp = this.getAttribute('data-whatsapp');
+            window.open('https://wa.me/' + whatsapp + '?text=Hola%20DESOLE,%20me%20gustaría%20hacer%20un%20pedido', '_blank');
+        });
+    });
+});
+</script>  </main>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="http://localhost:8000/js/base-config.js"></script>
+  <script src="http://localhost:8000/js/carrito.js"></script>
+  <script src="http://localhost:8000/js/cart.js"></script>
+  <script src="http://localhost:8000/js/cliente-carrito.js"></script>
+</body>
+</html>
