@@ -3,53 +3,86 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pedido;
+use App\Contracts\Services\OrderServiceInterface;
 use App\Traits\JsonResponseTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 class PedidoController extends Controller
 {
     use JsonResponseTrait;
 
-    public function index()
+    public function __construct(
+        protected OrderServiceInterface $orderService
+    ) {}
+
+    public function index(Request $request)
     {
-        $pedidos = Pedido::orderBy('created_at', 'desc')->get();
-        return view('admin.pedidos.index', compact('pedidos'));
+        $filters = [];
+
+        // Filtro por estado
+        if ($request->filled('estado')) {
+            $filters['estado'] = $request->estado;
+        }
+
+        // Filtros de fecha
+        if ($request->filled('fecha_desde')) {
+            $filters['fecha_desde'] = Carbon::parse($request->fecha_desde)->startOfDay();
+        }
+        if ($request->filled('fecha_hasta')) {
+            $filters['fecha_hasta'] = Carbon::parse($request->fecha_hasta)->endOfDay();
+        }
+
+        // Obtener pedidos activos (pendientes y en preparación)
+        $pedidosActivos = $this->orderService->getAll(array_merge(
+            $filters,
+            ['estado' => ['pendiente', 'en_preparacion']]
+        ));
+
+        // Obtener pedidos listos para entrega
+        $pedidosListos = $this->orderService->getAll(array_merge(
+            $filters,
+            ['estado' => 'listo']
+        ));
+
+        return view('admin.pedidos.index', compact('pedidosActivos', 'pedidosListos'));
     }
 
-    public function show(Pedido $pedido)
+    public function show(int $id)
     {
-        $pedido->load(['cliente']);
-        return $this->successResponse('', ['pedido' => $pedido]);
+        try {
+            $pedido = $this->orderService->get($id);
+            
+            if ($this->isAjaxRequest()) {
+                return $this->successResponse('', $pedido);
+            }
+
+            return view('admin.pedidos.show', compact('pedido'));
+        } catch (\Exception $e) {
+            if ($this->isAjaxRequest()) {
+                return $this->errorResponse($e->getMessage());
+            }
+            return redirect()->route('admin.pedidos.index')
+                           ->with('error', 'Pedido no encontrado');
+        }
     }
 
-    public function updateEstado(Request $request, Pedido $pedido)
+    public function updateStatus(Request $request, int $id)
     {
         $request->validate([
-            'estado' => 'required|in:pendiente,en_proceso,completado,cancelado'
+            'status' => 'required|in:pendiente,en_preparacion,listo,entregado,cancelado'
         ]);
 
         try {
-            DB::transaction(function () use ($pedido, $request) {
-                // Si el pedido se cancela, devolver el stock
-                if ($request->estado === 'cancelado' && $pedido->estado !== 'cancelado') {
-                    $pedido->incrementarStock();
-                }
-
-                // Si el pedido estaba cancelado y se reactiva, descontar stock
-                if ($pedido->estado === 'cancelado' && $request->estado !== 'cancelado') {
-                    $pedido->decrementarStock();
-                }
-
-                $pedido->update([
-                    'estado' => $request->estado
-                ]);
-            });
-
-            return $this->successResponse('Estado actualizado correctamente');
+            $pedido = $this->orderService->updateStatus($id, $request->status);
+            return $this->successResponse('Estado actualizado correctamente', $pedido);
         } catch (\Exception $e) {
             return $this->errorResponse('Error al actualizar el estado: ' . $e->getMessage());
         }
+    }
+
+    protected function isAjaxRequest(): bool
+    {
+        return request()->ajax() || request()->wantsJson();
     }
 }

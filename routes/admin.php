@@ -25,7 +25,9 @@ Route::middleware('admin.auth')->group(function () {
     Route::delete('productos/{producto}', [ProductoController::class, 'destroy'])->name('admin.productos.destroy');
 
     // Gestión de pedidos
-    Route::get('pedidos', [PedidoController::class, 'index'])->name('admin.pedidos.index');
-    Route::get('pedidos/{pedido}', [PedidoController::class, 'show'])->name('admin.pedidos.show');
-    Route::post('pedidos/{pedido}/estado', [PedidoController::class, 'updateEstado'])->name('admin.pedidos.updateEstado');
+    Route::prefix('pedidos')->name('admin.pedidos.')->group(function () {
+        Route::get('/', [PedidoController::class, 'index'])->name('index');
+        Route::get('/{id}', [PedidoController::class, 'show'])->name('show');
+        Route::patch('/{id}/status', [PedidoController::class, 'updateStatus'])->name('updateStatus');
+    });
 });

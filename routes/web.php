@@ -1,23 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\ProductoController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\PromocionController;
-use App\Http\Controllers\Admin\HorarioController;
-use App\Http\Controllers\Admin\CRMController;
-use App\Http\Controllers\Admin\ResenaController as AdminResenaController;
-use App\Http\Controllers\ResenaController;
 use App\Http\Controllers\PublicController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\Cliente\ClienteController;
-use App\Http\Controllers\Cliente\CarritoController;
-use App\Http\Controllers\Cliente\PedidoController;
-use App\Http\Controllers\Empleado\PedidoController as EmpleadoPedidoController;
-use App\Http\Controllers\Empleado\ProductoController as EmpleadoProductoController;
+use App\Http\Controllers\ResenaController;
 use App\Http\Controllers\MenuController;
 
 // ===========================================================
@@ -180,23 +165,8 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(functi
 //                PANEL DE EMPLEADO
 // ===========================================================
 
-Route::middleware(['auth', \App\Http\Middleware\EnsureUserRole::class . ':employee'])
-    ->prefix('empleado')
-    ->name('empleado.')
-    ->group(function () {
-        // Dashboard
-        Route::get('/', [EmpleadoPedidoController::class, 'dashboard'])->name('dashboard');
-
-        // Pedidos
-        Route::get('/pedidos', [EmpleadoPedidoController::class, 'index'])->name('pedidos.index');
-        Route::get('/pedidos/{pedido}', [EmpleadoPedidoController::class, 'show'])->name('pedidos.show');
-    Route::patch('/pedidos/{pedido}/status', [EmpleadoPedidoController::class, 'updateStatus'])->name('pedidos.updateStatus');
-
-        // Productos
-        Route::prefix('productos')->name('productos.')->group(function () {
-            Route::get('/', [EmpleadoProductoController::class, 'index'])->name('index');
-            Route::get('/{producto}/edit', [EmpleadoProductoController::class, 'edit'])->name('edit');
-            Route::put('/{producto}', [EmpleadoProductoController::class, 'update'])->name('update');
-            Route::patch('/{producto}/estado', [EmpleadoProductoController::class, 'updateEstado'])->name('updateEstado');
-        });
-    });
+// Incluir las rutas separadas
+require __DIR__.'/auth.php';
+require __DIR__.'/admin.php';
+require __DIR__.'/customer.php';
+require __DIR__.'/employee.php';

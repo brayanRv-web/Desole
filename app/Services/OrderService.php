@@ -66,10 +66,13 @@ class OrderService implements OrderServiceInterface
     /**
      * Cancelar un pedido
      */
-    public function cancel(Pedido $pedido): bool
+    public function cancel(Pedido $pedido): array
     {
         if ($pedido->estado !== 'pendiente') {
-            return false;
+            return [
+                'success' => false,
+                'message' => 'Solo se pueden cancelar pedidos pendientes'
+            ];
         }
 
         try {
@@ -79,10 +82,17 @@ class OrderService implements OrderServiceInterface
                 }
                 $pedido->update(['estado' => 'cancelado']);
             });
-            return true;
+            
+            return [
+                'success' => true,
+                'message' => 'Pedido cancelado exitosamente'
+            ];
         } catch (\Exception $e) {
             Log::error('Error cancelando pedido: ' . $e->getMessage());
-            return false;
+            return [
+                'success' => false,
+                'message' => 'Error al cancelar el pedido: ' . $e->getMessage()
+            ];
         }
     }
 

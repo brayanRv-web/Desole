@@ -14,10 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-           // Registrar bindings de servicios
-           $this->app->bind(\App\Contracts\CartServiceInterface::class, \App\Services\CartService::class);
-           $this->app->bind(\App\Contracts\OrderServiceInterface::class, \App\Services\OrderService::class);
-           $this->app->bind(\App\Contracts\ClienteServiceInterface::class, \App\Services\ClienteService::class);
+        // Registrar bindings de servicios
+        $this->app->bind(\App\Contracts\Services\CartServiceInterface::class, \App\Services\Cart\CartService::class);
+        $this->app->bind(\App\Contracts\Services\OrderServiceInterface::class, \App\Services\Order\OrderService::class);
+        $this->app->bind(\App\Contracts\Services\ProductServiceInterface::class, \App\Services\Product\ProductService::class);
     }
 
     /**
