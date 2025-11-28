@@ -1,0 +1,1 @@
+<?php /**PATH C:\xampp\htdocs\Desole\resources\views/admin/reportes/index.blade.php ENDPATH**/ ?>
