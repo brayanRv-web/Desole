@@ -14,13 +14,7 @@ return new class extends Migration
         Schema::create('horarios', function (Blueprint $table) {
             $table->id();
             $table->enum('dia_semana', [
-                'lunes', 
-                'martes', 
-                'miercoles', 
-                'jueves', 
-                'viernes', 
-                'sabado', 
-                'domingo'
+                'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'
             ])->unique();
             $table->time('apertura');
             $table->time('cierre');

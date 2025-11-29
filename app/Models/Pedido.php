@@ -21,7 +21,6 @@ class Pedido extends Model
         'direccion',
         'total',
         'status',
-        'estado',
         'items',
         'notas',
         'tiempo_estimado',

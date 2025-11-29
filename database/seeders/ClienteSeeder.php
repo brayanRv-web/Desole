@@ -15,14 +15,13 @@ class ClienteSeeder extends Seeder
         Cliente::create([
             'nombre' => 'Cliente Prueba',
             'email' => 'cliente@test.com',
-            'password' => bcrypt('cliente123'),
             'telefono' => '9611234567',
+            'password' => bcrypt('cliente123'),
             'direccion' => 'Calle de Prueba #123',
-            'colonia' => 'Centro',
             'tipo' => 'registrado',
-            'email_verified_at' => now(),
-            'recibir_promociones' => true,
-            'recibir_cumpleanos' => true,
+            'notas' => 'Cliente creado desde el seeder.',
+            'total_pedidos' => 0,
+            'ultima_visita' => now(),
         ]);
     }
 }

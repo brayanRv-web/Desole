@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categorias', function (Blueprint $table) {
-        $table->id();
-        $table->string('nombre');
-        $table->enum('estado', ['activo', 'inactivo'])->default('activo'); // Unificado aquí
-        $table->text('tipo')->nullable();
-        $table->string('icono')->nullable();
-        $table->string('color')->nullable();
-        $table->integer('orden')->default(0);
-        $table->timestamps();
+            $table->id();
+            $table->string('nombre');
+            $table->enum('status', ['activo', 'inactivo'])->default('activo');
+            $table->text('tipo')->nullable();
+            $table->string('icono')->nullable();
+            $table->string('color')->nullable();
+            $table->integer('orden')->default(0);
+            $table->timestamps();
         });
     }
 
