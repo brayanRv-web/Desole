@@ -1,0 +1,35 @@
+<?php
+//2025_10_16_033957_create_productos_table.php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('productos', function (Blueprint $table) {
+        $table->id();
+        $table->string('nombre');
+        $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
+        $table->decimal('precio', 8, 2);
+        $table->text('descripcion')->nullable();
+        $table->string('imagen')->nullable();
+        $table->string('status')->default('activo');
+        $table->integer('stock')->default(0); // Unificado aquí
+        $table->enum('estado_stock', ['disponible', 'agotado'])->default('disponible'); // Unificado aquí
+        $table->timestamp('ultima_alerta_stock')->nullable(); // Unificado aquí
+        $table->timestamps();
+        });
+    }
+    
+    public function down(): void
+    {
+        Schema::table('productos', function (Blueprint $table) {
+        $table->dropColumn(['stock', 'estado_stock']);});
+    }
+
+};
