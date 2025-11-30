@@ -235,7 +235,7 @@ function actualizarEstado() {
     const notas = document.getElementById('nuevo-notas').value;
 
     axios.patch('{{ route("empleado.pedidos.updateStatus", $pedido) }}', {
-        status: estado,
+        estado: estado,
         tiempo_estimado: tiempo,
         notas: notas
     })
@@ -259,7 +259,7 @@ function actualizarTiempoEstimado() {
     const tiempo = document.getElementById('tiempo_estimado').value;
     
     axios.patch('{{ route("empleado.pedidos.updateStatus", $pedido) }}', {
-        status: '{{ $pedido->status }}',
+        estado: '{{ $pedido->status }}',
         tiempo_estimado: tiempo
     })
     .then(response => {
@@ -282,7 +282,7 @@ function guardarNotas() {
     const notas = document.getElementById('notas').value;
     
     axios.patch('{{ route("empleado.pedidos.updateStatus", $pedido) }}', {
-        status: '{{ $pedido->status }}',
+        estado: '{{ $pedido->status }}',
         notas: notas
     })
     .then(response => {

@@ -104,13 +104,19 @@ class PedidoController extends Controller
     public function show(Pedido $pedido)
     {
         // Cargar información adicional necesaria
-        $pedido->load(['cliente']);
+        $pedido->load(['cliente', 'detalles.producto']);
 
         // Verificar stock actual de los productos
-        $items = collect($pedido->items)->map(function ($item) {
-            $producto = Producto::find($item['producto_id']);
-            $item['stock_actual'] = $producto ? $producto->stock : 0;
-            return $item;
+        $items = $pedido->detalles->map(function ($detalle) {
+            $producto = $detalle->producto;
+            return [
+                'producto_id' => $detalle->producto_id,
+                'nombre' => $producto->nombre ?? 'Producto eliminado',
+                'cantidad' => $detalle->cantidad,
+                'precio' => $detalle->precio,
+                'stock_actual' => $producto ? $producto->stock : 0,
+                'imagen' => $producto->imagen ?? null
+            ];
         });
 
         // Obtener estados permitidos para este pedido
@@ -150,8 +156,7 @@ class PedidoController extends Controller
                 } catch (\Exception $e) {
                     DB::rollBack();
                     Log::error("Error al decrementar stock: {$e->getMessage()}", [
-                        'pedido_id' => $pedido->id,
-                        'items' => $pedido->items
+                        'pedido_id' => $pedido->id
                     ]);
                     
                     return response()->json([
@@ -168,8 +173,7 @@ class PedidoController extends Controller
                 } catch (\Exception $e) {
                     DB::rollBack();
                     Log::error("Error al restaurar stock: {$e->getMessage()}", [
-                        'pedido_id' => $pedido->id,
-                        'items' => $pedido->items
+                        'pedido_id' => $pedido->id
                     ]);
                     
                     return response()->json([

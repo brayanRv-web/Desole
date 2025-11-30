@@ -18,11 +18,8 @@ class ClienteSeeder extends Seeder
             'password' => bcrypt('cliente123'),
             'telefono' => '9611234567',
             'direccion' => 'Calle de Prueba #123',
-            'colonia' => 'Centro',
             'tipo' => 'registrado',
-            'email_verified_at' => now(),
-            'recibir_promociones' => true,
-            'recibir_cumpleanos' => true,
+            'notas' => 'Cliente generado por seeder',
         ]);
     }
 }

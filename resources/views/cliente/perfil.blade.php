@@ -45,42 +45,11 @@
                                         <input type="text" class="form-control profile-input" name="telefono" value="{{ $cliente->telefono }}" required>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Fecha de Nacimiento</label>
-                                        <input type="date" class="form-control profile-input" name="fecha_nacimiento" value="{{ $cliente->fecha_nacimiento }}">
-                                    </div>
-                                </div>
                             </div>
                             
                             <div class="form-group">
                                 <label class="form-label">Dirección</label>
-                                <input type="text" class="form-control profile-input" name="direccion" value="{{ $cliente->direccion }}" required>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Colonia</label>
-                                        <input type="text" class="form-control profile-input" name="colonia" value="{{ $cliente->colonia }}" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">Referencias</label>
-                                        <input type="text" class="form-control profile-input" name="referencias" value="{{ $cliente->referencias }}">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Alergias</label>
-                                <textarea class="form-control profile-input" name="alergias" rows="3" placeholder="Ej: Alérgico a los mariscos, lactosa...">{{ $cliente->alergias }}</textarea>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Preferencias Alimenticias</label>
-                                <textarea class="form-control profile-input" name="preferencias" rows="3" placeholder="Ej: Vegetariano, sin azúcar...">{{ $cliente->preferencias }}</textarea>
+                                <input type="text" class="form-control profile-input" name="direccion" value="{{ $cliente->direccion }}" placeholder="Calle, número, colonia...">
                             </div>
                             
                             <div class="form-actions">

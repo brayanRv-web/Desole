@@ -98,7 +98,7 @@ class ProductoController extends Controller
             'stock' => 'required|integer|min:0',
             'categoria_id' => 'required|exists:categorias,id',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'estado' => 'required|in:activo,inactivo,agotado'
+            'status' => 'required|in:activo,inactivo'
         ]);
 
         $stockAnterior = $producto->stock;
@@ -112,14 +112,19 @@ class ProductoController extends Controller
             $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
 
-        // Ajustar estado_stock basado en el stock
+        // Lógica de Estado vs Stock
         if ($request->stock == 0) {
             $data['estado_stock'] = 'agotado';
-            $data['estado'] = 'agotado';
+            // Si es inactivo, se queda inactivo. Si es activo, pasa a agotado.
+            if ($request->status == 'activo') {
+                $data['status'] = 'agotado';
+            }
         } else {
             $data['estado_stock'] = 'disponible';
-            if ($producto->estado == 'agotado' && $request->stock > 0) {
-                $data['estado'] = 'activo';
+            // Si estaba agotado y ahora hay stock, pasa a activo.
+            // Si el usuario lo marcó como inactivo, se respeta.
+            if ($producto->status == 'agotado' && $request->status != 'inactivo') {
+                $data['status'] = 'activo';
             }
         }
 
@@ -139,15 +144,23 @@ class ProductoController extends Controller
     public function updateEstado(Request $request, Producto $producto)
     {
         Log::info('Datos recibidos:', $request->all());
-        Log::info('Producto:', ['id' => $producto->id, 'nombre' => $producto->nombre]);
         
         $request->validate([
-            'estado' => 'required|in:activo,inactivo,agotado'
+            'status' => 'required|in:activo,inactivo'
         ]);
 
+        $nuevoEstado = $request->status;
+        $nuevoEstadoStock = 'disponible';
+
+        // Si intenta activar pero no hay stock, se pone como agotado
+        if ($nuevoEstado == 'activo' && $producto->stock <= 0) {
+            $nuevoEstado = 'agotado';
+            $nuevoEstadoStock = 'agotado';
+        }
+
         $producto->update([
-            'estado' => $request->estado,
-            'estado_stock' => $request->estado == 'agotado' ? 'agotado' : 'disponible'
+            'status' => $nuevoEstado,
+            'estado_stock' => $nuevoEstadoStock
         ]);
 
         return back()->with('success', 'Estado del producto actualizado.');

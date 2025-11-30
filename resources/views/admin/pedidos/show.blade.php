@@ -61,7 +61,7 @@
 			<div class="space-y-4">
 				<div class="flex justify-between items-center pb-3 border-b border-gray-700">
 					<p class="text-gray-400">Cantidad de items:</p>
-					<span class="text-white font-bold text-lg">{{ count($pedido->items ?? []) }}</span>
+					<span class="text-white font-bold text-lg">{{ $pedido->detalles->count() }}</span>
 				</div>
 				<div class="flex justify-between items-center pb-3 border-b border-gray-700">
 					<p class="text-gray-400">Total:</p>
@@ -83,8 +83,8 @@
 			<i class="fas fa-package"></i> Productos en el Pedido
 		</h2>
 
-		@php $items = $pedido->items ?? []; @endphp
-		@if(empty($items))
+		@php $detalles = $pedido->detalles ?? collect([]); @endphp
+		@if($detalles->isEmpty())
 			<div class="bg-gray-800 border border-dashed border-gray-600 rounded-lg p-8 text-center">
 				<i class="fas fa-inbox text-gray-500 text-3xl mb-3"></i>
 				<p class="text-gray-400">No hay items registrados en este pedido.</p>
@@ -102,20 +102,20 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach($items as $item)
+						@foreach($detalles as $detalle)
 							<tr class="border-b border-gray-700 hover:bg-gray-800 transition">
-								<td class="px-4 py-3 text-gray-400">{{ $item['producto_id'] ?? '-' }}</td>
+								<td class="px-4 py-3 text-gray-400">{{ $detalle->producto_id }}</td>
 								<td class="px-4 py-3 text-white font-semibold">
-									{{ $item['nombre'] ?? ($productos[$item['producto_id']]->nombre ?? 'Desconocido') }}
+									{{ $detalle->producto->nombre ?? 'Producto no disponible' }}
 								</td>
 								<td class="px-4 py-3 text-center text-white">
 									<span class="bg-green-900/40 px-3 py-1 rounded-full text-green-400 font-bold">
-										{{ $item['cantidad'] ?? 0 }}
+										{{ $detalle->cantidad }}
 									</span>
 								</td>
-								<td class="px-4 py-3 text-right text-white">${{ number_format($item['precio'] ?? 0, 2) }}</td>
+								<td class="px-4 py-3 text-right text-white">${{ number_format($detalle->precio, 2) }}</td>
 								<td class="px-4 py-3 text-right text-green-400 font-bold">
-									${{ number_format(($item['precio'] ?? 0) * ($item['cantidad'] ?? 0), 2) }}
+									${{ number_format($detalle->precio * $detalle->cantidad, 2) }}
 								</td>
 							</tr>
 						@endforeach

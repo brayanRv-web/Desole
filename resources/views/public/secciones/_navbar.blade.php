@@ -16,7 +16,7 @@
         <li><a href="{{ route('cliente.pedidos.index') }}" class="{{ request()->routeIs('cliente.pedidos.*') ? 'active' : '' }}"><i class="fas fa-history"></i> Mis Pedidos</a></li>
       </ul>
 
-      <div class="nav-actions">
+      <div class="nav-actions flex items-center gap-4">
         <!-- Igual que en la versión pública: carrito + texto de salir -->
         <button id="cartBtn" class="cart-btn" aria-label="Abrir carrito">
           <i class="fas fa-shopping-cart"></i>
@@ -54,7 +54,7 @@
         @endauth
       </ul>
 
-      <div class="nav-actions">
+      <div class="nav-actions flex items-center gap-4">
         @guest('cliente')
           <a href="{{ route('login.cliente') }}" class="login-btn">
             <i class="fas fa-sign-in-alt"></i> Iniciar Sesión

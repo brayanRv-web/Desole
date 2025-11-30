@@ -37,13 +37,22 @@ class OrderService implements OrderServiceInterface
                 'cliente_telefono' => $data['cliente_telefono'] ?? null,
                 'direccion' => $data['direccion'] ?? null,
                 'total' => $this->cartService->calculateTotal($cart),
-                'items' => $this->cartService->itemsForPedido($cart),
                 'notas' => $data['notas'] ?? null,
             ];
 
             $payload[$col] = 'pendiente';
 
             $pedido = Pedido::create($payload);
+
+            // Guardar detalles en tabla relacional
+            foreach ($cart as $item) {
+                \App\Models\PedidoDetalle::create([
+                    'pedido_id' => $pedido->id,
+                    'producto_id' => $item['id'],
+                    'cantidad' => $item['cantidad'],
+                    'precio' => $item['precio']
+                ]);
+            }
 
             // Descontar stock si corresponde
             if (method_exists($pedido, 'decrementarStock')) {
@@ -92,7 +101,7 @@ class OrderService implements OrderServiceInterface
         }
 
         try {
-            DB::transaction(function () use ($pedido) {
+            DB::transaction(function () use ($pedido, $col) {
                 if (property_exists($pedido, 'stock_descontado') && $pedido->stock_descontado) {
                     if (method_exists($pedido, 'incrementarStock')) {
                         $pedido->incrementarStock();
@@ -120,12 +129,27 @@ class OrderService implements OrderServiceInterface
      */
     public function getOrderDetails(Pedido $pedido): array
     {
+        // Cargar relación si no existe
+        if (!$pedido->relationLoaded('detalles')) {
+            $pedido->load('detalles.producto');
+        }
+
+        $items = $pedido->detalles->map(function ($detalle) {
+            return [
+                'producto_id' => $detalle->producto_id,
+                'nombre' => $detalle->producto->nombre ?? 'Producto eliminado',
+                'cantidad' => $detalle->cantidad,
+                'precio' => $detalle->precio,
+                'imagen' => $detalle->producto->imagen ?? null
+            ];
+        })->toArray();
+
         return [
             'id' => $pedido->id,
             'cliente' => $pedido->cliente_nombre,
             'total' => $pedido->total,
             'status' => $pedido->status,
-            'items' => json_decode($pedido->items, true),
+            'items' => $items,
             'fecha' => $pedido->created_at->format('Y-m-d H:i:s'),
         ];
     }

@@ -195,13 +195,12 @@
                                 <?php echo csrf_field(); ?>
                                 <?php echo method_field('PATCH'); ?>
                                 <div class="relative">
-                                    <select name="estado" 
+                                    <select name="status" 
                                             data-producto-id="<?php echo e($producto->id); ?>"
                                             onchange="actualizarEstado(this)"
-                                            class="w-full px-4 py-2 rounded-xl border text-sm font-medium transition-all duration-200 cursor-pointer appearance-none bg-gray-800 text-white <?php echo e($estadoColors[$producto->estado] ?? 'border-gray-500'); ?>">
-                                        <option value="activo" <?php echo e($producto->estado == 'activo' ? 'selected' : ''); ?>>🟢 Activo</option>
-                                        <option value="inactivo" <?php echo e($producto->estado == 'inactivo' ? 'selected' : ''); ?>>⚪ Inactivo</option>
-                                        <option value="agotado" <?php echo e($producto->estado == 'agotado' ? 'selected' : ''); ?>>🔴 Agotado</option>
+                                            class="w-full px-4 py-2 rounded-xl border text-sm font-medium transition-all duration-200 cursor-pointer appearance-none bg-gray-800 text-white <?php echo e($estadoColors[$producto->status] ?? 'border-gray-500'); ?>">
+                                        <option value="activo" <?php echo e($producto->status == 'activo' || $producto->status == 'agotado' ? 'selected' : ''); ?>>🟢 Activo</option>
+                                        <option value="inactivo" <?php echo e($producto->status == 'inactivo' ? 'selected' : ''); ?>>⚪ Inactivo</option>
                                     </select>
                                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
                                         <i class="fas fa-chevron-down text-xs"></i>
@@ -323,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const forms = document.querySelectorAll('form[id^="form-estado-"]');
     forms.forEach(form => {
         form.addEventListener('submit', function(e) {
-            const select = this.querySelector('select[name="estado"]');
+            const select = this.querySelector('select[name="status"]');
             if (!select || !select.value) {
                 e.preventDefault();
                 alert('Por favor selecciona un estado válido');

@@ -141,7 +141,7 @@ class CatalogService
      */
     public function getProductosActivosForAdmin(): Collection
     {
-        return Producto::where('estado', 'activo')->get();
+        return Producto::where('status', 'activo')->get();
     }
 
     /**

@@ -19,8 +19,8 @@ class PublicController extends Controller
     protected function getActivePromociones()
     {
         return \App\Models\Promocion::query()
-            ->activa()
-            ->with('productosActivos')
+            ->fullyAvailable()
+            ->with('productos') // Load all products (they are guaranteed active by scope)
             ->orderBy('fecha_inicio')
             ->get();
     }
@@ -30,8 +30,8 @@ class PublicController extends Controller
         $promociones = $this->getActivePromociones();
 
         // Obtener imágenes para el carrusel del hero
-        // Usar columna 'activo' (boolean) en la tabla hero_images
-        $heroImages = HeroImage::where('activo', 1)
+        // Usar columna 'status' (boolean) en la tabla hero_images
+        $heroImages = HeroImage::where('status', 1)
             ->where('tipo', 'hero')
             ->orderBy('orden', 'asc')
             ->get();

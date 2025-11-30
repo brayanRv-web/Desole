@@ -36,9 +36,19 @@
                                 </span>
                             </td>
                             <td class="order-actions">
-                                <a href="{{ route('cliente.pedidos.show', $pedido->id) }}" class="btn-action">
-                                    Ver Detalles
-                                </a>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('cliente.pedidos.show', $pedido->id) }}" class="btn-action">
+                                        Ver Detalles
+                                    </a>
+                                    @if(in_array($pedido->estado ?? $pedido->status, ['entregado', 'completado', 'cancelado']))
+                                        <button type="button" class="btn-action btn-delete" onclick="confirmarOcultar({{ $pedido->id }})">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                        <form id="form-ocultar-{{ $pedido->id }}" action="{{ route('cliente.pedidos.ocultar', $pedido->id) }}" method="POST" style="display: none;">
+                                            @csrf
+                                        </form>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                         @endforeach
@@ -144,6 +154,16 @@
     color: var(--color-bg);
 }
 
+.btn-delete {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-delete:hover {
+    background: #dc3545;
+    color: white;
+}
+
 .empty-state {
     text-align: center;
     padding: 3rem 2rem;
@@ -193,3 +213,93 @@
 }
 </style>
 @endsection
+
+@push('scripts')
+<script>
+    function confirmarOcultar(id) {
+        Swal.fire({
+            title: '¿Ocultar pedido?',
+            text: "Dejará de ser visible en tu lista.",
+            showCancelButton: true,
+            confirmButtonColor: '#3f3f46',
+            cancelButtonColor: 'transparent',
+            confirmButtonText: 'Ocultar',
+            cancelButtonText: 'Cancelar',
+            background: '#18181b',
+            color: '#e4e4e7',
+            width: '20em',
+            padding: '1.5em',
+            reverseButtons: true,
+            customClass: {
+                confirmButton: 'border border-zinc-600',
+                cancelButton: 'text-gray-400 hover:text-white'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('form-ocultar-' + id).submit();
+            }
+        })
+    }
+
+    // Auto-update Status Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const pollInterval = 6000;
+
+        async function pollAll() {
+            const els = Array.from(document.querySelectorAll('[data-pedido-id]'));
+            if (!els.length) return;
+
+            for (const el of els) {
+                const id = el.getAttribute('data-pedido-id');
+                try {
+                    const res = await fetch("{{ url('/cliente/pedidos') }}/" + id, { 
+                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } 
+                    });
+                    
+                    if (!res.ok) continue;
+                    
+                    const j = await res.json();
+                    if (j && j.success && j.data && j.data.pedido) {
+                        const rawStatus = (j.data.pedido.estado || j.data.pedido.status || '').toString().toLowerCase();
+                        const currentText = el.textContent.trim().toLowerCase();
+                        
+                        if (rawStatus && rawStatus !== currentText) {
+                            // Update Text
+                            el.textContent = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1);
+                            
+                            // Update Class
+                            // Remove old status classes
+                            el.classList.forEach(cls => {
+                                if (cls.startsWith('status-') && cls !== 'status-badge') {
+                                    el.classList.remove(cls);
+                                }
+                            });
+                            // Add new status class
+                            el.classList.add('status-' + rawStatus);
+
+                            // Notification
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                background: '#18181b',
+                                color: '#fff'
+                            });
+                            Toast.fire({
+                                icon: 'info',
+                                title: 'Pedido #' + id + ' actualizado',
+                                text: 'Nuevo estado: ' + el.textContent
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.debug('pollAll error', e);
+                }
+            }
+        }
+
+        setInterval(pollAll, pollInterval);
+    });
+</script>
+@endpush

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\PromocionController;
 use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Admin\CRMController;
 use App\Http\Controllers\Admin\PedidoController as AdminPedidoController;
+use App\Http\Controllers\Admin\ReportesController;
 use App\Http\Controllers\Admin\ResenaController as AdminResenaController;
 use App\Http\Controllers\ResenaController;
 use App\Http\Controllers\PublicController;
@@ -78,13 +79,19 @@ Route::middleware(['auth:cliente'])
         Route::get('/carrito', [CarritoController::class, 'index'])
             ->name('carrito');
 
+        // Checkout (Selección de método de pago)
+        Route::get('/carrito/checkout', [CarritoController::class, 'checkout'])
+            ->name('carrito.checkout');
+
         // Finalizar compra (POST) -> usa el método `finalizar` del controlador
         Route::post('/carrito/finalizar', [CarritoController::class, 'finalizar'])
             ->name('carrito.finalizar');
 
         // API: Finalizar compra (JSON) - Endpoint específico para AJAX
-        Route::post('/carrito/api/finalizar', [CarritoController::class, 'finalizarApi'])
+        Route::post('/carrito/api/finalizar', [CarritoController::class, 'finalizar'])
             ->name('carrito.api.finalizar');
+
+
         // ============================
         //         PEDIDOS
         // ============================
@@ -92,6 +99,7 @@ Route::middleware(['auth:cliente'])
             Route::get('/', [PedidoController::class, 'index'])->name('index');
             Route::get('/{pedido}', [PedidoController::class, 'show'])->name('show');
             Route::post('/{pedido}/cancelar', [PedidoController::class, 'cancelar'])->name('cancelar');
+            Route::post('/{pedido}/ocultar', [PedidoController::class, 'ocultar'])->name('ocultar');
         });
     });
 
@@ -99,9 +107,14 @@ Route::middleware(['auth:cliente'])
 //        API: FINALIZAR COMPRA (SIN CSRF)
 // ===========================================================
 // Ruta API completamente separada, sin aplicar el middleware global CSRF
-Route::post('cliente/carrito/api/finalizar', [CarritoController::class, 'finalizarApi'])
+Route::post('cliente/carrito/api/finalizar', [CarritoController::class, 'finalizar'])
     ->middleware('auth:cliente')
     ->name('api.carrito.finalizar');
+
+// Agregar promoción al carrito (AJAX) - Fuera del grupo para debug/acceso directo
+Route::post('cliente/carrito/agregar-promocion', [CarritoController::class, 'agregarPromocion'])
+    ->middleware('auth:cliente')
+    ->name('cliente.carrito.agregar-promocion');
 
 // ===========================================================
 //                LOGIN Y LOGOUT DEL ADMIN
@@ -179,9 +192,11 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(functi
 
     // Módulos pendientes
     Route::get('/pedidos', [AdminPedidoController::class, 'index'])->name('pedidos.index');
+    Route::get('/pedidos/check-new', [AdminPedidoController::class, 'checkNewOrders'])->name('pedidos.check');
     Route::get('/pedidos/{pedido}', [AdminPedidoController::class, 'show'])->name('pedidos.show');
     Route::post('/pedidos/{pedido}/estado', [AdminPedidoController::class, 'updateEstado'])->name('pedidos.updateEstado');
-    Route::view('/reportes', 'admin.reportes.index')->name('reportes.index');
+    Route::get('/reportes', [ReportesController::class, 'index'])->name('reportes.index');
+    Route::get('/reportes/pdf', [ReportesController::class, 'downloadPdf'])->name('reportes.pdf');
     Route::view('/configuracion', 'admin.configuracion.index')->name('configuracion.index');
 });
 

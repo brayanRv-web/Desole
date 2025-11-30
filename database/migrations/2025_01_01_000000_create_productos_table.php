@@ -21,14 +21,14 @@ return new class extends Migration
             $table->string('status')->default('activo');
             $table->integer('stock')->default(0);
             $table->enum('estado_stock', ['disponible', 'agotado'])->default('disponible');
+            $table->timestamp('ultima_alerta_stock')->nullable();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::table('productos', function (Blueprint $table) {
-        $table->dropColumn(['stock', 'estado_stock']);});
+        Schema::dropIfExists('productos');
     }
 
 };

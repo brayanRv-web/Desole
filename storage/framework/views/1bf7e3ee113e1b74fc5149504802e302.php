@@ -216,76 +216,9 @@ unset($__errorArgs, $__bag); ?>
         </div>
 
         <div class="form-group">
-          <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección completa</label>
-          <input type="text" id="direccion" name="direccion" class="form-control" value="<?php echo e(old('direccion')); ?>" required>
+          <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección completa (Opcional)</label>
+          <input type="text" id="direccion" name="direccion" class="form-control" value="<?php echo e(old('direccion')); ?>" placeholder="Calle, número, colonia...">
           <?php $__errorArgs = ['direccion'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <div class="error-message"><?php echo e($message); ?></div> <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="colonia"><i class="fas fa-location-dot"></i> Colonia</label>
-            <input type="text" id="colonia" name="colonia" class="form-control" value="<?php echo e(old('colonia')); ?>" required>
-            <?php $__errorArgs = ['colonia'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <div class="error-message"><?php echo e($message); ?></div> <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-          </div>
-
-          <div class="form-group">
-            <label for="fecha_nacimiento"><i class="fas fa-cake-candles"></i> Fecha de nacimiento</label>
-            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" value="<?php echo e(old('fecha_nacimiento')); ?>" required>
-            <?php $__errorArgs = ['fecha_nacimiento'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <div class="error-message"><?php echo e($message); ?></div> <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="referencias"><i class="fas fa-map-pin"></i> Referencias de domicilio</label>
-          <input type="text" id="referencias" name="referencias" class="form-control" value="<?php echo e(old('referencias')); ?>" placeholder="Ej: Casa color azul, junto a...">
-          <?php $__errorArgs = ['referencias'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <div class="error-message"><?php echo e($message); ?></div> <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-        </div>
-
-        <div class="form-group">
-          <label for="alergias"><i class="fas fa-heart"></i> Alergias alimenticias</label>
-          <input type="text" id="alergias" name="alergias" class="form-control" value="<?php echo e(old('alergias')); ?>" placeholder="Ej: Sin gluten, alergia a nueces...">
-          <?php $__errorArgs = ['alergias'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <div class="error-message"><?php echo e($message); ?></div> <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-        </div>
-
-        <div class="form-group">
-          <label for="preferencias"><i class="fas fa-star"></i> Preferencias alimenticias</label>
-          <input type="text" id="preferencias" name="preferencias" class="form-control" value="<?php echo e(old('preferencias')); ?>" placeholder="Ej: Vegano, sin azúcar, etc.">
-          <?php $__errorArgs = ['preferencias'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }

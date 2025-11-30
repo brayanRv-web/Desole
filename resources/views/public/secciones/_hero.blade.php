@@ -11,6 +11,9 @@
 
         // Día de hoy en español
         $diaHoy = strtolower(now()->locale('es')->isoFormat('dddd'));
+        
+        // Normalizar día (quitar acentos) para coincidir con BD
+        $diaHoy = str_replace(['á', 'é', 'í', 'ó', 'ú'], ['a', 'e', 'i', 'o', 'u'], $diaHoy);
 
         // Obtenemos el horario correspondiente al día de hoy
         $horarioHoy = $horarios->firstWhere('dia_semana', $diaHoy);

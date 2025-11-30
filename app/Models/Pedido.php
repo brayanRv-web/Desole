@@ -21,14 +21,13 @@ class Pedido extends Model
         'direccion',
         'total',
         'estado',
-        'items',
         'notas',
         'tiempo_estimado',
-        'stock_descontado'
+        'stock_descontado',
+        'metodo_pago'
     ];
 
     protected $casts = [
-        'items' => 'array',
         'total' => 'decimal:2',
         'stock_descontado' => 'boolean',
         'status' => 'string'
@@ -44,6 +43,14 @@ class Pedido extends Model
     ];
 
     /**
+     * Relación con los detalles del pedido
+     */
+    public function detalles()
+    {
+        return $this->hasMany(PedidoDetalle::class);
+    }
+
+    /**
      * Decrement stock for all items in the order
      */
     public function decrementarStock()
@@ -53,29 +60,26 @@ class Pedido extends Model
         }
 
         DB::transaction(function () {
-            $items = $this->items ?? [];
+            // Cargar detalles si no están cargados
+            if (!$this->relationLoaded('detalles')) {
+                $this->load('detalles');
+            }
+
+            $detalles = $this->detalles;
 
             // First validate all stock
-            foreach ($items as $item) {
-                if (empty($item['producto_id']) || empty($item['cantidad'])) {
-                    continue;
-                }
-
-                $producto = Producto::lockForUpdate()->find($item['producto_id']);
-                if (!$producto || $producto->stock < $item['cantidad']) {
+            foreach ($detalles as $detalle) {
+                $producto = Producto::lockForUpdate()->find($detalle->producto_id);
+                if (!$producto || $producto->stock < $detalle->cantidad) {
                     throw new \Exception('Stock insuficiente para ' . ($producto->nombre ?? 'producto desconocido'));
                 }
             }
 
             // Then update all stock
-            foreach ($items as $item) {
-                if (empty($item['producto_id']) || empty($item['cantidad'])) {
-                    continue;
-                }
-
-                $producto = Producto::lockForUpdate()->find($item['producto_id']);
+            foreach ($detalles as $detalle) {
+                $producto = Producto::lockForUpdate()->find($detalle->producto_id);
                 if ($producto) {
-                    $producto->decrement('stock', $item['cantidad']);
+                    $producto->decrement('stock', $detalle->cantidad);
                     if ($producto->stock <= 0) {
                         $producto->update([
                             'stock' => 0,
@@ -146,6 +150,16 @@ class Pedido extends Model
     }
 
     /**
+     * Accesor para determinar si el pedido está pagado.
+     * Como no hay columna 'pagado', asumimos que está pagado si el estado es 'entregado' o 'completado'.
+     */
+    public function getPagadoAttribute()
+    {
+        $estado = $this->estado ?? $this->status;
+        return in_array($estado, ['entregado', 'completado']);
+    }
+
+    /**
      * Mutator para establecer el estado en la columna que exista en la BD
      */
     public function setStatusAttribute($value)
@@ -175,16 +189,17 @@ class Pedido extends Model
         }
 
         DB::transaction(function () {
-            $items = $this->items ?? [];
+            // Cargar detalles si no están cargados
+            if (!$this->relationLoaded('detalles')) {
+                $this->load('detalles');
+            }
 
-            foreach ($items as $item) {
-                if (empty($item['producto_id']) || empty($item['cantidad'])) {
-                    continue;
-                }
+            $detalles = $this->detalles;
 
-                $producto = Producto::lockForUpdate()->find($item['producto_id']);
+            foreach ($detalles as $detalle) {
+                $producto = Producto::lockForUpdate()->find($detalle->producto_id);
                 if ($producto) {
-                    $producto->increment('stock', $item['cantidad']);
+                    $producto->increment('stock', $detalle->cantidad);
                     if ($producto->stock > 0) {
                         $producto->update([
                             'estado_stock' => 'disponible',

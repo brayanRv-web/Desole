@@ -3,104 +3,36 @@
 @section('title', 'Carrito de Compras - DÉSOLÉ')
 
 @section('content')
-<div class="container mx-auto px-4 py-10">
-    <div class="max-w-5xl mx-auto bg-zinc-800 rounded-2xl shadow-xl overflow-hidden border border-zinc-700">
-        <div class="p-8">
-            <h1 class="text-4xl font-bold text-green-400 mb-8 text-center">
+<div class="container mx-auto px-4 py-12">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600 mb-2">
                 🛒 Mi Carrito
             </h1>
+            <p class="text-gray-400">Revisa tus productos antes de finalizar la compra</p>
+        </div>
 
-            <div id="carrito-detallado" class="space-y-6">
-                <!-- El contenido del carrito se cargará dinámicamente aquí -->
+        <div class="bg-zinc-800/80 backdrop-blur-md rounded-2xl border border-zinc-700/50 overflow-hidden shadow-xl">
+            <div class="p-6 md:p-8">
+                <div id="carrito-detallado" class="space-y-6">
+                    <!-- El contenido del carrito se cargará dinámicamente aquí -->
+                    <div class="flex flex-col items-center justify-center py-12 text-gray-500">
+                        <i class="fas fa-spinner fa-spin text-3xl mb-3"></i>
+                        <p>Cargando carrito...</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-.cart-item {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    border: 1px solid #3f3f46;
-    border-radius: 0.75rem;
-    background: rgba(39, 39, 42, 0.6);
-    transition: transform 0.2s ease;
-}
-.cart-item:hover { transform: translateY(-3px); }
-.cart-item-image {
-    width: 90px; height: 90px; object-fit: cover;
-    border-radius: 0.5rem; border: 1px solid #3f3f46;
-}
-.cart-item-info { flex: 1; min-width: 200px; }
-.cart-item-title { font-size: 1.125rem; font-weight: 600; color: white; }
-.cart-item-price { color: #65cf72; font-weight: 500; }
-.cart-item-stock { color: #a1a1aa; font-size: 0.875rem; }
-.cart-item-controls { display: flex; align-items: center; gap: 0.5rem; }
-.btn-cantidad {
-    padding: 0.4rem 0.8rem;
-    background: #3f3f46;
-    color: white;
-    border: 1px solid #52525b;
-    border-radius: 0.375rem;
-    transition: all 0.2s;
-}
-.btn-cantidad:hover:not(:disabled) { background: #52525b; }
-.cantidad-input {
-    width: 60px;
-    text-align: center;
-    background: #3f3f46;
-    color: white;
-    border: 1px solid #52525b;
-    border-radius: 0.375rem;
-    padding: 0.25rem;
-}
-.btn-eliminar { padding: 0.5rem; color: #ef4444; transition: all 0.2s; }
-.btn-eliminar:hover { color: #dc2626; }
-.cart-summary { border-top: 1px solid #3f3f46; padding-top: 1.5rem; margin-top: 1.5rem; }
-.cart-total {
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: white;
-    margin-bottom: 1rem;
-}
-.cart-total-amount { color: #65cf72; }
-.btn-procesar {
-    width: 100%;
-    padding: 1rem;
-    background: #65cf72;
-    color: white;
-    font-weight: 600;
-    text-align: center;
-    border-radius: 0.5rem;
-    transition: all 0.2s;
-}
-.btn-procesar:hover { background: #4fa85a; }
-.btn-seguir-comprando {
-    display: inline-block;
-    margin-top: 1rem;
-    padding: 0.75rem 1.5rem;
-    background: #3f3f46;
-    color: white;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    transition: all 0.2s;
-}
-.btn-seguir-comprando:hover { background: #52525b; }
-.empty-cart { text-align: center; padding: 3rem; }
-.empty-cart i { font-size: 4rem; color: #52525b; margin-bottom: 1rem; }
-</style>
 
 <script>
 /* ==============================
    SISTEMA DE CARRITO FUNCIONAL
    ============================== */
 
-window.carrito = {
+window.carritoView = {
     obtener() {
         return JSON.parse(localStorage.getItem('carrito')) || [];
     },
@@ -108,9 +40,39 @@ window.carrito = {
         localStorage.setItem('carrito', JSON.stringify(items));
     },
     eliminar(productoId) {
-        const items = this.obtener().filter(p => p.id !== productoId);
-        this.guardar(items);
-        actualizarVistaCarrito();
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "El producto será eliminado del carrito",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#3f3f46',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            background: '#27272a',
+            color: '#fff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const items = this.obtener().filter(p => p.id !== productoId);
+                this.guardar(items);
+                actualizarVistaCarrito();
+                
+                // Notificación discreta de éxito
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: '#27272a',
+                    color: '#fff'
+                });
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Producto eliminado'
+                });
+            }
+        });
     },
     actualizarCantidad(productoId, nuevaCantidad) {
         const items = this.obtener().map(p => {
@@ -132,15 +94,18 @@ document.addEventListener('DOMContentLoaded', actualizarVistaCarrito);
 
 function actualizarVistaCarrito() {
     const carritoContainer = document.getElementById('carrito-detallado');
-    const items = window.carrito.obtener();
+    const items = window.carritoView.obtener();
 
     if (items.length === 0) {
         carritoContainer.innerHTML = `
-            <div class="empty-cart">
-                <i class="fas fa-shopping-cart"></i>
-                <p class="text-gray-400 text-lg mb-4">Tu carrito está vacío</p>
-                <a href="{{ route('cliente.menu') }}" class="btn-seguir-comprando">
-                    <i class="fas fa-arrow-left mr-2"></i> Seguir Comprando
+            <div class="text-center py-12">
+                <div class="w-24 h-24 bg-zinc-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-shopping-cart text-4xl text-gray-500"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">Tu carrito está vacío</h2>
+                <p class="text-gray-400 mb-8">¡Agrega algunos productos deliciosos para empezar!</p>
+                <a href="{{ route('cliente.menu') }}" class="inline-flex items-center px-6 py-3 bg-zinc-700 hover:bg-zinc-600 text-white rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-arrow-left mr-2"></i> Ir al Menú
                 </a>
             </div>
         `;
@@ -149,148 +114,94 @@ function actualizarVistaCarrito() {
 
     const total = items.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
 
+    const baseUrl = (window.APP_URL || '').replace(/\/$/, '');
+
     carritoContainer.innerHTML = `
-        ${items.map(item => `
-            <div class="cart-item" data-producto-id="${item.id}">
-                <img src="${item.imagen ? '/storage/' + item.imagen : '{{ asset('assets/placeholder.png') }}'}"
-                     alt="${item.nombre}"
-                     class="cart-item-image">
+        <div class="space-y-4">
+            ${items.map(item => `
+                <div class="flex flex-col md:flex-row items-center gap-4 bg-zinc-700/20 p-4 rounded-xl border border-zinc-700/30 hover:bg-zinc-700/40 transition-all duration-300 group" data-producto-id="${item.id}">
+                    <!-- Imagen -->
+                    <div class="relative flex-shrink-0 w-full md:w-auto flex justify-center md:justify-start">
+                        <img src="${item.imagen ? (item.imagen.startsWith('http') ? item.imagen : baseUrl + '/' + item.imagen.replace(/^\//, '')) : baseUrl + '/assets/placeholder.svg'}"
+                             alt="${item.nombre}"
+                             class="w-24 h-24 object-cover rounded-lg shadow-md group-hover:scale-105 transition-transform duration-300">
+                    </div>
 
-                <div class="cart-item-info">
-                    <h3 class="cart-item-title">${item.nombre}</h3>
-                    <p class="cart-item-price">$${item.precio.toFixed(2)} c/u</p>
-                    <p class="cart-item-stock">Stock disponible: ${item.stock}</p>
+                    <!-- Info -->
+                    <div class="flex-1 text-center md:text-left w-full">
+                        <h3 class="text-lg font-bold text-white mb-1">${item.nombre}</h3>
+                        <p class="text-green-400 font-medium">$${item.precio.toFixed(2)} c/u</p>
+                        <p class="text-gray-500 text-xs mt-1">Stock disponible: ${item.stock || 'N/A'}</p>
+                    </div>
+
+                    <!-- Controles -->
+                    <div class="flex items-center gap-3 bg-zinc-800/50 p-1 rounded-lg border border-zinc-700/50">
+                        <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white hover:bg-zinc-700 rounded-md transition-colors" 
+                                onclick="window.carritoView.actualizarCantidad(${item.id}, ${item.cantidad - 1})"
+                                ${item.cantidad <= 1 ? 'disabled class="opacity-50 cursor-not-allowed w-8 h-8 flex items-center justify-center text-gray-600"' : ''}>
+                            <i class="fas fa-minus text-xs"></i>
+                        </button>
+
+                        <input type="number"
+                               value="${item.cantidad}"
+                               min="1"
+                               max="${item.stock || 99}"
+                               class="w-12 text-center bg-transparent text-white font-bold focus:outline-none border-none p-0"
+                               onchange="window.carritoView.actualizarCantidad(${item.id}, parseInt(this.value))">
+
+                        <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white hover:bg-zinc-700 rounded-md transition-colors" 
+                                onclick="window.carritoView.actualizarCantidad(${item.id}, ${item.cantidad + 1})"
+                                ${item.cantidad >= (item.stock || 99) ? 'disabled class="opacity-50 cursor-not-allowed w-8 h-8 flex items-center justify-center text-gray-600"' : ''}>
+                            <i class="fas fa-plus text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- Subtotal & Eliminar -->
+                    <div class="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-zinc-700/50 pt-4 md:pt-0 mt-2 md:mt-0">
+                        <div class="text-right md:min-w-[100px]">
+                            <p class="text-xs text-gray-500 mb-1">Subtotal</p>
+                            <p class="text-xl font-bold text-white">$${(item.precio * item.cantidad).toFixed(2)}</p>
+                        </div>
+                        
+                        <button class="w-10 h-10 flex items-center justify-center text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-all duration-300" 
+                                onclick="window.carritoView.eliminar(${item.id})"
+                                title="Eliminar producto">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
                 </div>
+            `).join('')}
+        </div>
 
-                <div class="cart-item-controls">
-                    <button class="btn-cantidad" onclick="window.carrito.actualizarCantidad(${item.id}, ${item.cantidad - 1})"
-                            ${item.cantidad <= 1 ? 'disabled' : ''}>
-                        <i class="fas fa-minus"></i>
-                    </button>
+        <!-- Resumen Total -->
+        <div class="mt-8 pt-8 border-t border-zinc-700/50">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <a href="${baseUrl}/cliente/menu" class="text-gray-400 hover:text-white transition-colors flex items-center gap-2 group">
+                    <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                    Seguir Comprando
+                </a>
 
-                    <input type="number"
-                           value="${item.cantidad}"
-                           min="1"
-                           max="${item.stock}"
-                           class="cantidad-input"
-                           onchange="window.carrito.actualizarCantidad(${item.id}, parseInt(this.value))">
+                <div class="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
+                    <div class="text-center md:text-right">
+                        <p class="text-gray-400 text-sm">Total a Pagar</p>
+                        <p class="text-3xl font-bold text-green-400">$${total.toFixed(2)}</p>
+                    </div>
 
-                    <button class="btn-cantidad" onclick="window.carrito.actualizarCantidad(${item.id}, ${item.cantidad + 1})"
-                            ${item.cantidad >= item.stock ? 'disabled' : ''}>
-                        <i class="fas fa-plus"></i>
-                    </button>
+                    <a href="${baseUrl}/cliente/carrito/checkout" class="w-full md:w-auto bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-green-500/20 transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2 group">
+                        <span>Finalizar Compra</span>
+                        <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </a>
                 </div>
-
-                <button class="btn-eliminar" onclick="window.carrito.eliminar(${item.id})">
-                    <i class="fas fa-trash"></i>
-                </button>
             </div>
-        `).join('')}
-
-        <div class="cart-summary">
-            <div class="cart-total">
-                <span>Total</span>
-                <span class="cart-total-amount">$${total.toFixed(2)}</span>
-            </div>
-
-            <button onclick="procesarPedido()" class="btn-procesar">
-                Finalizar Compra
-            </button>
-
-            <a href="{{ route('cliente.menu') }}" class="btn-seguir-comprando">
-                <i class="fas fa-arrow-left mr-2"></i> Seguir Comprando
-            </a>
         </div>
     `;
 }
 
+// Nota: La función procesarPedido ya no se usa aquí porque el botón redirige a checkout,
+// pero la mantenemos por si acaso se necesita lógica futura o compatibilidad.
 function procesarPedido() {
-    console.log('🔵 Iniciando procesarPedido()');
-
-    const items = window.carrito.obtener();
-    console.log('🔵 Items en carrito:', items);
-
-    if (items.length === 0) {
-        console.warn('⚠️ Carrito vacío');
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Carrito Vacío',
-                text: 'Agrega algunos productos antes de procesar el pedido.'
-            });
-        } else {
-            alert('Tu carrito está vacío');
-        }
-        return;
-    }
-
-    console.log('📤 Enviando fetch a: {{ route('cliente.carrito.api.finalizar') }}');
-
-    fetch("{{ route('api.finalizar') }}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRF-TOKEN": "{{ csrf_token() }}"
-        },
-        body: JSON.stringify({ carrito: items })
-    })
-    .then(res => {
-        console.log('📥 Respuesta recibida, status:', res.status);
-        console.log('📥 Content-Type:', res.headers.get('content-type'));
-        return res.text().then(text => {
-            console.log('📥 Body (texto):', text);
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('❌ Error al parsear JSON:', e);
-                throw new Error('Respuesta no es JSON válido: ' + text.substring(0, 100));
-            }
-        });
-    })
-    .then(data => {
-        console.log('✅ Datos parseados:', data);
-        if (data.success) {
-            console.log('✅ Éxito! Pedido creado:', data.pedido_id);
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Pedido realizado!',
-                    text: 'Tu pedido se ha creado exitosamente.',
-                    confirmButtonColor: '#65cf72'
-                }).then(() => {
-                    window.carrito.limpiar();
-                    window.location.href = "{{ route('cliente.pedidos.index') }}";
-                });
-            } else {
-                alert('¡Pedido realizado exitosamente!');
-                window.carrito.limpiar();
-                window.location.href = "{{ route('cliente.pedidos.index') }}";
-            }
-        } else {
-            console.error('❌ Error en la respuesta:', data.message);
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.message || 'No se pudo procesar tu pedido.'
-                });
-            } else {
-                alert('Error: ' + (data.message || 'No se pudo procesar tu pedido.'));
-            }
-        }
-    })
-    .catch(error => {
-        console.error('❌ Error en fetch:', error);
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error del servidor',
-                text: error.message || 'Inténtalo nuevamente más tarde.'
-            });
-        } else {
-            alert('Error del servidor: ' + error.message);
-        }
-    });
+    // Redirigir a checkout
+    window.location.href = "{{ route('cliente.carrito.checkout') }}";
 }
 </script>
 @endsection

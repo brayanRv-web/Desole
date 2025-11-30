@@ -276,6 +276,7 @@
                                     <input type="checkbox" 
                                            name="productos[]" 
                                            value="{{ $producto->id }}"
+                                           data-price="{{ $producto->precio }}"
                                            {{ $isSelected ? 'checked' : '' }}
                                            {{ $isInactive ? 'disabled' : '' }}
                                            class="rounded border-gray-600 bg-gray-700 text-green-500 focus:ring-green-500 focus:ring-2 transform scale-110
@@ -508,18 +509,61 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update discount suffix and example based on discount type
     function updateDiscountDisplay() {
         const selectedType = document.querySelector('input[name="tipo_descuento"]:checked');
-        const value = parseFloat(valorDescuento.value) || 0;
+        let value = parseFloat(valorDescuento.value) || 0;
         
         if (selectedType) {
             if (selectedType.value === 'porcentaje') {
                 discountSuffix.textContent = '%';
-                const discountAmount = (100 * value / 100);
-                const finalPrice = 100 - discountAmount;
-                exampleText.textContent = `Ejemplo: ${value}% = $${finalPrice.toFixed(2)} de $100.00 (ahorro: $${discountAmount.toFixed(2)})`;
+                
+                // Enforce max 100 for percentage
+                if (value > 100) {
+                    value = 100;
+                    valorDescuento.value = 100;
+                    showTempAlert('El porcentaje no puede ser mayor a 100%', 'warning');
+                }
+
+                // Calculate total price of selected products
+                let totalSelectedPrice = 0;
+                const checkedProducts = document.querySelectorAll('input[name="productos[]"]:checked');
+                checkedProducts.forEach(cb => {
+                    totalSelectedPrice += parseFloat(cb.getAttribute('data-price')) || 0;
+                });
+                
+                const basePrice = totalSelectedPrice > 0 ? totalSelectedPrice : 100;
+                const basePriceText = totalSelectedPrice > 0 ? 'Total seleccionados' : 'Ejemplo base';
+
+                const discountAmount = (basePrice * value / 100);
+                const finalPrice = basePrice - discountAmount;
+                exampleText.innerHTML = `<strong>${basePriceText}: $${basePrice.toFixed(2)}</strong> <br> Descuento: $${discountAmount.toFixed(2)} <br> <strong>Final: $${finalPrice.toFixed(2)}</strong>`;
             } else {
                 discountSuffix.textContent = '$';
-                const finalPrice = Math.max(0, 100 - value);
-                exampleText.textContent = `Ejemplo: $${value.toFixed(2)} = $${finalPrice.toFixed(2)} de $100.00 (ahorro: $${value.toFixed(2)})`;
+                
+                // Validate fixed amount against min product price
+                const checkedProducts = document.querySelectorAll('input[name="productos[]"]:checked');
+                let totalSelectedPrice = 0;
+                
+                if (checkedProducts.length > 0) {
+                    let minPrice = Infinity;
+                    checkedProducts.forEach(cb => {
+                        const price = parseFloat(cb.getAttribute('data-price')) || 0;
+                        if (price < minPrice) minPrice = price;
+                        totalSelectedPrice += price;
+                    });
+                    
+                    if (minPrice !== Infinity && value > minPrice) {
+                        showTempAlert(`El descuento no puede ser mayor al precio del producto más barato ($${minPrice.toFixed(2)})`, 'warning');
+                        value = minPrice;
+                        valorDescuento.value = minPrice.toFixed(2);
+                    }
+                }
+
+                const basePrice = totalSelectedPrice > 0 ? totalSelectedPrice : 100;
+                const basePriceText = totalSelectedPrice > 0 ? 'Total seleccionados' : 'Ejemplo base';
+                
+                const totalDiscount = totalSelectedPrice > 0 ? (value * checkedProducts.length) : value;
+                const finalPrice = Math.max(0, basePrice - totalDiscount);
+                
+                exampleText.innerHTML = `<strong>${basePriceText}: $${basePrice.toFixed(2)}</strong> <br> Descuento Total: $${totalDiscount.toFixed(2)} ($${value.toFixed(2)} x ${checkedProducts.length || 1} prod) <br> <strong>Final: $${finalPrice.toFixed(2)}</strong>`;
             }
         }
     }
@@ -531,6 +575,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Listen for discount value changes
     valorDescuento.addEventListener('input', updateDiscountDisplay);
+
+    // Listen for product selection changes
+    document.querySelectorAll('input[name="productos[]"]').forEach(cb => {
+        cb.addEventListener('change', updateDiscountDisplay);
+    });
 
     // Initialize display
     updateDiscountDisplay();

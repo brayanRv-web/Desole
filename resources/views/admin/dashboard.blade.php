@@ -3,7 +3,17 @@
 @section('content')
 @php
     // Calcular estado del local
-    $horarioHoy = $horarios->firstWhere('dia_semana', strtolower(now()->isoFormat('dddd')));
+    $dias = [
+        0 => 'domingo',
+        1 => 'lunes',
+        2 => 'martes',
+        3 => 'miercoles',
+        4 => 'jueves',
+        5 => 'viernes',
+        6 => 'sabado'
+    ];
+    $diaActual = $dias[now('America/Mexico_City')->dayOfWeek];
+    $horarioHoy = $horarios->firstWhere('dia_semana', $diaActual);
     $estaAbierto = $horarioHoy && $horarioHoy->activo && $horarioHoy->estaAbierto();
 @endphp
 

@@ -157,9 +157,7 @@
                             <th class="px-6 py-4 text-left text-blue-300 font-semibold text-sm uppercase tracking-wider">
                                 <i class="fas fa-toggle-on mr-2"></i>Estado
                             </th>
-                            <th class="px-6 py-4 text-center text-blue-300 font-semibold text-sm uppercase tracking-wider">
-                                <i class="fas fa-cogs mr-2"></i>Acciones
-                            </th>
+
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-700/50">
@@ -229,13 +227,7 @@
                             </td>
 
                             <!-- Acciones -->
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <a href="{{ route('admin.horarios.edit', $horario) }}" 
-                                   class="bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/50 text-blue-400 p-2 rounded-xl transition-all duration-200"
-                                   title="Editar horario individualmente">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </td>
+
                         </tr>
                         @endforeach
                     </tbody>

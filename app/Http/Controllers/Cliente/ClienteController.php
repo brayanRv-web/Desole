@@ -154,12 +154,7 @@ class ClienteController extends Controller
             'nombre' => 'required|string|max:255',
             'email' => 'required|email|unique:clientes,email,' . $cliente->id,
             'telefono' => 'required|string|max:20|unique:clientes,telefono,' . $cliente->id,
-            'direccion' => 'required|string|max:500',
-            'colonia' => 'required|string|max:255',
-            'fecha_nacimiento' => 'required|date',
-            'alergias' => 'nullable|string|max:500',
-            'preferencias' => 'nullable|string|max:500',
-            'referencias' => 'nullable|string|max:500',
+            'direccion' => 'nullable|string|max:500',
         ]);
 
         // Actualizar contraseña si se proporciona
@@ -338,13 +333,13 @@ class ClienteController extends Controller
             abort(403, 'No tienes permiso para ver este pedido');
         }
 
-        // Construir mapa de productos a partir de los items del pedido
-        $items = $pedido->items ?? [];
-        $productoIds = collect($items)->pluck('producto_id')->filter()->values()->all();
-        $productos = [];
-        if (!empty($productoIds)) {
-            $productos = Producto::whereIn('id', $productoIds)->get()->keyBy('id');
-        }
+        // Cargar detalles
+        $pedido->load('detalles.producto');
+
+        // Construir mapa de productos a partir de los detalles
+        $productos = $pedido->detalles->mapWithKeys(function ($detalle) {
+            return [$detalle->producto_id => $detalle->producto];
+        });
 
         return view('cliente.pedidos.show', compact('pedido', 'productos'));
     }
@@ -354,9 +349,8 @@ class ClienteController extends Controller
      */
     private function getActivePromociones()
     {
-        return Promocion::where('activa', true)
-            ->where('fecha_inicio', '<=', now())
-            ->where('fecha_fin', '>=', now())
+        return Promocion::fullyAvailable()
+            ->with('productos')
             ->get();
     }
 

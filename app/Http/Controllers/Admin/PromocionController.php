@@ -25,7 +25,7 @@ class PromocionController extends Controller
 
     public function create()
     {
-        $productos = $this->catalogService->getAvailableProductosForAdmin();
+        $productos = $this->catalogService->getProductosActivosForAdmin();
         return view('admin.promociones.create', compact('productos'));
     }
 
@@ -42,8 +42,19 @@ class PromocionController extends Controller
             'productos.*' => 'exists:productos,id'
         ]);
 
+        if ($request->tipo_descuento === 'porcentaje' && $request->valor_descuento > 100) {
+            return back()->withErrors(['valor_descuento' => 'El porcentaje de descuento no puede ser mayor a 100.'])->withInput();
+        }
+
+        if ($request->tipo_descuento === 'monto_fijo') {
+            $minPrice = Producto::whereIn('id', $request->productos)->min('precio');
+            if ($request->valor_descuento > $minPrice) {
+                return back()->withErrors(['valor_descuento' => 'El descuento fijo no puede ser mayor al precio del producto más barato seleccionado ($' . number_format($minPrice, 2) . ').'])->withInput();
+            }
+        }
+
         $productosInactivos = Producto::whereIn('id', $request->productos)
-                                    ->where('estado', '!=', 'activo')
+                                    ->where('status', '!=', 'activo')
                                     ->exists();
 
         if ($productosInactivos) {
@@ -66,7 +77,7 @@ class PromocionController extends Controller
     public function edit(Promocion $promocione)
     {
         $promocion = $promocione;
-        $productos = $this->catalogService->getAvailableProductosForAdmin();
+        $productos = $this->catalogService->getProductosActivosForAdmin();
         $productosSeleccionados = $promocion->productos->pluck('id')->toArray();
 
         return view('admin.promociones.edit', compact('promocion', 'productos', 'productosSeleccionados'));
@@ -87,8 +98,19 @@ class PromocionController extends Controller
             'productos.*' => 'exists:productos,id'
         ]);
 
+        if ($request->tipo_descuento === 'porcentaje' && $request->valor_descuento > 100) {
+            return back()->withErrors(['valor_descuento' => 'El porcentaje de descuento no puede ser mayor a 100.'])->withInput();
+        }
+
+        if ($request->tipo_descuento === 'monto_fijo') {
+            $minPrice = Producto::whereIn('id', $request->productos)->min('precio');
+            if ($request->valor_descuento > $minPrice) {
+                return back()->withErrors(['valor_descuento' => 'El descuento fijo no puede ser mayor al precio del producto más barato seleccionado ($' . number_format($minPrice, 2) . ').'])->withInput();
+            }
+        }
+
         $productosInactivos = Producto::whereIn('id', $request->productos)
-                                    ->where('estado', '!=', 'activo')
+                                    ->where('status', '!=', 'activo')
                                     ->exists();
 
         if ($productosInactivos) {

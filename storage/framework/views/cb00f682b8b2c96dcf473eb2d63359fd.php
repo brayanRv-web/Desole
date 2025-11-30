@@ -9,9 +9,6 @@
                 <div class="user-greeting">
                     <h1>¡Hola, <?php echo e($cliente->nombre); ?>! 👋</h1>
                     <p class="welcome-text">Bienvenido a tu panel de DÉSOLÉ</p>
-                    <?php if($cliente->primera_visita): ?>
-                        <small class="member-since">Miembro desde: <?php echo e($cliente->primera_visita->format('d/m/Y')); ?></small>
-                    <?php endif; ?>
                 </div>
                 <div class="last-visit">
                     <div class="visit-badge">
@@ -57,27 +54,9 @@
                         
                         <div class="info-group">
                             <label class="info-label">Dirección</label>
-                            <p class="info-value"><?php echo e($cliente->direccion); ?>, <?php echo e($cliente->colonia); ?></p>
+                            <p class="info-value"><?php echo e($cliente->direccion ?: 'Sin dirección registrada'); ?></p>
                         </div>
-
-                        <?php if($cliente->fecha_nacimiento): ?>
-                        <div class="info-group">
-                            <label class="info-label">Fecha de Nacimiento</label>
-                            <p class="info-value"><?php echo e($cliente->fecha_nacimiento->format('d/m/Y')); ?></p>
-                        </div>
-                        <?php endif; ?>
-
-                        <div class="info-group">
-                            <label class="info-label">Preferencias Alimenticias</label>
-                            <p class="info-value"><?php echo e($cliente->preferencias ?: 'Sin preferencias registradas'); ?></p>
-                        </div>
-
-                        <?php if($cliente->alergias): ?>
-                        <div class="info-group full-width">
-                            <label class="info-label warning"><i class="fas fa-exclamation-triangle me-1"></i>Alergias</label>
-                            <p class="info-value warning"><?php echo e($cliente->alergias); ?></p>
-                        </div>
-                        <?php endif; ?>
+                    </div>
                     </div>
                 </div>
             </div>

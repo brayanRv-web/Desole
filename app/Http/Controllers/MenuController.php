@@ -24,9 +24,9 @@ class MenuController extends Controller
         $categorias = $this->catalogService->getActiveCategoriasWithProductos();
         
         // Obtener promociones activas
-        $promociones = Promocion::where('activa', true)
-            ->where('fecha_inicio', '<=', now())
-            ->where('fecha_fin', '>=', now())
+        // Obtener promociones activas y válidas
+        $promociones = Promocion::fullyAvailable()
+            ->with('productos')
             ->get();
 
         return view('public.menu', compact('productos', 'categorias', 'promociones'));

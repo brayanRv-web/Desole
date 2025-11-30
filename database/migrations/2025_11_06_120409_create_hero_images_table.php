@@ -15,6 +15,14 @@ return new class extends Migration
         if (!Schema::hasTable('hero_images')) {
             Schema::create('hero_images', function (Blueprint $table) {
                 $table->id();
+                $table->string('imagen')->nullable();
+                $table->string('titulo')->nullable();
+                $table->string('subtitulo')->nullable();
+                $table->text('descripcion')->nullable();
+                $table->string('tipo')->default('hero');
+                $table->integer('orden')->default(0);
+                $table->string('enlace')->nullable();
+                $table->boolean('status')->default(true);
                 $table->timestamps();
             });
         }

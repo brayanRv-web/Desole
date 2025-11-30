@@ -41,12 +41,9 @@
                             <i class="fas fa-plus mr-2"></i>Seguir Comprando
                         </a>
                         
-                        <form id="finalizarForm" action="{{ route('cliente.carrito.finalizar') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg font-semibold transition duration-300 transform hover:scale-105">
-                                <i class="fas fa-credit-card mr-2"></i>Finalizar Compra
-                            </button>
-                        </form>
+                        <a href="{{ route('cliente.carrito.pago') }}" class="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg font-semibold transition duration-300 transform hover:scale-105 flex items-center">
+                            <i class="fas fa-credit-card mr-2"></i>Finalizar Compra
+                        </a>
                     </div>
                 </div>
             @endif

@@ -69,8 +69,8 @@ class Carrito {
         </div>
         <div class="modal-body" id="carrito-body">
           ${this.items.length === 0
-            ? '<p class="text-center text-secondary">Tu carrito está vacío.</p>'
-            : this.items.map(p => `
+        ? '<p class="text-center text-secondary">Tu carrito está vacío.</p>'
+        : this.items.map(p => `
               <div class="cart-item" data-id="${p.id}">
                 <div>
                   <strong>${p.nombre}</strong>
@@ -189,101 +189,34 @@ class Carrito {
       return;
     }
 
-    console.log('🔵 Iniciando procesar() desde carrito.js');
-    console.log('Items:', this.items);
+    console.log('🔵 Redirigiendo a checkout desde carrito.js');
 
-    // URL para el API 
+    // Usar APP_URL global si está definida (inyectada en layout)
+    if (window.APP_URL) {
+      const baseUrl = window.APP_URL.replace(/\/$/, '');
+      window.location.href = `${baseUrl}/cliente/carrito/checkout`;
+      return;
+    }
+
+    // Fallback: intentar deducir base path si APP_URL no existe
     const pathname = window.location.pathname;
-    const clienteIndex = pathname.indexOf('/cliente/');
-    let apiUrl = '/cliente/carrito/api/finalizar';
-    let redirectBase = '/cliente/pedidos/';
-    
-    if (clienteIndex !== -1) {
+    // Si estamos en /Desole/public/ o similar, tratar de conservar el prefijo
+    // Buscamos 'public' o el nombre del proyecto si es común
+    let checkoutUrl = '/cliente/carrito/checkout';
+
+    // Si la URL actual contiene 'public', asumimos que es parte del base path
+    const publicIndex = pathname.indexOf('/public/');
+    if (publicIndex !== -1) {
+      const base = pathname.substring(0, publicIndex + 8); // incluir /public/
+      checkoutUrl = base + 'cliente/carrito/checkout';
+    } else if (pathname.indexOf('/cliente/') !== -1) {
+      const clienteIndex = pathname.indexOf('/cliente/');
       const base = pathname.substring(0, clienteIndex);
-      apiUrl = base + '/cliente/carrito/api/finalizar';
-      redirectBase = base + '/cliente/pedidos/';
-    }
-    
-    console.log('📤 Current pathname:', pathname);
-    console.log('📤 API URL:', apiUrl);
-
-    // Obtener CSRF token de múltiples fuentes
-    let csrfToken = '';
-    
-    // 1. Intentar desde meta tag
-    csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
-    console.log('📤 CSRF token (desde meta):', csrfToken ? 'encontrado' : 'NO encontrado');
-    
-    // 2. Si no está, intentar desde cookie XSRF-TOKEN
-    if (!csrfToken) {
-      const name = 'XSRF-TOKEN';
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) {
-        csrfToken = decodeURIComponent(parts.pop().split(';').shift());
-        console.log('📤 CSRF token (desde cookie):', csrfToken ? 'encontrado' : 'NO encontrado');
-      }
+      checkoutUrl = base + '/cliente/carrito/checkout';
     }
 
-    // Construir headers
-    const headers = {
-      'Content-Type': 'application/json',
-    };
-    
-    if (csrfToken) {
-      headers['X-CSRF-TOKEN'] = csrfToken;
-      // Also set X-XSRF-TOKEN for frameworks that expect this header
-      headers['X-XSRF-TOKEN'] = csrfToken;
-      // Ask server for JSON responses
-      headers['Accept'] = 'application/json';
-      console.log('📤 Enviando X-CSRF-TOKEN / X-XSRF-TOKEN');
-    } else {
-      console.warn('⚠️  No se encontró CSRF token');
-    }
-
-    // Enviar AJAX al endpoint API (incluye credenciales para enviar cookie de sesión)
-    fetch(apiUrl, {
-      method: 'POST',
-      headers: headers,
-      credentials: 'same-origin',
-      body: JSON.stringify({ carrito: this.items })
-    })
-    .then(res => {
-      console.log('📥 Respuesta status:', res.status);
-      return res.text().then(text => {
-        console.log('📥 Body (primeros 200 chars):', text.substring(0, 200));
-        if (res.status === 419) {
-          console.error('❌ 419 Sesión expirada o token CSRF inválido');
-          console.error('📥 Body completo:', text);
-          throw new Error('Sesión expirada. Por favor recarga la página e inicia sesión de nuevo.');
-        }
-        try {
-          return JSON.parse(text);
-        } catch (e) {
-          console.error('❌ Error al parsear JSON:', e);
-          console.error('📥 Body completo:', text);
-          throw new Error('Respuesta no es JSON válido');
-        }
-      });
-    })
-    .then(data => {
-      console.log('✅ Datos parseados:', data);
-      if (data.success) {
-        this._notify('¡Pedido realizado exitosamente!', 'success');
-        this.limpiar();
-        setTimeout(() => {
-          const redirectUrl = redirectBase + data.pedido_id;
-          console.log('🔄 Redirigiendo a:', redirectUrl);
-          window.location.href = redirectUrl;
-        }, 500);
-      } else {
-        this._notify(data.message || 'Error al procesar pedido', 'error');
-      }
-    })
-    .catch(error => {
-      console.error('❌ Error en fetch:', error);
-      this._notify(error.message || 'Error del servidor', 'error');
-    });
+    console.log('🔄 Redirigiendo a (fallback):', checkoutUrl);
+    window.location.href = checkoutUrl;
   }
 
   /* ---------------------------

@@ -11,9 +11,6 @@
                 <div class="user-greeting">
                     <h1>¡Hola, {{ $cliente->nombre }}! 👋</h1>
                     <p class="welcome-text">Bienvenido a tu panel de DÉSOLÉ</p>
-                    @if($cliente->primera_visita)
-                        <small class="member-since">Miembro desde: {{ $cliente->primera_visita->format('d/m/Y') }}</small>
-                    @endif
                 </div>
                 <div class="last-visit">
                     <div class="visit-badge">
@@ -58,27 +55,9 @@
                         
                         <div class="info-group">
                             <label class="info-label">Dirección</label>
-                            <p class="info-value">{{ $cliente->direccion }}, {{ $cliente->colonia }}</p>
+                            <p class="info-value">{{ $cliente->direccion ?: 'Sin dirección registrada' }}</p>
                         </div>
-
-                        @if($cliente->fecha_nacimiento)
-                        <div class="info-group">
-                            <label class="info-label">Fecha de Nacimiento</label>
-                            <p class="info-value">{{ $cliente->fecha_nacimiento->format('d/m/Y') }}</p>
-                        </div>
-                        @endif
-
-                        <div class="info-group">
-                            <label class="info-label">Preferencias Alimenticias</label>
-                            <p class="info-value">{{ $cliente->preferencias ?: 'Sin preferencias registradas' }}</p>
-                        </div>
-
-                        @if($cliente->alergias)
-                        <div class="info-group full-width">
-                            <label class="info-label warning"><i class="fas fa-exclamation-triangle me-1"></i>Alergias</label>
-                            <p class="info-value warning">{{ $cliente->alergias }}</p>
-                        </div>
-                        @endif
+                    </div>
                     </div>
                 </div>
             </div>

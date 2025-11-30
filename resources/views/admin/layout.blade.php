@@ -200,5 +200,143 @@
             </div>
         </main>
     </div>
+    @stack('scripts')
+    
+    <!-- Global Audio Notification Script -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener el último ID de pedido al cargar la página
+            @php
+                $latestOrder = \App\Models\Pedido::latest('id')->first();
+                $initialLastId = $latestOrder ? $latestOrder->id : 0;
+            @endphp
+            let lastOrderId = {{ $initialLastId }};
+            
+            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+            
+            // Persistencia de Audio
+            let audioEnabled = localStorage.getItem('admin_audio_enabled') === 'true';
+
+            // Botón flotante
+            const enableAudioBtn = document.createElement('button');
+            enableAudioBtn.className = 'fixed bottom-4 right-4 bg-zinc-800 text-white p-3 rounded-full shadow-lg border border-zinc-700 hover:bg-zinc-700 transition-all z-50';
+            enableAudioBtn.title = "Configuración de Sonido";
+            
+            function updateAudioButton() {
+                if (audioEnabled) {
+                    enableAudioBtn.innerHTML = '<i class="fas fa-volume-up text-green-400"></i>';
+                    enableAudioBtn.classList.remove('animate-bounce');
+                } else {
+                    enableAudioBtn.innerHTML = '<i class="fas fa-volume-mute text-red-400"></i>';
+                    enableAudioBtn.classList.add('animate-bounce');
+                }
+            }
+
+            enableAudioBtn.onclick = () => {
+                if (!audioEnabled) {
+                    // Activar
+                    audio.play().then(() => {
+                        audio.pause();
+                        audio.currentTime = 0;
+                        audioEnabled = true;
+                        localStorage.setItem('admin_audio_enabled', 'true');
+                        updateAudioButton();
+                        
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            background: '#27272a',
+                            color: '#fff'
+                        });
+                        Toast.fire({ icon: 'success', title: 'Sonido activado' });
+                    }).catch(e => console.error("No se pudo activar audio:", e));
+                } else {
+                    // Desactivar
+                    audioEnabled = false;
+                    localStorage.setItem('admin_audio_enabled', 'false');
+                    updateAudioButton();
+                }
+            };
+            document.body.appendChild(enableAudioBtn);
+
+            // Intentar activar audio al cargar si estaba activado
+            if (audioEnabled) {
+                updateAudioButton();
+                // Intentar reproducir silencio para "desbloquear" si el navegador lo permite
+                audio.play().then(() => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }).catch(() => {
+                    console.log("Audio bloqueado por navegador, requiere interacción.");
+                    // Revertir estado visual y lógico porque el navegador lo bloqueó
+                    audioEnabled = false;
+                    updateAudioButton();
+                    
+                    // Avisar al usuario
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000,
+                        background: '#27272a',
+                        color: '#fff'
+                    });
+                    Toast.fire({
+                        icon: 'warning',
+                        title: 'Acción requerida',
+                        text: 'Haz clic en el icono de sonido para activar las alertas.'
+                    });
+                });
+            } else {
+                updateAudioButton();
+            }
+
+            // Polling Global (Cada 5 segundos)
+            setInterval(() => {
+                fetch("{{ route('admin.pedidos.check') }}?last_id=" + lastOrderId)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.has_new) {
+                            // Actualizar ID
+                            lastOrderId = data.latest_id;
+
+                            // Reproducir sonido
+                            if (audioEnabled) {
+                                audio.play().catch(e => {
+                                    console.log('Audio bloqueado:', e);
+                                    // Si falla aquí también, avisar de nuevo
+                                    if(audioEnabled) {
+                                        audioEnabled = false;
+                                        updateAudioButton();
+                                    }
+                                });
+                            }
+
+                            // Mostrar Toast Global
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 5000,
+                                background: '#27272a',
+                                color: '#fff'
+                            });
+                            Toast.fire({
+                                icon: 'info',
+                                title: '¡Nuevo Pedido!',
+                                text: 'Se ha recibido un nuevo pedido.'
+                            });
+
+                            // Disparar evento para que otras vistas se actualicen
+                            document.dispatchEvent(new CustomEvent('new-order-received', { detail: data }));
+                        }
+                    })
+                    .catch(err => console.error('Error polling:', err));
+            }, 5000); // 5 segundos
+        });
+    </script>
 </body>
 </html>

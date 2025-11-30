@@ -13,11 +13,17 @@ return new class extends Migration
     {
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('cliente_id')->nullable()->constrained('clientes')->onDelete('set null');
             $table->string('cliente_nombre')->nullable();
             $table->string('cliente_telefono')->nullable();
             $table->text('direccion')->nullable();
             $table->decimal('total', 10, 2)->default(0);
-            $table->string('status')->default('pendiente'); // pendiente, preparando, listo, entregado, cancelado
+            $table->string('estado')->default('pendiente'); // pendiente, preparando, listo, entregado, cancelado
+            $table->string('tiempo_estimado')->nullable()->comment('Tiempo estimado (ej. 15 min)');
+            $table->boolean('stock_descontado')->default(false);
+            $table->text('notas')->nullable();
+            $table->string('metodo_pago')->nullable();
+            $table->boolean('oculto_cliente')->default(false);
             $table->json('items')->nullable()->comment('Lista JSON de ítems: [{"nombre":"...","cantidad":1,"precio":...}]');
             $table->timestamps();
         });

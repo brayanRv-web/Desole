@@ -20,6 +20,7 @@
     <!-- Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        window.APP_URL = "{{ url('/') }}";
         tailwind.config = {
             darkMode: 'class',
             theme: {

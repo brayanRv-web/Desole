@@ -18,13 +18,13 @@ class PedidoResource extends JsonResource
             ],
             'estado' => $this->estado,
             'total' => $this->total,
-            'items' => collect($this->items)->map(function ($item) {
+            'items' => $this->detalles->map(function ($detalle) {
                 return [
-                    'producto_id' => $item['producto_id'],
-                    'nombre' => $item['nombre'],
-                    'cantidad' => $item['cantidad'],
-                    'precio_unitario' => $item['precio_unitario'],
-                    'subtotal' => $item['cantidad'] * $item['precio_unitario'],
+                    'producto_id' => $detalle->producto_id,
+                    'nombre' => $detalle->producto->nombre ?? 'Producto eliminado',
+                    'cantidad' => $detalle->cantidad,
+                    'precio_unitario' => $detalle->precio,
+                    'subtotal' => $detalle->cantidad * $detalle->precio,
                 ];
             }),
             'created_at' => $this->created_at,

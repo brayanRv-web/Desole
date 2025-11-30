@@ -195,41 +195,9 @@
         </div>
 
         <div class="form-group">
-          <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección completa</label>
-          <input type="text" id="direccion" name="direccion" class="form-control" value="{{ old('direccion') }}" required>
+          <label for="direccion"><i class="fas fa-map-marker-alt"></i> Dirección completa (Opcional)</label>
+          <input type="text" id="direccion" name="direccion" class="form-control" value="{{ old('direccion') }}" placeholder="Calle, número, colonia...">
           @error('direccion') <div class="error-message">{{ $message }}</div> @enderror
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="colonia"><i class="fas fa-location-dot"></i> Colonia</label>
-            <input type="text" id="colonia" name="colonia" class="form-control" value="{{ old('colonia') }}" required>
-            @error('colonia') <div class="error-message">{{ $message }}</div> @enderror
-          </div>
-
-          <div class="form-group">
-            <label for="fecha_nacimiento"><i class="fas fa-cake-candles"></i> Fecha de nacimiento</label>
-            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" class="form-control" value="{{ old('fecha_nacimiento') }}" required>
-            @error('fecha_nacimiento') <div class="error-message">{{ $message }}</div> @enderror
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="referencias"><i class="fas fa-map-pin"></i> Referencias de domicilio</label>
-          <input type="text" id="referencias" name="referencias" class="form-control" value="{{ old('referencias') }}" placeholder="Ej: Casa color azul, junto a...">
-          @error('referencias') <div class="error-message">{{ $message }}</div> @enderror
-        </div>
-
-        <div class="form-group">
-          <label for="alergias"><i class="fas fa-heart"></i> Alergias alimenticias</label>
-          <input type="text" id="alergias" name="alergias" class="form-control" value="{{ old('alergias') }}" placeholder="Ej: Sin gluten, alergia a nueces...">
-          @error('alergias') <div class="error-message">{{ $message }}</div> @enderror
-        </div>
-
-        <div class="form-group">
-          <label for="preferencias"><i class="fas fa-star"></i> Preferencias alimenticias</label>
-          <input type="text" id="preferencias" name="preferencias" class="form-control" value="{{ old('preferencias') }}" placeholder="Ej: Vegano, sin azúcar, etc.">
-          @error('preferencias') <div class="error-message">{{ $message }}</div> @enderror
         </div>
 
         <div class="form-row">

@@ -26,6 +26,40 @@ class Producto extends Model
         return $this->belongsTo(Categoria::class);
     }
 
+    // Relación con promociones
+    public function promociones()
+    {
+        return $this->belongsToMany(Promocion::class, 'producto_promocion')
+                    ->withTimestamps();
+    }
+
+    // Obtener la promoción activa más relevante
+    public function getPromocionActivaAttribute()
+    {
+        return $this->promociones()
+                    ->where('activa', true)
+                    ->where('fecha_inicio', '<=', now())
+                    ->where('fecha_fin', '>=', now())
+                    ->orderBy('created_at', 'desc') // Priorizar la más reciente si hay varias
+                    ->first();
+    }
+
+    // Obtener el precio con descuento (si existe)
+    public function getPrecioDescuentoAttribute()
+    {
+        $promocion = $this->promocionActiva;
+
+        if (!$promocion) {
+            return null;
+        }
+
+        if ($promocion->tipo_descuento === 'porcentaje') {
+            return $this->precio * (1 - ($promocion->valor_descuento / 100));
+        }
+
+        return max(0, $this->precio - $promocion->valor_descuento);
+    }
+
     // Scope para productos disponibles
     public function scopeDisponibles($query)
     {

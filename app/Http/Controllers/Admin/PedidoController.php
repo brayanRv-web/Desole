@@ -51,7 +51,7 @@ class PedidoController extends Controller
 
     public function show(Pedido $pedido)
     {
-        $pedido->load(['cliente']);
+        $pedido->load(['cliente', 'detalles.producto']);
 
         // Asegurar que los datos del cliente estén disponibles
         if (!$pedido->cliente_nombre && $pedido->cliente) {
@@ -98,5 +98,23 @@ class PedidoController extends Controller
             Log::error("Error al actualizar pedido {$pedido->id}: {$e->getMessage()}");
             return redirect()->back()->with('error', 'Error al actualizar el estado: ' . $e->getMessage());
         }
+    }
+    public function checkNewOrders(Request $request)
+    {
+        $lastId = $request->input('last_id', 0);
+        
+        // Buscar pedidos nuevos con ID mayor al último conocido
+        $newOrders = Pedido::where('id', '>', $lastId)
+            ->where('estado', 'pendiente') // Solo notificar pendientes
+            ->count();
+            
+        $latestOrder = Pedido::latest('id')->first();
+        $currentMaxId = $latestOrder ? $latestOrder->id : 0;
+
+        return response()->json([
+            'new_orders_count' => $newOrders,
+            'latest_id' => $currentMaxId,
+            'has_new' => $newOrders > 0
+        ]);
     }
 }

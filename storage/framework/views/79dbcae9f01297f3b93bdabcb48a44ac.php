@@ -6,11 +6,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DÉSOLÉ - Cafetería nocturna</title>
   <meta name="description" content="DESOLE - Cafetería nocturna. Alitas, pizzadogs, frappés y promociones nocturnas. Pedidos por WhatsApp o en línea." />
+  <script>
+      window.APP_URL = "<?php echo e(url('/')); ?>";
+  </script>
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- AOS Animation -->
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+      tailwind.config = {
+          darkMode: 'class',
+          theme: {
+              extend: {
+                  fontFamily: {
+                      sans: ['Poppins', 'sans-serif'],
+                  },
+                  colors: {
+                        zinc: {
+                            700: '#3f3f46',
+                            800: '#27272a',
+                            900: '#18181b',
+                        }
+                    }
+              }
+          }
+      }
+  </script>
 
   <!-- Estilos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -95,35 +120,89 @@
           <p>Vuelve pronto para descubrir nuestras ofertas especiales</p>
         </div>
       <?php else: ?>
-        <div class="promociones-grid">
+        <div class="<?php echo e($promociones->count() === 1 ? 'flex justify-center' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'); ?> gap-4">
           <?php $__currentLoopData = $promociones; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $promo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div class="promo-card">
-              <h3 class="promo-name"><?php echo e($promo->nombre); ?></h3>
-              <p class="promo-desc"><?php echo e($promo->descripcion); ?></p>
+            <?php
+                $totalOriginal = 0;
+                $totalDescuento = 0;
+                // Usar productosActivos si existe, sino fallback a productos (aunque en welcome siempre debería ser activos)
+                $productos = $promo->productosActivos ?? $promo->productos;
+                
+                foreach($productos as $prod) {
+                    $totalOriginal += $prod->precio;
+                    $totalDescuento += $prod->precio_descuento;
+                }
+                $ahorro = $totalOriginal - $totalDescuento;
+            ?>
+            <div class="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-xl p-4 flex flex-col shadow-lg hover:border-green-500/30 transition-all duration-300 group <?php echo e($promociones->count() === 1 ? 'w-full max-w-md' : ''); ?>" data-aos="fade-up">
+                <!-- Header Compacto -->
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-white leading-tight mb-1"><?php echo e($promo->nombre); ?></h3>
+                        <div class="flex items-center gap-2 text-xs text-gray-400">
+                            <span class="bg-green-500/10 text-green-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
+                                <?php echo e($promo->tipo_descuento === 'porcentaje' ? '-' . $promo->valor_descuento . '%' : 'Ahorra $' . number_format($promo->valor_descuento, 0)); ?>
 
-              <p class="promo-detail">
-                <strong>Tipo de Descuento:</strong>
-                <span>
-                  <?php echo e($promo->tipo_descuento === 'porcentaje' ? $promo->valor_descuento . '%' : '$' . number_format($promo->valor_descuento, 2)); ?>
+                            </span>
+                            <span><i class="far fa-clock text-[10px]"></i> <?php echo e(\Carbon\Carbon::parse($promo->fecha_fin)->format('d M')); ?></span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-green-400 leading-none">$<?php echo e(number_format($totalDescuento, 2)); ?></div>
+                        <div class="text-xs text-gray-500 line-through">$<?php echo e(number_format($totalOriginal, 2)); ?></div>
+                    </div>
+                </div>
 
-                </span>
-              </p>
+                <p class="text-gray-400 text-xs mb-3 line-clamp-2"><?php echo e($promo->descripcion); ?></p>
 
-              <p class="promo-dates">
-                <strong>Válido del:</strong>
-                <?php echo e(\Carbon\Carbon::parse($promo->fecha_inicio)->format('d/m/Y')); ?>
+                <div class="mt-auto">
+                    <?php if(auth()->guard('cliente')->check()): ?>
+                        <!-- Productos Compactos (Solo clientes) -->
+                        <?php if($productos->isNotEmpty()): ?>
+                            <div class="bg-zinc-950/50 rounded-lg p-2 mb-3 border border-zinc-800/50">
+                                <p class="text-[10px] text-gray-500 mb-1.5 font-medium uppercase tracking-wide">Incluye:</p>
+                                <div class="space-y-1.5 max-h-24 overflow-y-auto pr-1 custom-scrollbar">
+                                    <?php $__currentLoopData = $productos; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $prod): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <div class="flex items-center gap-2">
+                                            <img src="<?php echo e($prod->imagen ? asset($prod->imagen) : asset('assets/placeholder.svg')); ?>" 
+                                                 alt="<?php echo e($prod->nombre); ?>" 
+                                                 class="w-6 h-6 rounded object-cover opacity-80">
+                                            <div class="flex-1 min-w-0">
+                                                <div class="text-xs text-gray-300 truncate"><?php echo e($prod->nombre); ?></div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                             <p class="text-xs text-gray-400 italic mb-2">Ver productos en el menú</p>
+                        <?php endif; ?>
 
-                <strong>al</strong>
-                <?php echo e(\Carbon\Carbon::parse($promo->fecha_fin)->format('d/m/Y')); ?>
+                        <!-- Footer / Botón -->
+                        <div class="pt-2 border-t border-zinc-800">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs text-green-400 font-medium">
+                                    <i class="fas fa-piggy-bank mr-1"></i> Ahorras: $<?php echo e(number_format($ahorro, 2)); ?>
 
-              </p>
-
-              <div class="promo-cta">
-                <p class="promo-registro">⚠️ Esta promoción requiere registro</p>
-                <a href="<?php echo e(route('register')); ?>" class="btn btn-outline">
-                  <i class="fas fa-user-plus"></i> Registrarme para aprovechar
-                </a>
-              </div>
+                                </span>
+                            </div>
+                            <button class="btn-agregar-promocion w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white text-xs font-bold py-2 px-3 rounded-lg transition-all shadow-lg shadow-green-900/20 flex items-center justify-center gap-2 transform active:scale-95"
+                                    data-promocion-id="<?php echo e($promo->id); ?>">
+                                <i class="fas fa-cart-plus"></i> Agregar Pack al Carrito
+                            </button>
+                        </div>
+                    <?php else: ?>
+                        <!-- Guest View -->
+                        <div class="pt-2 border-t border-zinc-800 mt-2">
+                            <p class="text-xs text-amber-500 mb-2 flex items-center gap-1">
+                                <i class="fas fa-lock"></i> Requiere registro
+                            </p>
+                            <a href="<?php echo e(route('register')); ?>" class="w-full block text-center border border-zinc-700 hover:bg-zinc-800 text-gray-300 text-xs font-medium py-2 px-3 rounded-lg transition-colors">
+                                Registrarme para aprovechar
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
@@ -146,9 +225,9 @@
               <span class="stat-label">Promociones activas</span>
             </div>
             <div class="stat-card">
-              <i class="fas fa-star"></i>
-              <span class="stat-number"><?php echo e(Auth::guard('cliente')->user()->puntos_fidelidad); ?></span>
-              <span class="stat-label">Puntos fidelidad</span>
+              <i class="fas fa-shopping-bag"></i>
+              <span class="stat-number"><?php echo e(Auth::guard('cliente')->user()->total_pedidos); ?></span>
+              <span class="stat-label">Pedidos realizados</span>
             </div>
           </div>
         </div>

@@ -14,12 +14,12 @@ class HeroImage extends Model
         'titulo',
         'subtitulo', 
         'orden',
-        'activo',
+        'status',
         'tipo' // 'hero' o 'carrusel'
     ];
 
     protected $casts = [
-        'activo' => 'boolean',
+        'status' => 'boolean',
         'orden' => 'integer'
     ];
 }

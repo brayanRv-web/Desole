@@ -38,16 +38,26 @@ class Promocion extends Model
     public function productosActivos()
     {
         return $this->belongsToMany(Producto::class, 'producto_promocion')
-                    ->where('estado', 'activo')
+                    ->where('status', 'activo')
                     ->withTimestamps();
     }
 
-    // Scope para promociones activas
+    // Scope para promociones activas (fechas y flag)
     public function scopeActiva($query)
     {
         return $query->where('activa', true)
                     ->where('fecha_inicio', '<=', now())
                     ->where('fecha_fin', '>=', now());
+    }
+
+    // Scope para promociones completamente disponibles (todos los productos activos)
+    public function scopeFullyAvailable($query)
+    {
+        return $query->activa()
+                     ->has('productos') // Debe tener productos
+                     ->whereDoesntHave('productos', function($q) {
+                         $q->where('status', '!=', 'activo');
+                     });
     }
 
     // Verifica si la promoción está vigente
@@ -71,7 +81,7 @@ class Promocion extends Model
     // Retorna los productos inactivos
     public function getProductosInactivosAttribute()
     {
-        return $this->productos()->where('estado', '!=', 'activo')->get();
+        return $this->productos()->where('status', '!=', 'activo')->get();
     }
 
     // Calcula el precio con descuento

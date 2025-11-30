@@ -22,6 +22,7 @@ class PedidoController extends Controller
     public function index()
     {
         $pedidos = Pedido::where('cliente_id', Auth::guard('cliente')->id())
+            ->where('oculto_cliente', false) // Filter out hidden orders
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -34,16 +35,10 @@ class PedidoController extends Controller
      */
     public function show($id)
     {
-        $pedido = Pedido::where('id', $id)
+        $pedido = Pedido::with('detalles.producto')
+            ->where('id', $id)
             ->where('cliente_id', Auth::guard('cliente')->id())
             ->firstOrFail();
-
-        // Obtener los items del pedido (guardados como JSON)
-        $items = $pedido->items ?? [];
-
-        // Obtener productos asociados
-        $productoIds = collect($items)->pluck('producto_id')->filter()->toArray();
-        $productos = Producto::whereIn('id', $productoIds)->get()->keyBy('id');
 
         // If request expects JSON (AJAX polling), return the pedido as JSON so client can poll for estado
         if (request()->wantsJson() || request()->ajax()) {
@@ -54,7 +49,7 @@ class PedidoController extends Controller
         }
 
         // Render the dedicated show view for normal browser requests
-        return view('cliente.pedidos.show', compact('pedido', 'productos'));
+        return view('cliente.pedidos.show', compact('pedido'));
     }
 
     /**
@@ -73,23 +68,13 @@ class PedidoController extends Controller
         DB::beginTransaction();
 
         try {
-            $pedido->estado = 'cancelado';
-            $pedido->save();
-
             // Restaurar stock si ya fue descontado
             if ($pedido->stock_descontado) {
-                foreach ($pedido->items ?? [] as $item) {
-                    if (!empty($item['producto_id']) && !empty($item['cantidad'])) {
-                        $producto = Producto::find($item['producto_id']);
-                        if ($producto) {
-                            $producto->increment('stock', $item['cantidad']);
-                        }
-                    }
-                }
-
-                $pedido->stock_descontado = false;
-                $pedido->save();
+                $pedido->incrementarStock();
             }
+
+            $pedido->estado = 'cancelado';
+            $pedido->save();
 
             DB::commit();
 
@@ -99,5 +84,25 @@ class PedidoController extends Controller
             DB::rollBack();
             return back()->with('error', 'Error al cancelar el pedido: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Ocultar un pedido del historial del cliente (Soft Delete visual)
+     */
+    public function ocultar($id)
+    {
+        $pedido = Pedido::where('id', $id)
+            ->where('cliente_id', Auth::guard('cliente')->id())
+            ->firstOrFail();
+
+        // Solo permitir ocultar si está entregado o completado
+        if (!in_array($pedido->estado, ['entregado', 'completado', 'cancelado'])) {
+            return back()->with('error', 'Solo se pueden eliminar del historial pedidos finalizados.');
+        }
+
+        $pedido->oculto_cliente = true;
+        $pedido->save();
+
+        return back()->with('success', 'Pedido eliminado del historial.');
     }
 }
