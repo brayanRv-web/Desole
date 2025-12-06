@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
@@ -58,17 +59,9 @@ class RegisterController extends Controller
         // Autenticar al cliente usando el guard 'cliente'
         Auth::guard('cliente')->login($cliente);
 
-        // Enviar correo de bienvenida mediante Job (no bloquear el request)
-        try {
-            if ($cliente->email) {
-                \App\Jobs\SendWelcomeEmailJob::dispatch($cliente);
-            }
-        } catch (\Exception $e) {
-            // No queremos bloquear el registro por un fallo en el despacho
-            \Log::error('Error despachando job de bienvenida: ' . $e->getMessage());
-        }
+        // Enviar correo de bienvenida
+        $cliente->notify(new WelcomeClienteNotification());
 
-            return redirect()->route('home')
-        ->with('success', '¡Bienvenido a DÉSOLÉ! Tu cuenta ha sido creada exitosamente.');
-    }
+        return redirect()->route('home')
+            ->with('success', '¡Bienvenido a DÉSOLÉ! Tu cuenta ha sido creada exitosamente.');}
 }

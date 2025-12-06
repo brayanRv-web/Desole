@@ -5,7 +5,7 @@
     <title>Panel de Administración</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="{{ asset('assets/favicon.ico') }}">
+    <link rel="icon" href="<?php echo e(asset('assets/favicon.ico')); ?>">
     <script>
         tailwind.config = {
             theme: {
@@ -86,8 +86,8 @@
                 <span class="text-sm text-gray-300">Administrador</span>
             </div>
 
-            <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="hidden">
-                @csrf
+            <form id="logout-form" action="<?php echo e(route('admin.logout')); ?>" method="POST" class="hidden">
+                <?php echo csrf_field(); ?>
             </form>
             <button
                 class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-green-500/30 flex items-center gap-2"
@@ -107,68 +107,68 @@
                 <h2 class="text-gray-400 uppercase text-xs font-semibold tracking-wider mb-3">Menú Principal</h2>
 
                 <!-- Dashboard -->
-                <a href="{{ url('admin/') }}"
+                <a href="<?php echo e(url('admin/')); ?>"
                 class="flex items-center gap-3 px-4 py-2 rounded-lg bg-green-600/20 text-green-400 transition">
                     <i class="fas fa-tachometer-alt"></i> <span>Inicio</span>
                 </a>
 
 
                 <!-- Productos -->
-                <a href="{{ url('admin/productos') }}"
+                <a href="<?php echo e(url('admin/productos')); ?>"
                     class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition relative">
                         <i class="fas fa-box w-5 text-center"></i> 
                         <span>Productos</span>
                         
                         <!-- Notificación de stock bajo -->
-                        @php
+                        <?php
                             // Obtener contador de stock bajo directamente
                             $stockBajoCount = \App\Models\Producto::where('stock', '<=', 5)
                                 ->where('stock', '>', 0)
                                 ->count();
-                        @endphp
+                        ?>
                         
-                        @if($stockBajoCount > 0)
+                        <?php if($stockBajoCount > 0): ?>
                         <div class="absolute -top-1 -right-1">
                             <div class="relative">
                                 <div class="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center animate-pulse">
-                                    <span class="text-white text-xs font-bold">{{ $stockBajoCount }}</span>
+                                    <span class="text-white text-xs font-bold"><?php echo e($stockBajoCount); ?></span>
                                 </div>
                                 <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-400 rounded-full animate-ping"></div>
                             </div>
                         </div>
-                        @endif
+                        <?php endif; ?>
                     </a>
 
                 <!-- Pedidos -->
-                <a href="{{ url('admin/pedidos') }}"
+                <a href="<?php echo e(url('admin/pedidos')); ?>"
                 class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
                     <i class="fas fa-clipboard-list w-5 text-center"></i> <span>Pedidos</span>
                 </a>
 
                 <!-- Promociones -->
-                <a href="{{ url('admin/promociones') }}"
+                <a href="<?php echo e(url('admin/promociones')); ?>"
                 class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
                     <i class="fas fa-tag w-5 text-center"></i> <span>Promociones</span>
                 </a>
 
                 <!-- Horarios -->
-                <a href="{{ url('admin/horarios') }}"
+                <a href="<?php echo e(url('admin/horarios')); ?>"
                 class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
                     <i class="fas fa-clock w-5 text-center"></i> <span>Horarios</span>
                 </a>
 
                 <!-- Usuarios -->
-                <a href="{{ url('admin/usuarios') }}"
+                <a href="<?php echo e(url('admin/usuarios')); ?>"
                    class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
                     <i class="fas fa-users w-5 text-center"></i> <span>Usuarios</span>
                 </a>
                 <!-- Reportes -->
-                <a href="{{ url('admin/reportes') }}"
+                <a href="<?php echo e(url('admin/reportes')); ?>"
                    class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
                     <i class="fas fa-chart-bar w-5 text-center"></i> <span>Reportes</span>
                 </a>
                  <!-- Reseñas -->
-                <a href="{{ url('admin/reseñas') }}"
+                <a href="<?php echo e(url('admin/reseñas')); ?>"
                 class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
                     <i class="fas fa-comments"></i> <span>Reseñas</span>
                 </a>
@@ -178,7 +178,7 @@
                 
 
             <div class="mt-10 border-t border-green-800 pt-4 text-center text-xs text-gray-500">
-                <p>&copy; {{ date('Y') }} <span class="text-green-500">Désolé</span></p>
+                <p>&copy; <?php echo e(date('Y')); ?> <span class="text-green-500">Désolé</span></p>
                 <p>Panel de Administración</p>
             </div>
         </aside>
@@ -186,22 +186,22 @@
         <!-- Contenido principal - Solo este se desplaza -->
         <main class="flex-1 p-8 bg-gray-950 overflow-y-auto ml-64 mt-0">
             <div class="bg-gray-900 rounded-xl shadow-lg border border-green-700/40 p-6 min-h-[80vh]">
-                @yield('content')
+                <?php echo $__env->yieldContent('content'); ?>
             </div>
         </main>
     </div>
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
     
     <!-- Global Audio Notification Script -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Obtener el último ID de pedido al cargar la página
-            @php
+            <?php
                 $latestOrder = \App\Models\Pedido::latest('id')->first();
                 $initialLastId = $latestOrder ? $latestOrder->id : 0;
-            @endphp
-            let lastOrderId = {{ $initialLastId }};
+            ?>
+            let lastOrderId = <?php echo e($initialLastId); ?>;
             
             const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
             
@@ -286,7 +286,7 @@
 
             // Polling Global (Cada 5 segundos)
             setInterval(() => {
-                fetch("{{ route('admin.pedidos.check') }}?last_id=" + lastOrderId)
+                fetch("<?php echo e(route('admin.pedidos.check')); ?>?last_id=" + lastOrderId)
                     .then(response => response.json())
                     .then(data => {
                         if (data.has_new) {
@@ -329,4 +329,4 @@
         });
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\Users\josxp\Documents\desole\Desole\resources\views/admin/layout.blade.php ENDPATH**/ ?>

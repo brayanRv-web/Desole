@@ -20,15 +20,10 @@ class Cliente extends Authenticatable
         'email',
         'password',
         'direccion',
-        'colonia',
-        'referencias',
         'fecha_nacimiento',
-        'alergias',
-        'preferencias',
-        'tipo',
         'recibir_promociones',
         'recibir_cumpleanos',
-        'notas'
+
     ];
 
     protected $hidden = [

@@ -22,6 +22,7 @@ use App\Http\Controllers\Empleado\PedidoController as EmpleadoPedidoController;
 use App\Http\Controllers\Empleado\ProductoController as EmpleadoProductoController;
 use App\Http\Controllers\MenuController;
 
+
 // ===========================================================
 //                      RUTAS PÚBLICAS
 // ===========================================================
@@ -181,14 +182,6 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(functi
         Route::patch('/{horario}/toggle-status', [HorarioController::class, 'toggleStatus'])->name('toggle-status');
     });
 
-    // CRM
-    Route::prefix('crm')->name('crm.')->group(function () {
-        Route::get('/', [CRMController::class, 'index'])->name('index');
-        Route::get('/clientes', [CRMController::class, 'clientes'])->name('clientes');
-        Route::get('/clientes/{id}', [CRMController::class, 'verCliente'])->name('clientes.ver');
-        Route::get('/campanas', [CRMController::class, 'campanas'])->name('campanas');
-        Route::get('/fidelidad', [CRMController::class, 'fidelidad'])->name('fidelidad');
-    });
 
     // Módulos pendientes
     Route::get('/pedidos', [AdminPedidoController::class, 'index'])->name('pedidos.index');
@@ -197,7 +190,6 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(functi
     Route::post('/pedidos/{pedido}/estado', [AdminPedidoController::class, 'updateEstado'])->name('pedidos.updateEstado');
     Route::get('/reportes', [ReportesController::class, 'index'])->name('reportes.index');
     Route::get('/reportes/pdf', [ReportesController::class, 'downloadPdf'])->name('reportes.pdf');
-    Route::view('/configuracion', 'admin.configuracion.index')->name('configuracion.index');
 });
 
 // ===========================================================
@@ -220,4 +212,5 @@ Route::middleware(['auth', \App\Http\Middleware\EnsureUserRole::class . ':employ
             Route::put('/{producto}', [EmpleadoProductoController::class, 'update'])->name('update');
             Route::patch('/{producto}/estado', [EmpleadoProductoController::class, 'updateEstado'])->name('updateEstado');
         });
+
     });

@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cliente;
+use App\Models\User;
 use App\Models\Promocion;
 use App\Models\Producto;
 use App\Services\CatalogService;
 use Illuminate\Http\Request;
+use App\Notifications\NewPromotionNotification;
 
 class PromocionController extends Controller
 {
@@ -70,6 +73,12 @@ class PromocionController extends Controller
 
         $promocion->productos()->sync($request->productos);
 
+        // 🔵 NOTIFICAR A TODOS LOS CLIENTES SOBRE LA NUEVA PROMOCIÓN
+        $clientes = Cliente::registrados()->get(); // solo clientes registrados
+        foreach ($clientes as $cliente) {
+            $cliente->notify(new NewPromotionNotification($promocion));
+        }
+
         return redirect()->route('admin.promociones.index')
                         ->with('success', 'Promoción creada exitosamente.');
     }
@@ -126,6 +135,14 @@ class PromocionController extends Controller
 
         $promocion->productos()->sync($request->productos);
 
+        // 🔵 ENVIAR NOTIFICACIÓN INMEDIATA SOLO SI SE ACTIVA NUEVA PROMOCIÓN
+        if ($promocion->activa) {
+            $clientes = Cliente::registrados()->get();
+            foreach ($clientes as $cliente) {
+                $cliente->notify(new NewPromotionNotification($promocion));
+            }
+        }
+
         return redirect()->route('admin.promociones.index')
                         ->with('success', 'Promoción actualizada exitosamente.');
     }
@@ -150,6 +167,14 @@ class PromocionController extends Controller
         }
 
         $promocione->update(['activa' => !$promocione->activa]);
+        // Enviar notificación si se activó
+        if ($promocione->activa) {
+            $clientes = Cliente::registrados()->get();
+            foreach ($clientes as $cliente) {
+                $cliente->notify(new NewPromotionNotification($promocione));
+            }
+        }
+
         $status = $promocione->activa ? 'activada' : 'desactivada';
         return back()->with('success', "Promoción {$status} exitosamente.");
     }

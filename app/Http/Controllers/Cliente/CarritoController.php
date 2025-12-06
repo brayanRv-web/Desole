@@ -38,9 +38,9 @@ class CarritoController extends Controller
     public function finalizar(\Illuminate\Http\Request $request)
     {
         // Log para debug
-        \Log::info('🔵 CarritoController::finalizar() llamado');
-        \Log::info('Request headers:', $request->headers->all());
-        \Log::info('Request input:', $request->all());
+        \Illuminate\Support\Facades\Log::info('🔵 CarritoController::finalizar() llamado');
+        \Illuminate\Support\Facades\Log::info('Request headers:', $request->headers->all());
+        \Illuminate\Support\Facades\Log::info('Request input:', $request->all());
 
         // Soportar tanto peticiones AJAX (frontend envia carrito en el body)
         // como el flujo tradicional donde el carrito está en el servidor (CartService).
@@ -188,7 +188,7 @@ class CarritoController extends Controller
                          ->with('success', '¡Pedido realizado correctamente!');
     } catch (\Exception $e) {
         DB::rollBack();
-        \Log::error('Error al finalizar compra: ' . $e->getMessage());
+        \Illuminate\Support\Facades\Log::error('Error al finalizar compra: ' . $e->getMessage());
 
         if ($request->wantsJson() || $request->ajax() || $request->expectsJson()) {
             return response()->json([
@@ -207,7 +207,7 @@ class CarritoController extends Controller
     public function finalizarApi(\Illuminate\Http\Request $request)
     {
         try {
-            \Log::info('🔵 CarritoController::finalizarApi() llamado');
+            \Illuminate\Support\Facades\Log::info('🔵 CarritoController::finalizarApi() llamado');
 
             $cart = $request->input('carrito', []);
 
@@ -280,7 +280,7 @@ class CarritoController extends Controller
 
                 DB::commit();
 
-                \Log::info('✅ Pedido creado:', ['pedido_id' => $pedido->id, 'total' => $total]);
+                \Illuminate\Support\Facades\Log::info('✅ Pedido creado:', ['pedido_id' => $pedido->id, 'total' => $total]);
 
                 return response()->json([
                     'success' => true,
@@ -295,7 +295,7 @@ class CarritoController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('❌ Error en finalizarApi: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('❌ Error en finalizarApi: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -355,7 +355,7 @@ class CarritoController extends Controller
         ]);
 
     } catch (\Exception $e) {
-        \Log::error('Error en agregarPromocion: ' . $e->getMessage());
+        \Illuminate\Support\Facades\Log::error('Error en agregarPromocion: ' . $e->getMessage());
         return response()->json([
             'success' => false,
             'message' => 'Error al procesar la promoción.'
