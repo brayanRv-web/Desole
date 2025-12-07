@@ -96,10 +96,10 @@
               <div>
                   <h3 class="text-lg font-semibold text-green-400 mb-4">Síguenos</h3>
                   <div class="flex space-x-4">
-                      <a href="#" class="text-gray-300 hover:text-white transition">
+                      <a href="https://www.facebook.com/share/1FPD5T2i9E/?mibextid=wwXIfr"  class="text-gray-300 hover:text-white transition">
                           <i class="fab fa-facebook text-2xl"></i>
                       </a>
-                      <a href="#" class="text-gray-300 hover:text-white transition">
+                      <a href="https://www.instagram.com/desole_cafe?igsh=M2M2a3VsaTR6OG12" class="text-gray-300 hover:text-white transition">
                           <i class="fab fa-instagram text-2xl"></i>
                       </a>
                   </div>
