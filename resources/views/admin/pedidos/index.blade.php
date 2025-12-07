@@ -1,6 +1,7 @@
 @extends('admin.layout')
 
 @section('content')
+
     <div class="container mx-auto px-4 py-8">
         <!-- Header & Stats -->
         <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">

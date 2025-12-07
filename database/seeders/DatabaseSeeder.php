@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Usuario empleado por defecto
-        User::create([
+        /*User::create([
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => bcrypt('admin123'),
@@ -29,6 +29,6 @@ class DatabaseSeeder extends Seeder
             CategoriaSeeder::class,
             ClienteSeeder::class,
             ProductoSeeder::class,
-        ]);
+        ]);*/
     }
 }

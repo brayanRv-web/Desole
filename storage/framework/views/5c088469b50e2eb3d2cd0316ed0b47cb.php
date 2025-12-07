@@ -235,44 +235,6 @@
     </section>
 
     <!-- MENÚ COMPLETO eliminado del Home: los productos del menú se muestran en la página /menu -->
-
-    <!-- PROMOCIONES COMPLETAS PARA CLIENTES -->
-    <section id="promociones-cliente" class="promociones-cliente-section">
-      <div class="container">
-        <h2 class="section-title" data-aos="fade-up">Tus Promociones Exclusivas</h2>
-        
-        <div class="promociones-grid-cliente">
-          <?php $__currentLoopData = $promociones; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $promo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-          <div class="promo-card-cliente" data-aos="fade-up">
-            <div class="promo-badge">EXCLUSIVO</div>
-            <h3 class="promo-name"><?php echo e($promo->nombre); ?></h3>
-            <p class="promo-desc"><?php echo e($promo->descripcion); ?></p>
-
-            <div class="promo-details">
-              <div class="promo-discount">
-                <strong>Descuento:</strong>
-                <span class="discount-value">
-                  <?php echo e($promo->tipo_descuento === 'porcentaje' ? $promo->valor_descuento . '%' : '$' . number_format($promo->valor_descuento, 2)); ?>
-
-                </span>
-              </div>
-              
-              <div class="promo-dates">
-                <strong>Válido hasta:</strong>
-                <?php echo e(\Carbon\Carbon::parse($promo->fecha_fin)->format('d/m/Y')); ?>
-
-              </div>
-            </div>
-
-            <button class="btn-aplicar-promo">
-              <i class="fas fa-tag"></i> Disponible para tu pedido
-            </button>
-          </div>
-          <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </div>
-      </div>
-    </section>
-
   <?php endif; ?>
 
     <!-- SECCIONES QUE SE MUESTRAN A TODOS -->
@@ -291,6 +253,7 @@
     });
   </script>
   <script src="<?php echo e(asset('js/base-config.js')); ?>"></script>
+  <script src="<?php echo e(asset('js/hero-carousel.js')); ?>"></script>
   <script src="<?php echo e(asset('js/carrito.js')); ?>"></script>
   <script src="<?php echo e(asset('js/cart.js')); ?>"></script>
   <script src="<?php echo e(asset('js/cliente-carrito.js')); ?>"></script>

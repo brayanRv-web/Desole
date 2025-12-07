@@ -374,41 +374,89 @@ a {
 .cta-registro {
   display: flex;
   justify-content: center;
-  padding: 1.4rem 0 0.6rem;
+  padding: 2rem 1rem; /* más espacio arriba y abajo */
 }
+
 .cta-registro .cta-content {
   max-width: 780px;
   width: 100%;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
-  border: 1px solid rgba(255,255,255,0.03);
-  padding: 1.25rem 1.2rem;
-  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.08));
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 2rem 1.5rem; /* más espaciamiento interno */
+  border-radius: 14px;
   text-align: center;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.45);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem; /* separación uniforme entre elementos */
 }
+
+/* Titulos y párrafos */
 .cta-registro .cta-content h3 {
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.5rem;
   color: var(--color-text);
+  font-size: 1.8rem;
+  font-weight: 700;
 }
-.cta-registro .cta-content p { margin-bottom: 0.6rem; color: var(--color-muted); }
+
+.cta-registro .cta-content p {
+  margin-bottom: 0.8rem;
+  color: var(--color-muted);
+  font-size: 1rem;
+}
+
+/* Lista de beneficios */
 .cta-registro .cta-content ul {
   list-style: none;
   padding: 0;
-  margin: 0.6rem auto 0.9rem;
-  display: inline-block;
-  text-align: left;
-}
-.cta-registro .cta-content ul li {
-  margin: 0.55rem 0;
+  margin: 0;
   display: flex;
-  gap: 0.6rem;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.6rem; /* separación vertical uniforme */
+  width: 100%;
+}
+
+.cta-registro .cta-content ul li {
+  display: flex;
+  align-items: flex-start; /* icono alineado con texto */
+  gap: 0.7rem;
   color: var(--color-muted);
+  font-size: 0.95rem;
 }
+
+.cta-registro .cta-content ul li i {
+  color: var(--color-primary);
+  margin-top: 2px; /* centrar icono respecto al texto */
+}
+
+/* Botón */
 .cta-registro .cta-content .btn {
-  margin-top: 0.9rem;
+  margin-top: 1rem;
+  padding: 0.65rem 1.8rem;
+  font-size: 1rem;
+  border-radius: 40px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.cta-registro .cta-small { margin-top: 0.6rem; color: var(--color-muted); display:block; }
+
+.cta-registro .cta-content .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(101, 207, 114, 0.3);
+}
+
+/* Texto pequeño */
+.cta-registro .cta-small {
+  margin-top: 0.8rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.cta-registro .cta-small a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
 
 /* ===== CLIENTE WELCOME SECTION ===== */
 .cliente-hero {
@@ -914,10 +962,32 @@ a {
   margin: 0.5rem 0;
 }
 
-.distribucion-calificaciones {
-  max-width: 220px;
-  margin: 0 auto;
+/* Distribución horizontal */
+.distribucion-calificaciones.horizontal {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
+
+.distribucion-calificaciones.horizontal .stat-horizontal {
+    display: flex;
+    align-items: center;
+    min-width: 120px; /* Ajusta según el espacio */
+}
+
+.distribucion-calificaciones.horizontal .progress {
+    height: 6px; /* más compacto */
+    border-radius: 6px;
+    flex-grow: 1;
+}
+
+.distribucion-calificaciones.horizontal .progress-bar {
+    background-color: var(--color-primary);
+    border-radius: 6px;
+    transition: width 0.6s ease-in-out;
+}
+
 
 /* --- PROGRESS BARS --- */
 .progress {

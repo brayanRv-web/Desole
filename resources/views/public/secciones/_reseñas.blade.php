@@ -36,19 +36,18 @@
                                         <p class="text-muted small">Basado en {{ $totalReseñas }} reseñas</p> <!-- Texto más pequeño -->
                                     </div>
                                     
-                                    <div class="distribucion-calificaciones">
-                                        @for($i = 5; $i >= 1; $i--)
+                                   <div class="distribucion-calificaciones horizontal">
+                                        @for($i = 1; $i <= 5; $i++)
                                             @php
                                                 $count = $reseñas->where('calificacion', $i)->count();
                                                 $percentage = $totalReseñas > 0 ? ($count / $totalReseñas) * 100 : 0;
                                             @endphp
-                                            <div class="d-flex align-items-center mb-1"> <!-- Reducido espacio -->
-                                                <span class="text-warning me-1 small">{{ $i }}★</span> <!-- Texto más pequeño -->
-                                                <div class="progress flex-grow-1 mx-1 distribucion-progress">
-                                                    <div class="progress-bar bg-warning distribucion-progress-bar" 
-                                                         data-width="{{ number_format($percentage, 2) }}"></div>
+                                            <div class="d-flex align-items-center mb-2 justify-content-center stat-horizontal">
+                                                <span class="text-warning me-2 small">{{ $i }}★</span>
+                                                <div class="progress flex-grow-1 mx-2">
+                                                    <div class="progress-bar" data-width="{{ number_format($percentage, 2) }}"></div>
                                                 </div>
-                                                <span class="text-muted small">{{ $count }}</span>
+                                                <span class="text-muted ms-2 small">{{ $count }}</span>
                                             </div>
                                         @endfor
                                     </div>
@@ -183,12 +182,9 @@
                     @endforeach
                 </div>
                 
-                <!-- Ver más reseñas -->
-                <div class="text-center mt-4"> <!-- Reducido espacio -->
-                    <a href="{{ route('reseñas.index') }}" class="btn btn-outline-warning btn-sm"> <!-- Botón más pequeño -->
-                        <i class="fas fa-list me-1"></i>Ver Todas las Reseñas
-                    </a>
-                </div>
+                <a href="{{ route('reseñas.publicas') }}" class="btn btn-outline-warning btn-sm">
+                    <i class="fas fa-list me-1"></i> Ver Todas las Reseñas
+                </a>
             </div>
         </div>
         @else
@@ -210,17 +206,17 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Animación para las barras de progreso
-    function animarBarrasProgreso() {
-        const progressBars = document.querySelectorAll('.distribucion-progress-bar');
-        progressBars.forEach(bar => {
-            const width = bar.getAttribute('data-width');
+    // --- 1a. Animación para barras de calificaciones horizontales ---
+    function animarBarrasDistribucion() {
+        const barras = document.querySelectorAll('.distribucion-calificaciones .progress-bar');
+        barras.forEach(bar => {
+            const width = bar.dataset.width; // <-- usamos data-width
             setTimeout(() => {
                 bar.style.width = width + '%';
-            }, 300);
+            }, 200); // retraso para animación
         });
     }
-    animarBarrasProgreso();
+    animarBarrasDistribucion();
 
     // 2. Contador de caracteres
     const comentario = document.getElementById('comentario');
@@ -304,5 +300,6 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.transform = 'translateY(0)';
         });
     });
+    
 });
 </script>

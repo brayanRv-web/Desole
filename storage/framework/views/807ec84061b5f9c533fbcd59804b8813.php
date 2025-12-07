@@ -1,12 +1,10 @@
-@extends('admin.layout')
+<?php $__env->startSection('title', 'Reseñas de Clientes'); ?>
 
-@section('title', 'Reseñas de Clientes')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="max-w-7xl mx-auto">
     <!-- Header Section -->
     <div class="flex items-center gap-4 mb-8">
-        <a href="{{ url()->previous() }}" 
+        <a href="<?php echo e(url()->previous()); ?>" 
            class="bg-gray-700 hover:bg-gray-600 text-white p-3 rounded-xl transition-all duration-200 group">
             <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
         </a>
@@ -19,15 +17,15 @@
         </div>
     </div>
 
-    {{-- Mensajes de éxito --}}
-    @if(session('success'))
+    
+    <?php if(session('success')): ?>
         <div class="bg-green-500/10 border border-green-500/50 text-green-400 px-6 py-4 rounded-xl mb-6">
             <div class="flex items-center gap-3">
                 <i class="fas fa-check-circle text-lg"></i>
-                <span class="font-medium">{{ session('success') }}</span>
+                <span class="font-medium"><?php echo e(session('success')); ?></span>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="bg-gray-800/50 border border-green-700/30 rounded-2xl shadow-xl overflow-hidden">
         <div class="p-8">
@@ -37,7 +35,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">No. de Reseñas</p>
-                            <p class="text-2xl font-bold text-white mt-1">{{ $reseñas->count() }}</p>
+                            <p class="text-2xl font-bold text-white mt-1"><?php echo e($reseñas->count()); ?></p>
                         </div>
                         <div class="bg-green-500/20 p-3 rounded-lg">
                             <i class="fas fa-user-check text-green-400 text-xl"></i>
@@ -48,7 +46,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Promedio</p>
-                            <p class="text-2xl font-bold text-white mt-1">{{ number_format($reseñas->avg('calificacion') ?? 0, 1) }}/5</p>
+                            <p class="text-2xl font-bold text-white mt-1"><?php echo e(number_format($reseñas->avg('calificacion') ?? 0, 1)); ?>/5</p>
                         </div>
                         <div class="bg-purple-500/20 p-3 rounded-lg">
                             <i class="fas fa-star text-purple-400 text-xl"></i>
@@ -76,12 +74,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($reseñas as $reseña)
+                            <?php $__empty_1 = true; $__currentLoopData = $reseñas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reseña): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                             <tr class="border-b border-gray-700/50 hover:bg-gray-600/30 transition-all duration-200">
                                 <td class="py-4 px-6">
                                     <div>
-                                        <strong class="text-white block">{{ $reseña->nombre }}</strong>
-                                        <small class="text-gray-400 text-sm">{{ $reseña->email }}</small>
+                                        <strong class="text-white block"><?php echo e($reseña->nombre); ?></strong>
+                                        <small class="text-gray-400 text-sm"><?php echo e($reseña->email); ?></small>
                                         <div class="mt-1">
                                             <span class="inline-flex items-center gap-1 bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded-full">
                                                 <i class="fas fa-user-check text-xs"></i>
@@ -89,46 +87,48 @@
                                             </span>
                                             <br>
                                             <small class="text-blue-400 text-xs">
-                                                📞 {{ $reseña->cliente->telefono ?? 'Sin teléfono' }}
+                                                📞 <?php echo e($reseña->cliente->telefono ?? 'Sin teléfono'); ?>
+
                                             </small>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-4 px-6">{{ $reseña->calificacion }}/5</td>
-                                <td class="py-4 px-6">{{ $reseña->comentario }}</td>
-                                <td class="py-4 px-6">{{ $reseña->created_at->format('d/m/Y H:i') }}</td>
+                                <td class="py-4 px-6"><?php echo e($reseña->calificacion); ?>/5</td>
+                                <td class="py-4 px-6"><?php echo e($reseña->comentario); ?></td>
+                                <td class="py-4 px-6"><?php echo e($reseña->created_at->format('d/m/Y H:i')); ?></td>
                                 <td class="py-4 px-6">
-                                    <form action="{{ route('admin.reseñas.destroy', $reseña->id) }}" method="POST" class="deleteResenaForm inline-block">
-                                        @csrf
-                                        @method('DELETE')
+                                    <form action="<?php echo e(route('admin.reseñas.destroy', $reseña->id)); ?>" method="POST" class="deleteResenaForm inline-block">
+                                        <?php echo csrf_field(); ?>
+                                        <?php echo method_field('DELETE'); ?>
                                         <button type="button"
                                                 class="deleteResenaBtn bg-red-600/20 hover:bg-red-600/40 border border-red-500/50 text-red-400 hover:text-red-300 px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 group"
-                                                data-name="{{ $reseña->nombre }}">
+                                                data-name="<?php echo e($reseña->nombre); ?>">
                                             <i class="fas fa-trash group-hover:scale-110 transition-transform"></i>
                                             Eliminar
                                         </button>
                                     </form>
                                 </td>
                             </tr>
-                            @empty
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                             <tr>
                                 <td colspan="5" class="py-12 text-center text-gray-400">
                                     No hay reseñas aún
                                 </td>
                             </tr>
-                            @endforelse
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Pagination -->
-                @if($reseñas->hasPages())
+                <?php if($reseñas->hasPages()): ?>
                 <div class="mt-6 flex justify-center">
                     <div class="bg-gray-700/50 rounded-xl p-4 border border-gray-600/30">
-                        {{ $reseñas->links('vendor.pagination.custom') }}
+                        <?php echo e($reseñas->links('vendor.pagination.custom')); ?>
+
                     </div>
                 </div>
-                @endif
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -173,4 +173,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\josxp\Documents\desole\Desole\resources\views/admin/resenas/index.blade.php ENDPATH**/ ?>

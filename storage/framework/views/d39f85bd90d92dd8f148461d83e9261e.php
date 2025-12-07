@@ -29,7 +29,6 @@
         }
     </script>
     <style>
-        /* Admin button styles to ensure good contrast with the dark admin theme */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -63,9 +62,7 @@
         .btn-danger { background-color: #ef4444; color: #ffffff; border-color: #ef4444; }
         .btn-danger:hover { background-color: #dc2626; }
 
-        /* ensure links with btn classes inherit cursor and focus styles */
         a.btn { display: inline-flex; }
-
     </style>
 </head>
 
@@ -97,36 +94,33 @@
         </div>
     </header>
 
-    <!-- Contenedor principal -->
-    <div class="flex flex-1 pt-16"> <!-- pt-16 para compensar el header fijo -->
+    <div class="flex flex-1 pt-16">
 
-        <!-- Sidebar - Menú Principal Fijo -->
         <aside class="w-64 bg-gray-900 p-6 flex flex-col justify-between shadow-xl border-r border-green-800 fixed h-[calc(100vh-4rem)] top-16 z-20">
             <nav class="space-y-2">
 
-                <h2 class="text-gray-400 uppercase text-xs font-semibold tracking-wider mb-3">Menú Principal</h2>
+                    <h2 class="text-gray-400 uppercase text-xs font-semibold tracking-wider mb-3">Menú Principal</h2>
 
-                <!-- Dashboard -->
-                <a href="<?php echo e(url('admin/')); ?>"
-                class="flex items-center gap-3 px-4 py-2 rounded-lg bg-green-600/20 text-green-400 transition">
-                    <i class="fas fa-tachometer-alt"></i> <span>Inicio</span>
-                </a>
+                    <!-- Inicio -->
+                    <a href="<?php echo e(url('admin/')); ?>"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition
+                            <?php echo e(request()->is('admin') || request()->is('admin/') ? 'bg-green-600 text-white' : 'hover:bg-green-600/20 hover:text-green-400 text-gray-300'); ?>">
+                        <i class="fas fa-tachometer-alt"></i> <span>Inicio</span>
+                    </a>
 
-
-                <!-- Productos -->
-                <a href="<?php echo e(url('admin/productos')); ?>"
-                    class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition relative">
-                        <i class="fas fa-box w-5 text-center"></i> 
+                    <!-- Productos -->
+                    <a href="<?php echo e(url('admin/productos')); ?>"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition relative
+                            <?php echo e(request()->is('admin/productos*') ? 'bg-green-600 text-white' : 'hover:bg-green-600/20 hover:text-green-400 text-gray-300'); ?>">
+                        <i class="fas fa-box w-5 text-center"></i>
                         <span>Productos</span>
-                        
-                        <!-- Notificación de stock bajo -->
+
                         <?php
-                            // Obtener contador de stock bajo directamente
                             $stockBajoCount = \App\Models\Producto::where('stock', '<=', 5)
                                 ->where('stock', '>', 0)
                                 ->count();
                         ?>
-                        
+
                         <?php if($stockBajoCount > 0): ?>
                         <div class="absolute -top-1 -right-1">
                             <div class="relative">
@@ -139,43 +133,49 @@
                         <?php endif; ?>
                     </a>
 
-                <!-- Pedidos -->
-                <a href="<?php echo e(url('admin/pedidos')); ?>"
-                class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
-                    <i class="fas fa-clipboard-list w-5 text-center"></i> <span>Pedidos</span>
-                </a>
+                    <!-- Pedidos -->
+                    <a href="<?php echo e(url('admin/pedidos')); ?>"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition
+                            <?php echo e(request()->is('admin/pedidos*') ? 'bg-green-600 text-white' : 'hover:bg-green-600/20 hover:text-green-400 text-gray-300'); ?>">
+                        <i class="fas fa-clipboard-list w-5 text-center"></i> <span>Pedidos</span>
+                    </a>
 
-                <!-- Promociones -->
-                <a href="<?php echo e(url('admin/promociones')); ?>"
-                class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
-                    <i class="fas fa-tag w-5 text-center"></i> <span>Promociones</span>
-                </a>
+                    <!-- Promociones -->
+                    <a href="<?php echo e(url('admin/promociones')); ?>"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition
+                            <?php echo e(request()->is('admin/promociones*') ? 'bg-green-600 text-white' : 'hover:bg-green-600/20 hover:text-green-400 text-gray-300'); ?>">
+                        <i class="fas fa-tag w-5 text-center"></i> <span>Promociones</span>
+                    </a>
 
-                <!-- Horarios -->
-                <a href="<?php echo e(url('admin/horarios')); ?>"
-                class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
-                    <i class="fas fa-clock w-5 text-center"></i> <span>Horarios</span>
-                </a>
+                    <!-- Horarios -->
+                    <a href="<?php echo e(url('admin/horarios')); ?>"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition
+                            <?php echo e(request()->is('admin/horarios*') ? 'bg-green-600 text-white' : 'hover:bg-green-600/20 hover:text-green-400 text-gray-300'); ?>">
+                        <i class="fas fa-clock w-5 text-center"></i> <span>Horarios</span>
+                    </a>
 
-                <!-- Usuarios -->
-                <a href="<?php echo e(url('admin/usuarios')); ?>"
-                   class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
-                    <i class="fas fa-users w-5 text-center"></i> <span>Usuarios</span>
-                </a>
-                <!-- Reportes -->
-                <a href="<?php echo e(url('admin/reportes')); ?>"
-                   class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
-                    <i class="fas fa-chart-bar w-5 text-center"></i> <span>Reportes</span>
-                </a>
-                 <!-- Reseñas -->
-                <a href="<?php echo e(url('admin/reseñas')); ?>"
-                class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-green-600/20 hover:text-green-400 transition">
-                    <i class="fas fa-comments"></i> <span>Reseñas</span>
-                </a>
+                    <!-- Usuarios -->
+                    <a href="<?php echo e(url('admin/usuarios')); ?>"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition
+                            <?php echo e(request()->is('admin/usuarios*') ? 'bg-green-600 text-white' : 'hover:bg-green-600/20 hover:text-green-400 text-gray-300'); ?>">
+                        <i class="fas fa-users w-5 text-center"></i> <span>Usuarios</span>
+                    </a>
+
+                    <!-- Reportes -->
+                    <a href="<?php echo e(url('admin/reportes')); ?>"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition
+                            <?php echo e(request()->is('admin/reportes*') ? 'bg-green-600 text-white' : 'hover:bg-green-600/20 hover:text-green-400 text-gray-300'); ?>">
+                        <i class="fas fa-chart-bar w-5 text-center"></i> <span>Reportes</span>
+                    </a>
+
+                    <!-- Reseñas -->
+                    <a href="<?php echo e(url('admin/reseñas')); ?>"
+                        class="flex items-center gap-3 px-4 py-2 rounded-lg transition
+                            <?php echo e(request()->is('admin/reseñas*') ? 'bg-green-600 text-white' : 'hover:bg-green-600/20 hover:text-green-400 text-gray-300'); ?>">
+                        <i class="fas fa-comments"></i> <span>Reseñas</span>
+                    </a>
+
                 </nav>
-
-
-                
 
             <div class="mt-10 border-t border-green-800 pt-4 text-center text-xs text-gray-500">
                 <p>&copy; <?php echo e(date('Y')); ?> <span class="text-green-500">Désolé</span></p>
@@ -183,150 +183,137 @@
             </div>
         </aside>
 
-        <!-- Contenido principal - Solo este se desplaza -->
         <main class="flex-1 p-8 bg-gray-950 overflow-y-auto ml-64 mt-0">
             <div class="bg-gray-900 rounded-xl shadow-lg border border-green-700/40 p-6 min-h-[80vh]">
                 <?php echo $__env->yieldContent('content'); ?>
             </div>
         </main>
     </div>
+
     <?php echo $__env->yieldPushContent('scripts'); ?>
-    
-    <!-- Global Audio Notification Script -->
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Obtener el último ID de pedido al cargar la página
-            <?php
-                $latestOrder = \App\Models\Pedido::latest('id')->first();
-                $initialLastId = $latestOrder ? $latestOrder->id : 0;
-            ?>
-            let lastOrderId = <?php echo e($initialLastId); ?>;
-            
-            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-            
-            // Persistencia de Audio
-            let audioEnabled = localStorage.getItem('admin_audio_enabled') === 'true';
+    document.addEventListener('DOMContentLoaded', function() {
 
-            // Botón flotante
-            const enableAudioBtn = document.createElement('button');
-            enableAudioBtn.className = 'fixed bottom-4 right-4 bg-zinc-800 text-white p-3 rounded-full shadow-lg border border-zinc-700 hover:bg-zinc-700 transition-all z-50';
-            enableAudioBtn.title = "Configuración de Sonido";
-            
-            function updateAudioButton() {
-                if (audioEnabled) {
-                    enableAudioBtn.innerHTML = '<i class="fas fa-volume-up text-green-400"></i>';
-                    enableAudioBtn.classList.remove('animate-bounce');
-                } else {
-                    enableAudioBtn.innerHTML = '<i class="fas fa-volume-mute text-red-400"></i>';
-                    enableAudioBtn.classList.add('animate-bounce');
-                }
-            }
+        // → Cargamos los datos globales sin mezclar Blade en JS
+        let lastOrderId = window.PANEL_CONFIG.lastOrderId;
+        const checkUrl = window.PANEL_CONFIG.checkUrl;
 
-            enableAudioBtn.onclick = () => {
-                if (!audioEnabled) {
-                    // Activar
-                    audio.play().then(() => {
-                        audio.pause();
-                        audio.currentTime = 0;
-                        audioEnabled = true;
-                        localStorage.setItem('admin_audio_enabled', 'true');
-                        updateAudioButton();
-                        
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 2000,
-                            background: '#27272a',
-                            color: '#fff'
-                        });
-                        Toast.fire({ icon: 'success', title: 'Sonido activado' });
-                    }).catch(e => console.error("No se pudo activar audio:", e));
-                } else {
-                    // Desactivar
-                    audioEnabled = false;
-                    localStorage.setItem('admin_audio_enabled', 'false');
-                    updateAudioButton();
-                }
-            };
-            document.body.appendChild(enableAudioBtn);
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
-            // Intentar activar audio al cargar si estaba activado
+        let audioEnabled = localStorage.getItem('admin_audio_enabled') === 'true';
+
+        const enableAudioBtn = document.createElement('button');
+        enableAudioBtn.className = 'fixed bottom-4 right-4 bg-zinc-800 text-white p-3 rounded-full shadow-lg border border-zinc-700 hover:bg-zinc-700 transition-all z-50';
+        enableAudioBtn.title = "Configuración de Sonido";
+
+        function updateAudioButton() {
             if (audioEnabled) {
-                updateAudioButton();
-                // Intentar reproducir silencio para "desbloquear" si el navegador lo permite
+                enableAudioBtn.innerHTML = '<i class="fas fa-volume-up text-green-400"></i>';
+                enableAudioBtn.classList.remove('animate-bounce');
+            } else {
+                enableAudioBtn.innerHTML = '<i class="fas fa-volume-mute text-red-400"></i>';
+                enableAudioBtn.classList.add('animate-bounce');
+            }
+        }
+
+        enableAudioBtn.onclick = () => {
+            if (!audioEnabled) {
                 audio.play().then(() => {
                     audio.pause();
                     audio.currentTime = 0;
-                }).catch(() => {
-                    console.log("Audio bloqueado por navegador, requiere interacción.");
-                    // Revertir estado visual y lógico porque el navegador lo bloqueó
-                    audioEnabled = false;
+                    audioEnabled = true;
+                    localStorage.setItem('admin_audio_enabled', 'true');
                     updateAudioButton();
-                    
-                    // Avisar al usuario
-                    const Toast = Swal.mixin({
+
+                    Swal.fire({
                         toast: true,
+                        icon: 'success',
                         position: 'top-end',
+                        title: 'Sonido activado',
                         showConfirmButton: false,
-                        timer: 5000,
+                        timer: 2000,
                         background: '#27272a',
                         color: '#fff'
                     });
-                    Toast.fire({
-                        icon: 'warning',
-                        title: 'Acción requerida',
-                        text: 'Haz clic en el icono de sonido para activar las alertas.'
-                    });
-                });
+
+                }).catch(e => console.error("No se pudo activar audio:", e));
             } else {
+                audioEnabled = false;
+                localStorage.setItem('admin_audio_enabled', 'false');
                 updateAudioButton();
             }
+        };
 
-            // Polling Global (Cada 5 segundos)
-            setInterval(() => {
-                fetch("<?php echo e(route('admin.pedidos.check')); ?>?last_id=" + lastOrderId)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.has_new) {
-                            // Actualizar ID
-                            lastOrderId = data.latest_id;
+        document.body.appendChild(enableAudioBtn);
 
-                            // Reproducir sonido
-                            if (audioEnabled) {
-                                audio.play().catch(e => {
-                                    console.log('Audio bloqueado:', e);
-                                    // Si falla aquí también, avisar de nuevo
-                                    if(audioEnabled) {
-                                        audioEnabled = false;
-                                        updateAudioButton();
-                                    }
-                                });
-                            }
+        if (audioEnabled) {
+            updateAudioButton();
 
-                            // Mostrar Toast Global
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: 'top-end',
-                                showConfirmButton: false,
-                                timer: 5000,
-                                background: '#27272a',
-                                color: '#fff'
+            audio.play().then(() => {
+                audio.pause();
+                audio.currentTime = 0;
+            }).catch(() => {
+                audioEnabled = false;
+                updateAudioButton();
+
+                Swal.fire({
+                    toast: true,
+                    icon: 'warning',
+                    position: 'top-end',
+                    title: 'Acción requerida',
+                    text: 'Haz clic en el icono de sonido para activar las alertas.',
+                    showConfirmButton: false,
+                    timer: 5000,
+                    background: '#27272a',
+                    color: '#fff'
+                });
+            });
+        } else {
+            updateAudioButton();
+        }
+
+        setInterval(() => {
+            fetch(checkUrl + "?last_id=" + lastOrderId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.has_new) {
+
+                        lastOrderId = data.latest_id;
+
+                        if (audioEnabled) {
+                            audio.play().catch(e => {
+                                console.log('Audio bloqueado:', e);
+                                if (audioEnabled) {
+                                    audioEnabled = false;
+                                    updateAudioButton();
+                                }
                             });
-                            Toast.fire({
-                                icon: 'info',
-                                title: '¡Nuevo Pedido!',
-                                text: 'Se ha recibido un nuevo pedido.'
-                            });
-
-                            // Disparar evento para que otras vistas se actualicen
-                            document.dispatchEvent(new CustomEvent('new-order-received', { detail: data }));
                         }
-                    })
-                    .catch(err => console.error('Error polling:', err));
-            }, 5000); // 5 segundos
-        });
+
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'info',
+                            title: '¡Nuevo Pedido!',
+                            text: 'Se ha recibido un nuevo pedido.',
+                            showConfirmButton: false,
+                            timer: 5000,
+                            background: '#27272a',
+                            color: '#fff'
+                        });
+
+                        document.dispatchEvent(
+                            new CustomEvent('new-order-received', { detail: data })
+                        );
+                    }
+                })
+                .catch(err => console.error('Error polling:', err));
+        }, 5000);
+    });
     </script>
 </body>
-</html><?php /**PATH C:\Users\josxp\Documents\desole\Desole\resources\views/admin/layout.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH C:\Users\josxp\Documents\desole\Desole\resources\views/admin/layout.blade.php ENDPATH**/ ?>

@@ -1,6 +1,4 @@
-@extends('admin.layout')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="flex flex-col space-y-6">
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -12,7 +10,7 @@
             <p class="text-gray-400 mt-2">Agrega un nuevo usuario al sistema</p>
         </div>
         
-        <a href="{{ route('admin.usuarios.index') }}" 
+        <a href="<?php echo e(route('admin.usuarios.index')); ?>" 
            class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-gray-500/25 transition-all duration-200 flex items-center gap-2 font-semibold group">
             <i class="fas fa-arrow-left group-hover:scale-110 transition-transform"></i>
             Volver a Usuarios
@@ -29,8 +27,8 @@
         </div>
 
         <div class="p-6">
-            <form action="{{ route('admin.usuarios.store') }}" method="POST" class="space-y-6">
-                @csrf
+            <form action="<?php echo e(route('admin.usuarios.store')); ?>" method="POST" class="space-y-6">
+                <?php echo csrf_field(); ?>
 
                 <!-- Información Básica -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -40,16 +38,31 @@
                             <i class="fas fa-user mr-2 text-purple-400"></i>
                             Nombre Completo *
                         </label>
-                        <input type="text" id="name" name="name" value="{{ old('name') }}"
-                               class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-200 @error('name') border-red-500 @enderror"
+                        <input type="text" id="name" name="name" value="<?php echo e(old('name')); ?>"
+                               class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-200 <?php $__errorArgs = ['name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                placeholder="Ej: Juan Pérez García"
                                required>
-                        @error('name')
+                        <?php $__errorArgs = ['name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                             <p class="text-red-400 text-sm mt-1 flex items-center gap-1">
                                 <i class="fas fa-exclamation-circle"></i>
-                                {{ $message }}
+                                <?php echo e($message); ?>
+
                             </p>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <!-- Email -->
@@ -58,16 +71,31 @@
                             <i class="fas fa-envelope mr-2 text-purple-400"></i>
                             Correo Electrónico *
                         </label>
-                        <input type="email" id="email" name="email" value="{{ old('email') }}"
-                               class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-200 @error('email') border-red-500 @enderror"
+                        <input type="email" id="email" name="email" value="<?php echo e(old('email')); ?>"
+                               class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-200 <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                placeholder="Ej: juan.perez@empresa.com"
                                required>
-                        @error('email')
+                        <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                             <p class="text-red-400 text-sm mt-1 flex items-center gap-1">
                                 <i class="fas fa-exclamation-circle"></i>
-                                {{ $message }}
+                                <?php echo e($message); ?>
+
                             </p>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
                 </div>
 
@@ -80,15 +108,30 @@
                             Contraseña *
                         </label>
                         <input type="password" id="password" name="password"
-                               class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-200 @error('password') border-red-500 @enderror"
+                               class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-200 <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                placeholder="Mínimo 8 caracteres"
                                required>
-                        @error('password')
+                        <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                             <p class="text-red-400 text-sm mt-1 flex items-center gap-1">
                                 <i class="fas fa-exclamation-circle"></i>
-                                {{ $message }}
+                                <?php echo e($message); ?>
+
                             </p>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <!-- Confirmar Contraseña -->
@@ -115,7 +158,7 @@
                         <div class="space-y-3">
                             <div class="flex items-center">
                                 <input type="radio" id="panel_admin" name="user_type" value="panel_admin" 
-                                       class="hidden peer" {{ old('user_type') == 'panel_admin' ? 'checked' : '' }}>
+                                       class="hidden peer" <?php echo e(old('user_type') == 'panel_admin' ? 'checked' : ''); ?>>
                                 <label for="panel_admin" 
                                        class="flex items-center justify-between w-full p-4 border-2 border-gray-600 rounded-xl cursor-pointer transition-all duration-200 peer-checked:border-red-500 peer-checked:bg-red-500/10 hover:border-red-400">
                                     <div class="flex items-center gap-3">
@@ -133,15 +176,24 @@
 
                             <div class="flex items-center">
                                 <input type="radio" id="system_user" name="user_type" value="system_user" 
-                                       class="hidden peer" {{ old('user_type', 'system_user') == 'system_user' ? 'checked' : '' }}>
+                                       class="hidden peer" <?php echo e(old('user_type', 'system_user') == 'system_user' ? 'checked' : ''); ?>>
+                               
                             </div>
                         </div>
-                        @error('user_type')
+                        <?php $__errorArgs = ['user_type'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
                             <p class="text-red-400 text-sm mt-1 flex items-center gap-1">
                                 <i class="fas fa-exclamation-circle"></i>
-                                {{ $message }}
+                                <?php echo e($message); ?>
+
                             </p>
-                        @enderror
+                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                     </div>
 
                     <!-- Información de Contacto (solo para empleados) -->
@@ -152,7 +204,7 @@
                                 <i class="fas fa-phone mr-2 text-purple-400"></i>
                                 Teléfono
                             </label>
-                            <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
+                            <input type="tel" id="phone" name="phone" value="<?php echo e(old('phone')); ?>"
                                    class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-200"
                                    placeholder="Ej: +1 234 567 8900">
                         </div>
@@ -165,7 +217,7 @@
                             </label>
                             <textarea id="address" name="address" rows="2"
                                       class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-200 resize-none"
-                                      placeholder="Ej: Av. Principal #123, Ciudad">{{ old('address') }}</textarea>
+                                      placeholder="Ej: Av. Principal #123, Ciudad"><?php echo e(old('address')); ?></textarea>
                         </div>
                     </div>
                 </div>
@@ -195,7 +247,7 @@
                         <i class="fas fa-save group-hover:scale-110 transition-transform"></i>
                         Crear Usuario
                     </button>
-                    <a href="{{ route('admin.usuarios.index') }}" 
+                    <a href="<?php echo e(route('admin.usuarios.index')); ?>" 
                        class="bg-gray-600 hover:bg-gray-700 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-gray-500/25 transition-all duration-200 flex items-center justify-center gap-2 font-semibold">
                         <i class="fas fa-times"></i>
                         Cancelar
@@ -254,4 +306,5 @@ input[type="radio"]:checked + label#system_user {
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 </style>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('admin.layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\Users\josxp\Documents\desole\Desole\resources\views/admin/usuarios/create.blade.php ENDPATH**/ ?>

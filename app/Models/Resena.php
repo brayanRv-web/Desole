@@ -11,8 +11,16 @@ class Resena extends Model
 
     protected $fillable = [
         'nombre',
-        'email', 
+        'email',
         'calificacion',
         'comentario',
+        'cliente_id',
+        'tipo_cliente',
     ];
+
+    // Relación con Cliente (usa la tabla/model Cliente)
+    public function cliente()
+    {
+        return $this->belongsTo(\App\Models\Cliente::class, 'cliente_id');
+    }
 }

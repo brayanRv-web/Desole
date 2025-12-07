@@ -21,6 +21,7 @@ use App\Http\Controllers\Cliente\PedidoController;
 use App\Http\Controllers\Empleado\PedidoController as EmpleadoPedidoController;
 use App\Http\Controllers\Empleado\ProductoController as EmpleadoProductoController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\Cliente\ProfileController;
 
 
 // ===========================================================
@@ -35,6 +36,10 @@ Route::get('/contacto', [PublicController::class, 'contacto'])->name('contacto')
 
 // Envío de reseñas públicas
 Route::post('/reseñas', [ResenaController::class, 'store'])->name('reseñas.store');
+// Envío de reseñas públicas, cliente
+Route::get('/reseñas-publicas', [ResenaController::class, 'index'])
+    ->name('reseñas.publicas');
+
 
 // ===========================================================
 //                RUTAS PÚBLICAS DE MENÚ
@@ -70,8 +75,8 @@ Route::middleware(['auth:cliente'])
         Route::get('/menu', [ClienteController::class, 'menu'])->name('menu');
 
         // Perfil
-        Route::get('/perfil', [ClienteController::class, 'perfil'])->name('perfil');
-        Route::post('/perfil/actualizar', [ClienteController::class, 'actualizarPerfil'])->name('perfil.update');
+        Route::get('/perfil', [ProfileController::class, 'show'])->name('perfil');
+        Route::post('/perfil/actualizar', [ProfileController::class, 'update'])->name('perfil.update');
 
         // ============================
         //         CARRITO
@@ -148,6 +153,17 @@ Route::prefix('admin')->name('admin.')->middleware(['admin.auth'])->group(functi
         Route::put('/{user}', [UserController::class, 'update'])->name('update');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
         Route::patch('/{user}/status', [UserController::class, 'updateStatus'])->name('updateStatus');
+        // ya dentro del prefijo admin y middleware admin.auth
+        Route::patch('clientes/{cliente}/estado', [UserController::class, 'toggleCliente'])->name('clientes.estado');
+        Route::delete('clientes/{cliente}', [UserController::class, 'destroyCliente'])->name('clientes.destroy');
+
+    });
+
+        // Clientes registrados
+    Route::prefix('clientes')->name('clientes.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AdminClienteController::class, 'index'])->name('index');
+        Route::patch('/{cliente}/estado', [\App\Http\Controllers\Admin\AdminClienteController::class, 'toggleEstado'])->name('estado');
+        Route::delete('/{cliente}', [\App\Http\Controllers\Admin\AdminClienteController::class, 'destroy'])->name('destroy');
     });
 
     // Productos

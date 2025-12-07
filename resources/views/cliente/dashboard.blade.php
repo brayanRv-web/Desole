@@ -115,81 +115,76 @@
 
         <!-- Sidebar - Acciones y Promociones -->
         <div class="sidebar-section">
-            <!-- Acciones Rápidas -->
             <div class="actions-card">
-                <div class="card-header-custom">
-                    <h3><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h3>
-                </div>
-                <div class="card-body-custom">
-                    <div class="actions-grid">
-                        <a href="{{ route('cliente.menu') }}" class="action-btn primary">
-                            <i class="fas fa-utensils"></i>
-                            <span>Ver Menú y Ordenar</span>
-                        </a>
-                        <a href="{{ route('cliente.pedidos.index') }}" class="action-btn secondary">
-                            <i class="fas fa-history"></i>
-                            <span>Historial de Pedidos</span>
-                        </a>
-                        <a href="{{ route('cliente.perfil') }}" class="action-btn secondary">
-                            <i class="fas fa-user-edit"></i>
-                            <span>Editar Mi Perfil</span>
-                        </a>
+                        <div class="card-header-custom">
+                        <h3><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h3>
+                        </div>
+                        <div class="actions-grid">
+                            <a href="{{ route('cliente.menu') }}" class="action-btn secondary">
+                                <i class="fas fa-utensils"></i>
+                                <span>Ver Menú y Ordenar</span>
+                            </a>
+                            <a href="{{ route('cliente.pedidos.index') }}" class="action-btn secondary">
+                                <i class="fas fa-history"></i>
+                                <span>Historial de Pedidos</span>
+                            </a>
+                            <a href="{{ route('cliente.perfil') }}" class="action-btn secondary">
+                                <i class="fas fa-user-edit"></i>
+                                <span>Editar Mi Perfil</span>
+                            </a>
+                        </div>
+                    </div> 
+                    <!-- Promociones Activas -->
+                    <div class="promotions-card">
+                        <div class="card-header-custom">
+                            <h3><i class="fas fa-tags me-2"></i>Promociones Activas</h3>
+                        </div>
+                        <div class="card-body-custom">
+                            @if(isset($promociones) && $promociones->count() > 0)
+                                <div class="promotions-list">
+                                    @foreach($promociones as $promocion)
+                                    <div class="promotion-item">
+                                        <div class="promotion-header">
+                                            <h4>{{ $promocion->nombre }}</h4>
+                                            @if($promocion->descuento)
+                                                <span class="discount-badge">{{ $promocion->descuento }}% OFF</span>
+                                            @endif
+                                        </div>
+                                        <p class="promotion-desc">{{ $promocion->descripcion }}</p>
+                                        <div class="promotion-footer">
+                                            <small class="promotion-date">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                @if($promocion->fecha_fin)
+                                                    Válida hasta: {{ $promocion->fecha_fin->format('d/m/Y') }}
+                                                @else
+                                                    Promoción permanente
+                                                @endif
+                                            </small>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="empty-state small">
+                                    <i class="fas fa-tags"></i>
+                                    <p>No hay promociones activas en este momento</p>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Promociones Activas -->
-            <div class="promotions-card">
-                <div class="card-header-custom">
-                    <h3><i class="fas fa-tags me-2"></i>Promociones Activas</h3>
-                </div>
-                <div class="card-body-custom">
-                    @if(isset($promociones) && $promociones->count() > 0)
-                        <div class="promotions-list">
-                            @foreach($promociones as $promocion)
-                            <div class="promotion-item">
-                                <div class="promotion-header">
-                                    <h4>{{ $promocion->nombre }}</h4>
-                                    @if($promocion->descuento)
-                                        <span class="discount-badge">{{ $promocion->descuento }}% OFF</span>
-                                    @endif
-                                </div>
-                                <p class="promotion-desc">{{ $promocion->descripcion }}</p>
-                                <div class="promotion-footer">
-                                    <small class="promotion-date">
-                                        <i class="fas fa-calendar me-1"></i>
-                                        @if($promocion->fecha_fin)
-                                            Válida hasta: {{ $promocion->fecha_fin->format('d/m/Y') }}
-                                        @else
-                                            Promoción permanente
-                                        @endif
-                                    </small>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="empty-state small">
-                            <i class="fas fa-tags"></i>
-                            <p>No hay promociones activas en este momento</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <style>
+/* Contenedor Principal */
+
 .dashboard-container {
-    padding: 100px 20px 40px 20px;
-    min-height: 100vh;
-    background: var(--color-bg);
+    padding: 10px 20px 40px 20px; /* padding-top muy pequeño para pegarlo al navbar */
 }
 
 /* Header de Bienvenida */
 .dashboard-header {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem; /* antes 2rem -> un poco más cercano */
 }
 
 .welcome-card {
@@ -559,6 +554,36 @@
         padding: 0.75rem 0.5rem;
         font-size: 0.9rem;
     }
+}
+
+
+/* Botón de acción en tabla de pedidos */
+.order-actions .btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: var(--transition);
+    white-space: nowrap; /* evita que se rompa el texto */
+}
+
+.order-actions .btn-action:hover {
+    background: var(--color-primary);
+    color: var(--color-bg);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(101, 207, 114, 0.3);
+}
+
+/* Asegurar que la celda se ajuste al contenido */
+.custom-table td.order-actions {
+    white-space: nowrap;
+    width: 1%;
 }
 </style>
 @push('scripts')

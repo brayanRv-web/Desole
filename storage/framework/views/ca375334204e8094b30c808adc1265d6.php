@@ -92,22 +92,45 @@
                         </div>
                         
                         <!-- Formulario de Dirección (Oculto por defecto) -->
+                        <!-- Formulario de Dirección -->
+                        <!-- Formulario de Dirección -->
                         <div id="delivery-details" class="mt-6 pt-6 border-t border-zinc-700/50 animate-fade-in-down">
                             <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
                                 <i class="fas fa-map-marker-alt text-red-400"></i> Datos de Envío
                             </h3>
                             <div class="space-y-4">
+                                <!-- Dirección Completa (Solo lectura) -->
                                 <div>
                                     <label class="block text-gray-400 text-xs mb-1">Dirección Completa</label>
-                                    <input type="text" id="delivery_address" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500 transition-colors" placeholder="Calle, Número, Colonia, Referencias">
+                                    <input type="text" id="delivery_address" 
+                                        class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none cursor-not-allowed"
+                                        value="<?php echo e(auth()->user()->direccion); ?>" readonly>
                                 </div>
+                                
+
+                                <!-- Teléfono de Contacto (Editable) -->
                                 <div>
                                     <label class="block text-gray-400 text-xs mb-1">Teléfono de Contacto</label>
-                                    <input type="tel" id="delivery_phone" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500 transition-colors" placeholder="10 dígitos">
+                                    <input type="tel" id="delivery_phone" 
+                                        class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none cursor-not-allowed"
+                                        value="<?php echo e(auth()->user()->telefono); ?>" readonly>
                                 </div>
+                                
+
+                                <!-- Instrucciones Adicionales -->
                                 <div>
                                     <label class="block text-gray-400 text-xs mb-1">Instrucciones Adicionales (Opcional)</label>
-                                    <textarea id="delivery_instructions" rows="2" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500 transition-colors" placeholder="Ej. Tocar el timbre, dejar en recepción..."></textarea>
+                                    <textarea id="delivery_instructions" rows="2" 
+                                            class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500 transition-colors"
+                                            placeholder="Ej. Tocar el timbre, dejar en recepción..."></textarea>
+                                </div>
+
+                                <!-- Enlace para editar datos -->
+                                <div class="mt-2 text-right">
+                                    <a href="<?php echo e(route('cliente.perfil')); ?>" 
+                                    class="text-yellow-400 hover:text-yellow-300 text-sm flex items-center justify-end gap-1">
+                                        <i class="fas fa-edit"></i> Editar datos
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -336,13 +359,8 @@ function procesarCompra(e) {
 
     // Validación de Dirección (si es a domicilio)
     if (tipoEntrega === 'domicilio') {
-        const address = document.getElementById('delivery_address').value.trim();
         const phone = document.getElementById('delivery_phone').value.trim();
 
-        if (address.length < 5) {
-            showError('Dirección incompleta');
-            return;
-        }
         if (phone.length < 10) {
             showError('Teléfono inválido (10 dígitos)');
             return;

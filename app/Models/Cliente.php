@@ -4,9 +4,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
+/**
+ * @property \Illuminate\Database\Eloquent\Collection|Resena[] $resenas
+ */
 
 class Cliente extends Authenticatable
 {
@@ -62,5 +65,16 @@ class Cliente extends Authenticatable
     public function scopeInactivos($query)
     {
         return $query->where('ultima_visita', '<', now()->subMonth());
+    }
+
+    /**
+     * Relación con las reseñas que ha dejado el cliente
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+
+     public function resenas()
+    {
+        return $this->hasMany(Resena::class, 'cliente_id');
     }
 }

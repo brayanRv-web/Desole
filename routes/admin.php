@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ProductoController;
 use App\Http\Controllers\Admin\PedidoController;
 
+
 // Login y Logout
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('login', [AuthController::class, 'authenticate'])->name('admin.authenticate');
@@ -28,4 +29,5 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('pedidos', [PedidoController::class, 'index'])->name('admin.pedidos.index');
     Route::get('pedidos/{pedido}', [PedidoController::class, 'show'])->name('admin.pedidos.show');
     Route::post('pedidos/{pedido}/estado', [PedidoController::class, 'updateEstado'])->name('admin.pedidos.updateEstado');
+
 });

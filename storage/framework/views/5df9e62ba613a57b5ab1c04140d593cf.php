@@ -1,14 +1,14 @@
-{{-- resources/views/layouts/reseñas.blade.php --}}
+
 <!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DÉSOLÉ - Cafetería nocturna - @yield('title', 'Reseñas')</title>
+  <title>DÉSOLÉ - Cafetería nocturna - <?php echo $__env->yieldContent('title', 'Reseñas'); ?></title>
 
   <script>
-      window.APP_URL = "{{ url('/') }}";
+      window.APP_URL = "<?php echo e(url('/')); ?>";
   </script>
 
   <!-- Font Awesome -->
@@ -35,53 +35,53 @@
   </script>
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="{{ asset('css/desole.css') }}"> 
-  <link rel="icon" href="{{ asset('assets/favicon.ico') }}">
+  <link rel="stylesheet" href="<?php echo e(asset('css/desole.css')); ?>"> 
+  <link rel="icon" href="<?php echo e(asset('assets/favicon.ico')); ?>">
 </head>
 <body data-theme="default">
 
-  {{-- NAVBAR --}}
-  @include('public.secciones._navbar')
+  
+  <?php echo $__env->make('public.secciones._navbar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
 
-  {{-- CONTENIDO PRINCIPAL --}}
+  
 <main class="min-h-screen py-8">
   <div class="container mx-auto px-4">
 
       <h1 class="text-3xl font-bold text-green-500 mb-6 text-center">Todas las Reseñas</h1>
 
-      @if($resenas->isEmpty())
+      <?php if($resenas->isEmpty()): ?>
           <div class="text-center p-6 bg-gray-700/50 rounded-lg border border-gray-600">
               <p class="text-gray-300">No hay reseñas disponibles por ahora.</p>
           </div>
-      @else
+      <?php else: ?>
           <div class="space-y-4">
-              @foreach($resenas as $resena)
+              <?php $__currentLoopData = $resenas; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $resena): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="bg-zinc-800/50 p-5 rounded-lg border border-zinc-700 shadow-md hover:shadow-lg transition max-w-5xl mx-auto">
                         <div class="flex justify-between items-center mb-2">
-                            <span class="font-semibold text-green-400 text-lg">{{ $resena->nombre }}</span>
-                            <span class="text-gray-400 text-sm">{{ $resena->created_at->format('d M Y') }}</span>
+                            <span class="font-semibold text-green-400 text-lg"><?php echo e($resena->nombre); ?></span>
+                            <span class="text-gray-400 text-sm"><?php echo e($resena->created_at->format('d M Y')); ?></span>
                         </div>
 
                         <div class="text-yellow-400 mb-2">
-                            @for ($i = 0; $i < $resena->calificacion; $i++)
+                            <?php for($i = 0; $i < $resena->calificacion; $i++): ?>
                                 <i class="fas fa-star"></i>
-                            @endfor
+                            <?php endfor; ?>
                         </div>
 
-                        <p class="text-gray-200">{{ $resena->comentario }}</p>
+                        <p class="text-gray-200"><?php echo e($resena->comentario); ?></p>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
           </div>
 
-      @endif
+      <?php endif; ?>
 
   </div>
 </main>
 
 
-  {{-- FOOTER --}}
+  
 <footer class="bg-zinc-800/50 border-t border-zinc-700 mt-12">
       <div class="container mx-auto px-4 py-8">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -111,7 +111,7 @@
               </div>
           </div>
           <div class="mt-8 pt-4 border-t border-zinc-700 text-center text-gray-400">
-              <p>&copy; {{ date('Y') }} Désolé. Todos los derechos reservados.</p>
+              <p>&copy; <?php echo e(date('Y')); ?> Désolé. Todos los derechos reservados.</p>
           </div>
       </div>
 </footer>
@@ -125,6 +125,7 @@
       }
     });
   </script>
-  @stack('scripts')
+  <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
+<?php /**PATH C:\Users\josxp\Documents\desole\Desole\resources\views/layouts/public.blade.php ENDPATH**/ ?>

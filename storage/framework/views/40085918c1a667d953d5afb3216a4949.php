@@ -1,59 +1,77 @@
+
 <section id="home" class="hero">
-  <div class="hero-content">
-    <h1>DÉSOLÉ - Cafetería Nocturna</h1>
-    <p>
-      <i class="fas fa-clock"></i>
-      <?php
-        use Carbon\Carbon;
+  <!-- Carrusel de Imágenes -->
+  <div class="hero-carousel">
+    <div class="carousel-track">
+      <!-- Imagen 1 -->
+      <div class="carousel-slide active">
+        <img src="<?php echo e(asset('img/carousel/slide-1.jpg')); ?>" alt="Ambiente nocturno DÉSOLÉ" />
+        <div class="slide-overlay"></div>
+      </div>
+      <!-- Imagen 2 -->
+      <div class="carousel-slide">
+        <img src="<?php echo e(asset('img/carousel/slide-2.jpg')); ?>" alt="Bebidas especiales DÉSOLÉ" />
+        <div class="slide-overlay"></div>
+      </div>
+      <!-- Imagen 3 -->
+      <div class="carousel-slide">
+        <img src="<?php echo e(asset('img/carousel/slide-3.jpg')); ?>" alt="Alitas DÉSOLÉ" />
+        <div class="slide-overlay"></div>
+      </div>
+    </div>
 
-        // Traemos los horarios
-        $horarios = \App\Models\Horario::ordenados()->get();
+    <!-- Controles de Navegación -->
+    <button class="carousel-control prev" aria-label="Imagen anterior">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="carousel-control next" aria-label="Siguiente imagen">
+      <i class="fas fa-chevron-right"></i>
+    </button>
 
-        // Día de hoy en español
-        $diaHoy = strtolower(now()->locale('es')->isoFormat('dddd'));
-        
-        // Normalizar día (quitar acentos) para coincidir con BD
-        $diaHoy = str_replace(['á', 'é', 'í', 'ó', 'ú'], ['a', 'e', 'i', 'o', 'u'], $diaHoy);
-
-        // Obtenemos el horario correspondiente al día de hoy
-        $horarioHoy = $horarios->firstWhere('dia_semana', $diaHoy);
-
-        // Convertimos apertura y cierre a Carbon si existe
-        if ($horarioHoy) {
-            $apertura = Carbon::createFromFormat('H:i:s', $horarioHoy->apertura)->format('g:i A');
-            $cierre   = Carbon::createFromFormat('H:i:s', $horarioHoy->cierre)->format('g:i A');
-        }
-      ?>
-
-      <?php if($horarioHoy && $horarioHoy->activo): ?>
-        Pedidos <?php echo e($apertura); ?> - <?php echo e($cierre); ?>
-
-      <?php else: ?>
-        Cerrado hoy
-      <?php endif; ?>
-      <br>
-      <i class="fas fa-map-marker-alt"></i> San Fernando · 
-      <i class="fas fa-car"></i> Delivery Disponible
-    </p>
-    <div class="hero-ctas">
-      <a href="<?php echo e(route('menu')); ?>" class="btn-primary">
-        <i class="fas fa-utensils"></i> Ver Menú
-      </a>
-      <a href="https://wa.me/<?php echo e($whatsapp_number ?? '9614564697'); ?>" target="_blank" class="btn-ghost">
-        <i class="fab fa-whatsapp"></i> Ordenar por WhatsApp
-      </a>
+    <!-- Indicadores -->
+    <div class="carousel-indicators">
+      <?php for($i = 0; $i < 3; $i++): ?>
+        <button class="indicator <?php echo e($i === 0 ? 'active' : ''); ?>" data-slide="<?php echo e($i); ?>"></button>
+      <?php endfor; ?>
     </div>
   </div>
 
-  <div class="hero-art">
-    <?php
-      $productoDestacado = \App\Models\Producto::where('status', 'activo')->inRandomOrder()->first();
-    ?>
-    <?php if($productoDestacado && $productoDestacado->imagen): ?>
-      <img src="<?php echo e(asset('storage/' . $productoDestacado->imagen)); ?>" alt="<?php echo e($productoDestacado->nombre); ?>" />
-    <?php else: ?>
-      <img src="<?php echo e(asset('uploads/productos/alitas.jpg')); ?>" alt="Especialidades DESOLE" />
-    <?php endif; ?>
+   <!-- Contenido del Hero SUPERPUESTO -->
+    <div class="hero-content-overlay">
+      <h1 class="hero-title">DÉSOLÉ<br><span class="hero-subtitle">Cafetería Nocturna</span></h1>
+      
+      <div class="hero-info">
+        <div class="info-item">
+          <i class="fas fa-clock"></i>
+          <span>
+            <?php
+              use Carbon\Carbon;
+              $horarios = \App\Models\Horario::ordenados()->get();
+              $diaHoy = strtolower(now()->locale('es')->isoFormat('dddd'));
+              $horarioHoy = $horarios->firstWhere('dia_semana', $diaHoy);
+
+              if($horarioHoy && $horarioHoy->activo) {
+                  $apertura = Carbon::createFromFormat('H:i:s', $horarioHoy->apertura)->format('g:i A');
+                  $cierre = Carbon::createFromFormat('H:i:s', $horarioHoy->cierre)->format('g:i A');
+                  echo "Pedidos {$apertura} - {$cierre}";
+              } else {
+                  echo "Cerrado hoy";
+              }
+            ?>
+          </span>
+        </div>
+        
+        <div class="info-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>San Fernando</span>
+        </div>
+        
+        <div class="info-item">
+          <i class="fas fa-car"></i>
+          <span>Delivery Disponible</span>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 <?php /**PATH C:\Users\josxp\Documents\desole\Desole\resources\views/public/secciones/_hero.blade.php ENDPATH**/ ?>

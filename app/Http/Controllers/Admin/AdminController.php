@@ -10,6 +10,7 @@ use App\Models\Promocion;
 use App\Models\Horario;
 use App\Services\CatalogService;
 use Illuminate\Http\Request;
+use App\Models\Pedido;
 
 class AdminController extends Controller
 {
@@ -107,5 +108,14 @@ class AdminController extends Controller
         }
 
         return Horario::ordenados()->get();
+    }
+
+    public function verPedido($id)
+    {
+        // Cargar pedido con la relación cliente
+        $pedido = Pedido::with('cliente')->findOrFail($id);
+
+        // Pasar a la vista
+        return view('admin.pedidos.ver', compact('pedido'));
     }
 }

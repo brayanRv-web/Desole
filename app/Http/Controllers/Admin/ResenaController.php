@@ -23,7 +23,7 @@ class ResenaController extends Controller
         $reseña = Resena::findOrFail($id);
         $reseña->delete();
 
-        return redirect()->route('admin.resenas.index')
+        return redirect()->route('admin.reseñas.index')
             ->with('success', 'Reseña eliminada correctamente.');
     }
 }

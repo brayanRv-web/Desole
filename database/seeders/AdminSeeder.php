@@ -22,7 +22,7 @@ class AdminSeeder extends Seeder
         );
 
         // Crear un empleado en la tabla users
-        User::updateOrCreate(
+        /*User::updateOrCreate(
             ['email' => 'empleado@desole.com'],
             [
                 'name' => 'Empleado',
@@ -30,7 +30,7 @@ class AdminSeeder extends Seeder
                 'role' => 'employee',
                 'is_active' => true,
             ]
-        );
+        );*/
 
         $this->command->info('✅ Administrador creado:');
         $this->command->info('📧 Email: admin@desole.com');

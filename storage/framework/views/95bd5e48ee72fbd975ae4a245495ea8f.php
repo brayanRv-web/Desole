@@ -39,9 +39,8 @@
         <li><a href="<?php echo e(url('/')); ?>#home"><i class="fas fa-home"></i> Inicio</a></li>
         
         <?php if(auth()->guard('cliente')->check()): ?>
-          <li><a href="<?php echo e(route('cliente.menu')); ?>"><i class="fas fa-utensils"></i> Menú Completo</a></li>
-        <?php else: ?>
-          <li><a href="<?php echo e(route('menu')); ?>"><i class="fas fa-utensils"></i> Menú</a></li>
+          <li><a href="<?php echo e(route('cliente.menu')); ?>"><i class="fas fa-utensils"></i> Menú</a></li>
+  
         <?php endif; ?>
         
   <li><a href="<?php echo e(url('/')); ?>#promociones"><i class="fas fa-gift"></i> Promociones</a></li>

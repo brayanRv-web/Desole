@@ -1,99 +1,307 @@
-/* ===== HERO AISLADO ===== */
+/* ===== HERO STYLE NIKE ===== */
 .hero {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 1rem;
-  background: linear-gradient(135deg, #0f0f0f, #191919);
-  min-height: 90vh;
-  padding-top: 100px;
   position: relative;
-  isolation: isolate;
+  width: 100%;
+  height: 100vh;
+  min-height: 700px;
+  overflow: hidden;
 }
 
-.hero-content {
-  max-width: 550px;
+/* ===== CARRUSEL HERO ===== */
+.hero-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ===== CONTENIDO SUPERPUESTO (ESTILO NIKE) ===== */
+.hero-content-overlay {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+  z-index: 20;
+  color: white;
   text-align: left;
-  padding: 1rem;
-  animation: fadeInUp 0.8s ease-out both;
+  max-width: 500px;
 }
 
-.hero-content h1 {
-  font-size: 2.6rem;
+.hero-title {
+  font-size: 4.5rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  color: white;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.hero-subtitle {
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 3px;
   color: var(--color-primary);
+  display: block;
+  margin-top: 0.5rem;
+}
+
+/* Información estilo minimalista */
+.hero-info {
+  margin-bottom: 2.5rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
   margin-bottom: 0.8rem;
-}
-
-.hero-content p {
   font-size: 1.1rem;
-  color: var(--color-muted);
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
 }
 
+.info-item i {
+  color: var(--color-primary);
+  margin-right: 12px;
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+/* Botones estilo moderno */
 .hero-ctas {
-  margin-top: 1.5rem;
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .btn-primary,
 .btn-ghost {
-  padding: 0.7rem 1.5rem;
-  border-radius: 25px;
+  padding: 1rem 2rem;
+  border-radius: 30px;
   border: none;
   cursor: pointer;
   font-weight: 600;
-  transition: var(--transition);
+  font-size: 1rem;
+  transition: all 0.3s ease;
   text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .btn-primary {
   background-color: var(--color-primary);
   color: var(--color-bg);
+  box-shadow: 0 4px 15px rgba(101, 207, 114, 0.3);
 }
 
 .btn-primary:hover {
   background-color: #5ac968;
-  transform: translateY(-3px);
-  box-shadow: 0 0 15px rgba(101, 207, 114, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(101, 207, 114, 0.4);
 }
 
 .btn-ghost {
-  border: 1px solid var(--color-primary);
-  color: var(--color-primary);
+  border: 2px solid white;
+  color: white;
   background: transparent;
+  backdrop-filter: blur(10px);
 }
 
 .btn-ghost:hover {
-  background-color: var(--color-primary);
+  background-color: white;
   color: var(--color-bg);
+  transform: translateY(-2px);
 }
 
-.btn-spacing {
-  height: 1.5rem;
+/* ===== CONTROLES DEL CARRUSEL ===== */
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: #5ac968;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 25;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
-.hero-art img {
-  max-width: 380px;
-  border-radius: 15px;
-  margin: 1rem;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
-  animation: float 4s ease-in-out infinite;
+.carousel-control:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: white;
+  transform: translateY(-50%) scale(1.1);
 }
 
-/* Asegurar que el hero NO afecte lo siguiente */
-.hero + * {
-  margin-top: 0 !important;
-  clear: both;
+.carousel-control.prev {
+  left: 2rem;
 }
 
-/* ===== ANIMACIONES DEL HERO ===== */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+.carousel-control.next {
+  right: 2rem;
 }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+.carousel-control i {
+  font-size: 1.5rem;
+}
+
+/* Indicadores */
+.carousel-indicators {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  z-index: 25;
+}
+
+.indicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #163b1b;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.indicator.active {
+  background: #5ac968;
+  transform: scale(1.2);
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* ===== OVERLAY PARA MEJOR LEGIBILIDAD ===== */
+.hero-carousel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.4) 50%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  z-index: 5;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: 3.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    height: 80vh;
+    min-height: 600px;
+  }
+  
+  .hero-content-overlay {
+    left: 5%;
+    right: 5%;
+    text-align: center;
+  }
+  
+  .hero-title {
+    font-size: 2.8rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.4rem;
+  }
+  
+  .hero-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .info-item {
+    justify-content: center;
+  }
+  
+  .carousel-control {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .carousel-control.prev {
+    left: 1rem;
+  }
+  
+  .carousel-control.next {
+    right: 1rem;
+  }
+  
+  .btn-primary,
+  .btn-ghost {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .hero-ctas {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .carousel-indicators {
+    bottom: 2rem;
+  }
 }

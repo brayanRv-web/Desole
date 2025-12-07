@@ -25,6 +25,19 @@
     ];
 @endphp
 
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50">
+    <div class="bg-gray-900 rounded-2xl p-6 w-96 max-w-full shadow-lg">
+        <h3 class="text-lg font-semibold text-white mb-4">Confirmar Eliminación</h3>
+        <p class="text-gray-300 mb-6">¿Está seguro de que desea eliminar permanentemente este usuario? Esta acción no se puede deshacer.</p>
+        <div class="flex justify-end gap-3">
+            <button id="cancelDelete" class="px-4 py-2 rounded-xl bg-gray-700 hover:bg-gray-600 text-white transition">Cancelar</button>
+            <button id="confirmDelete" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white transition">Eliminar</button>
+        </div>
+    </div>
+</div>
+
+
 <div class="flex flex-col space-y-6">
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -91,17 +104,6 @@
                 <div>
                     <p class="text-gray-400 text-sm">Admins Panel</p>
                     <p class="text-2xl font-bold text-white">{{ $allUsers->where('user_type', 'panel_admin')->count() }}</p>
-                </div>
-            </div>
-
-            <!-- System Users -->
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center">
-                    <i class="fas fa-user-tie text-blue-400"></i>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-sm">Empleados</p>
-                    <p class="text-2xl font-bold text-white">{{ $allUsers->where('user_type', 'system_user')->count() }}</p>
                 </div>
             </div>
         </div>
@@ -221,14 +223,11 @@
 
                                 <!-- Delete Button -->
                                 @if(!$isCurrentUser)
-                                <form action="{{ route('admin.usuarios.destroy', $user->id) }}" method="POST" 
-                                      onsubmit="return confirm('¿Está seguro de que desea eliminar permanentemente este usuario?')">
+                                <form id="deleteForm-user-{{ $user->id }}" action="{{ route('admin.usuarios.destroy', $user->id) }}" method="POST" class="deleteForm">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" 
-                                            class="bg-red-600/20 hover:bg-red-600/40 border border-red-500/50 hover:border-red-400 text-red-400 hover:text-red-300 p-2 rounded-xl transition-all duration-200 group/delete tooltip"
-                                            title="Eliminar usuario">
-                                        <i class="fas fa-trash group-hover/delete:scale-110 transition-transform"></i>
+                                    <button type="button" class="deleteBtn bg-red-600/20 hover:bg-red-600/40 border border-red-500/50 hover:border-red-400 text-red-400 hover:text-red-300 p-2 rounded-xl transition-all duration-200" data-name="{{ $user->name }}">
+                                        <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
                                 @else
@@ -265,12 +264,176 @@
         <div class="px-6 py-4 border-t border-gray-700/50 bg-gray-800/30">
             <div class="text-center text-sm text-gray-400">
                 Mostrando <span class="text-purple-400 font-semibold">{{ $allUsers->count() }}</span> usuarios en total
-                ({{ $allUsers->where('user_type', 'panel_admin')->count() }} administradores, 
-                {{ $allUsers->where('user_type', 'system_user')->count() }} empleados)
+                ({{ $allUsers->where('user_type', 'panel_admin')->count() }} administradores)
             </div>
         </div>
         @endif
     </div>
+
+    
+    <!-- Divider Between Admin Users and Clients -->
+    <div class="mt-16 mb-6">
+        <h2 class="text-3xl font-bold text-blue-400 flex items-center gap-3">
+            <i class="fas fa-users text-2xl"></i>
+            Clientes Registrados
+        </h2>
+        <p class="text-gray-400 mt-2">Clientes registrados en el sistema</p>
+    </div>
+    
+            <!-- Clients Counter -->
+        <div class="bg-gray-800/30 border border-blue-700/20 rounded-xl p-4 mt-10">
+            <h2 class="text-xl font-semibold text-blue-300 mb-4 flex items-center gap-2">
+
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+                <!-- Total Clientes -->
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-blue-600/20 flex items-center justify-center">
+                        <i class="fas fa-user-friends text-blue-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">Total Clientes</p>
+                        <p class="text-2xl font-bold text-white">{{ $clientes->count() }}</p>
+                    </div>
+                </div>
+
+                <!-- Clientes Hoy -->
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-green-600/20 flex items-center justify-center">
+                        <i class="fas fa-calendar-day text-green-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">Registrados Hoy</p>
+                        <p class="text-2xl font-bold text-white">
+                            {{ $clientes->where('created_at', '>=', now()->startOfDay())->count() }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Clientes Esta Semana -->
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-yellow-600/20 flex items-center justify-center">
+                        <i class="fas fa-calendar-week text-yellow-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">Esta Semana</p>
+                        <p class="text-2xl font-bold text-white">
+                            {{ $clientes->where('created_at', '>=', now()->startOfWeek())->count() }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Clientes Este Mes -->
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-purple-600/20 flex items-center justify-center">
+                        <i class="fas fa-calendar-alt text-purple-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">Este Mes</p>
+                        <p class="text-2xl font-bold text-white">
+                            {{ $clientes->where('created_at', '>=', now()->startOfMonth())->count() }}
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    <div class="bg-gray-800/50 rounded-2xl border border-blue-700/30 shadow-xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gradient-to-r from-blue-700/40 to-blue-800/20 border-b border-blue-600/30">
+                    <tr>
+                        <th class="px-6 py-4 text-left text-blue-300 font-semibold text-sm uppercase tracking-wider">
+                            <i class="fas fa-user mr-2"></i>Nombre
+                        </th>
+                        <th class="px-6 py-4 text-left text-blue-300 font-semibold text-sm uppercase tracking-wider">
+                            <i class="fas fa-envelope mr-2"></i>Email
+                        </th>
+                        <th class="px-6 py-4 text-left text-blue-300 font-semibold text-sm uppercase tracking-wider">
+                            <i class="fas fa-phone mr-2"></i>Teléfono
+                        </th>
+                        <th class="px-6 py-4 text-left text-blue-300 font-semibold text-sm uppercase tracking-wider">
+                            <i class="fas fa-calendar mr-2"></i>Registro
+                        </th>
+                        <th class="px-6 py-4 text-center text-blue-300 font-semibold text-sm uppercase tracking-wider">
+                            <i class="fas fa-cogs mr-2"></i>Acciones
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-700/50">
+                    @forelse($clientes as $cliente)
+                    <tr class="hover:bg-blue-900/20 transition-all duration-200 group">
+
+                        <!-- Nombre -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-3">
+
+                                <!-- ICONO -->
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 
+                                            border border-blue-400/30 flex items-center justify-center 
+                                            text-white font-semibold">
+                                    {{ strtoupper(substr($cliente->nombre, 0, 1)) }}
+                                </div>
+
+                                <span class="font-semibold text-white group-hover:text-blue-300 transition-colors">
+                                    {{ $cliente->nombre }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <!-- Email -->
+                        <td class="px-6 py-4 whitespace-nowrap text-gray-300">
+                            {{ $cliente->email }}
+                        </td>
+
+                        <!-- Teléfono -->
+                        <td class="px-6 py-4 whitespace-nowrap text-gray-300">
+                            {{ $cliente->telefono ?? 'No proporcionado' }}
+                        </td>
+
+                        <!-- Fecha -->
+                        <td class="px-6 py-4 whitespace-nowrap text-gray-400">
+                            {{ $cliente->created_at->format('d/m/Y') }}
+                        </td>
+
+                        <!-- Acciones -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center justify-center gap-2">
+
+                                <!-- Eliminar -->
+                                <form id="deleteForm-client-{{ $cliente->id }}" action="{{ route('admin.clientes.destroy', $cliente->id) }}" method="POST" class="deleteForm">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="deleteBtn bg-red-600/20 hover:bg-red-600/40 border border-red-500/50 hover:border-red-400 text-red-400 hover:text-red-300 p-2 rounded-xl transition-all duration-200" data-name="{{ $cliente->nombre }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <i class="fas fa-users text-4xl mb-4 text-gray-600"></i>
+                            <h3 class="text-lg font-semibold text-gray-400 mb-2">No hay clientes registrados</h3>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="px-6 py-4 border-t border-gray-700/50 bg-gray-800/30">
+            {{ $clientes->links() }}
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -282,28 +445,15 @@ function toggleUserStatus(button) {
     console.log('Toggle status:', { userId, currentStatus, newStatus });
     
     if (confirm(`¿Estás seguro de que deseas ${newStatus === 'active' ? 'activar' : 'desactivar'} este usuario?`)) {
-        // Usar la ruta con el helper de Laravel
         const url = "{{ route('admin.usuarios.updateStatus', ':id') }}".replace(':id', userId);
         
-        // Crear formulario dinámico
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = url;
         
-        // Obtener el token CSRF de diferentes formas
         let csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-        
-        // Si no se encuentra en meta tag, buscar en input hidden
-        if (!csrfToken) {
-            csrfToken = document.querySelector('input[name="_token"]')?.value;
-        }
-        
-        // Si aún no se encuentra, usar el valor global de Laravel
-        if (!csrfToken && window.Laravel?.csrfToken) {
-            csrfToken = window.Laravel.csrfToken;
-        }
-        
-        console.log('CSRF Token:', csrfToken);
+        if (!csrfToken) csrfToken = document.querySelector('input[name="_token"]')?.value;
+        if (!csrfToken && window.Laravel?.csrfToken) csrfToken = window.Laravel.csrfToken;
         
         if (!csrfToken) {
             alert('Error: No se pudo encontrar el token de seguridad. Por favor recarga la página.');
@@ -325,19 +475,16 @@ function toggleUserStatus(button) {
         statusInput.name = 'is_active';
         statusInput.value = newStatus === 'active' ? '1' : '0';
         
-        console.log('Sending is_active value:', statusInput.value);
-        
         form.appendChild(methodInput);
         form.appendChild(csrfInput);
         form.appendChild(statusInput);
         
         document.body.appendChild(form);
-        console.log('Submitting form to:', url);
         form.submit();
     }
 }
 
-// Auto-dismiss alerts after 5 seconds
+// Auto-dismiss alerts after 5 segundos
 document.addEventListener('DOMContentLoaded', function() {
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(function(alert) {
@@ -345,15 +492,39 @@ document.addEventListener('DOMContentLoaded', function() {
             if (alert && alert.parentNode) {
                 alert.style.opacity = '0';
                 setTimeout(() => {
-                    if (alert.parentNode) {
-                        alert.parentNode.removeChild(alert);
-                    }
+                    if (alert.parentNode) alert.parentNode.removeChild(alert);
                 }, 300);
             }
         }, 5000);
     });
+
+    // ===== Modal de Confirmación de Eliminación =====
+    const modal = document.getElementById('deleteModal');
+    const confirmBtn = document.getElementById('confirmDelete');
+    const cancelBtn = document.getElementById('cancelDelete');
+    let activeForm = null;
+
+    // Abrir modal al dar click en botón de eliminar
+    document.querySelectorAll('.deleteBtn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            activeForm = btn.closest('form');
+            modal.classList.remove('hidden');
+        });
+    });
+
+    // Cancelar eliminación
+    cancelBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+        activeForm = null;
+    });
+
+    // Confirmar eliminación
+    confirmBtn.addEventListener('click', () => {
+        if (activeForm) activeForm.submit();
+    });
 });
 </script>
+
 
 <style>
 .tooltip {

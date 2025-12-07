@@ -3,14 +3,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Cliente;
 use App\Notifications\WelcomeClienteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
@@ -55,13 +53,13 @@ class RegisterController extends Controller
             'ultima_visita' => now(),
         ]);
 
-
-        // Autenticar al cliente usando el guard 'cliente'
+        // Autenticar al cliente
         Auth::guard('cliente')->login($cliente);
 
         // Enviar correo de bienvenida
         $cliente->notify(new WelcomeClienteNotification());
 
-        return redirect()->route('home')
-            ->with('success', '¡Bienvenido a DÉSOLÉ! Tu cuenta ha sido creada exitosamente.');}
+        // Redirigir al home (welcome)
+        return redirect()->route('home')->with('success', '¡Bienvenido a DÉSOLÉ!');
+    }
 }

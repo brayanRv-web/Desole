@@ -62,7 +62,8 @@
             </div>
             <div class="map-container-minimal">
                 <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d337.47763374956827!2d-93.20833979079931!3d16.869780574649454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2smx!4v1762201718722!5m2!1ses-419!2smx&z=16" 
+                    
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3820.352260248572!2d-93.17491152508018!3d16.759141084024833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85ecd964bb4d07fd%3A0x4e771d3242c2f25a!2sTecnol%C3%B3gico%20Nacional%20de%20M%C3%A9xico%20Campus%20Tuxtla%20Guti%C3%A9rrez!5e0!3m2!1ses-419!2smx!4v1765052705312!5m2!1ses-419!2smx"
                     width="100%" 
                     height="200" 
                     style="border:0;" 
@@ -74,24 +75,44 @@
                 Visítanos en nuestra cafetería
             </p>
         </div>
-
-        <!-- Redes Sociales al Final -->
-        <div class="social-section">
-            <p class="social-title">Síguenos en redes sociales</p>
-            <div class="social-links-minimal">
-                <a href="https://www.facebook.com/share/1FPD5T2i9E/?mibextid=wwXIfr" class="social-link-minimal" title="Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="https://www.instagram.com/desole_cafe?igsh=M2M2a3VsaTR6OG12" class="social-link-minimal" title="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a href="#" class="social-link-minimal" title="TikTok">
-                    <i class="fab fa-tiktok"></i>
-                </a>
-            </div>
-        </div>
     </div>
 </section>
+
+ 
+<footer class="bg-zinc-800/50 border-t border-zinc-700 mt-12">
+      <div class="container mx-auto px-4 py-8">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div>
+                  <h3 class="text-lg font-semibold text-green-400 mb-4">Contacto</h3>
+                  <div class="space-y-2 text-gray-300">
+                      <p><i class="fas fa-phone w-6"></i> (961) 456-46-97</p>
+                      <p><i class="fas fa-envelope w-6"></i> desole.cafeteria@gmail.com</p>
+                  </div>
+              </div>
+              <div>
+                  <h3 class="text-lg font-semibold text-green-400 mb-4">Enlaces</h3>
+                  <div class="space-y-2">
+                      <p><a href="#" class="text-gray-300 hover:text-white transition">Preguntas Frecuentes</a></p>
+                  </div>
+              </div>
+              <div>
+                  <h3 class="text-lg font-semibold text-green-400 mb-4">Síguenos</h3>
+                  <div class="flex space-x-4">
+                      <a href="#" class="text-gray-300 hover:text-white transition">
+                          <i class="fab fa-facebook text-2xl"></i>
+                      </a>
+                      <a href="#" class="text-gray-300 hover:text-white transition">
+                          <i class="fab fa-instagram text-2xl"></i>
+                      </a>
+                  </div>
+              </div>
+          </div>
+          <div class="mt-8 pt-4 border-t border-zinc-700 text-center text-gray-400">
+              <p>&copy; <?php echo e(date('Y')); ?> Désolé. Todos los derechos reservados.</p>
+          </div>
+      </div>
+</footer>
+
 
 <!-- Botón Flotante de WhatsApp Minimalista -->
 <a href="https://wa.me/<?php echo e(config('contacto.whatsapp')); ?>?text=Hola%20DESOLE,%20me%20gustaría%20hacer%20un%20pedido" 
