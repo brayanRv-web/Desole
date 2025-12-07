@@ -54,27 +54,7 @@
             </div>
         </div>
 
-        <!-- Mapa con Animación -->
-        <div class="mapa-animado">
-            <div class="mapa-header">
-                <i class="fas fa-map-marker-alt"></i>
-                <h5>Nuestra Ubicación</h5>
-            </div>
-            <div class="map-container-minimal">
-                <iframe 
-                    
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3820.352260248572!2d-93.17491152508018!3d16.759141084024833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85ecd964bb4d07fd%3A0x4e771d3242c2f25a!2sTecnol%C3%B3gico%20Nacional%20de%20M%C3%A9xico%20Campus%20Tuxtla%20Guti%C3%A9rrez!5e0!3m2!1ses-419!2smx!4v1765052705312!5m2!1ses-419!2smx"
-                    width="100%" 
-                    height="200" 
-                    style="border:0;" 
-                    allowfullscreen="" 
-                    loading="lazy">
-                </iframe>
-            </div>
-            <p class="text-center mt-3" style="color: var(--color-muted); font-size: 0.9rem;">
-                Visítanos en nuestra cafetería
-            </p>
-        </div>
+      
     </div>
 </section>
 
@@ -90,18 +70,12 @@
                   </div>
               </div>
               <div>
-                  <h3 class="text-lg font-semibold text-green-400 mb-4">Enlaces</h3>
-                  <div class="space-y-2">
-                      <p><a href="#" class="text-gray-300 hover:text-white transition">Preguntas Frecuentes</a></p>
-                  </div>
-              </div>
-              <div>
                   <h3 class="text-lg font-semibold text-green-400 mb-4">Síguenos</h3>
                   <div class="flex space-x-4">
-                      <a href="#" class="text-gray-300 hover:text-white transition">
+                      <a href="https://www.facebook.com/share/1FPD5T2i9E/?mibextid=wwXIfr"  class="text-gray-300 hover:text-white transition">
                           <i class="fab fa-facebook text-2xl"></i>
                       </a>
-                      <a href="#" class="text-gray-300 hover:text-white transition">
+                      <a href="https://www.instagram.com/desole_cafe?igsh=M2M2a3VsaTR6OG12" class="text-gray-300 hover:text-white transition">
                           <i class="fab fa-instagram text-2xl"></i>
                       </a>
                   </div>

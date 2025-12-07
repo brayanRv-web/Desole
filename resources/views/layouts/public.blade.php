@@ -92,12 +92,7 @@
                       <p><i class="fas fa-envelope w-6"></i> desole.cafeteria@gmail.com</p>
                   </div>
               </div>
-              <div>
-                  <h3 class="text-lg font-semibold text-green-400 mb-4">Enlaces</h3>
-                  <div class="space-y-2">
-                      <p><a href="#" class="text-gray-300 hover:text-white transition">Preguntas Frecuentes</a></p>
-                  </div>
-              </div>
+
               <div>
                   <h3 class="text-lg font-semibold text-green-400 mb-4">Síguenos</h3>
                   <div class="flex space-x-4">

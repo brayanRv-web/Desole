@@ -53,61 +53,49 @@
 
   <main>
 
-    <!-- SECCIÓN PRODUCTOS DESTACADOS (VISIBLE PARA TODOS) -->
-    <section id="destacados" class="destacados-section">
-      <div class="container">
-        <h2 class="section-title" data-aos="fade-up">Nuestros Favoritos</h2>
-        <p class="section-subtitle" data-aos="fade-up" data-aos-delay="200">
-          Una probadita de lo que te espera en nuestro menú
-        </p>
-        
-        <div class="productos-grid">
-          @foreach($productosDestacados as $producto)
-          <div class="producto-card" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}"
-               data-producto-id="{{ $producto->id }}"
-               data-nombre="{{ htmlspecialchars($producto->nombre, ENT_QUOTES) }}"
-               data-precio="{{ number_format($producto->precio, 2, '.', '') }}"
-               data-stock="{{ $producto->stock ?? 0 }}"
-               data-imagen="{{ $producto->imagen ? asset($producto->imagen) : asset('assets/placeholder.svg') }}">
-            <div class="producto-img">
-              <img src="{{ $producto->imagen ? asset($producto->imagen) : asset('assets/placeholder.svg') }}" alt="{{ $producto->nombre }}">
+<!-- DESTACADOS CLIENTE / INVITADO -->
+<section id="destacados" class="destacados-hero">
+    <h2 class="destacados-title" data-aos="fade-up">Nuestros Favoritos</h2>
+    <p class="destacados-subtitle" data-aos="fade-up" data-aos-delay="100">
+        Una probadita de lo que te espera en nuestro menú
+    </p>
+
+    <div class="productos-grid" data-aos="fade-up" data-aos-delay="200">
+        @foreach($productosDestacados as $producto)
+            <div class="producto-card" 
+                 data-producto-id="{{ $producto->id }}"
+                 data-nombre="{{ htmlspecialchars($producto->nombre, ENT_QUOTES) }}"
+                 data-precio="{{ number_format($producto->precio, 2, '.', '') }}"
+                 data-stock="{{ $producto->stock ?? 0 }}"
+                 data-imagen="{{ $producto->imagen ? asset($producto->imagen) : asset('assets/placeholder.svg') }}">
+                <div class="producto-img">
+                    <img src="{{ $producto->imagen ? asset($producto->imagen) : asset('assets/placeholder.svg') }}" alt="{{ $producto->nombre }}">
+                </div>
+                <div class="producto-info">
+                    <h3>{{ $producto->nombre }}</h3>
+                    <p class="producto-desc">{{ Str::limit($producto->descripcion, 80) }}</p>
+                    <div class="producto-precio">${{ number_format($producto->precio, 2) }}</div>
+                    <div class="producto-actions">
+                        <button class="btn-agregar-carrito" type="button">
+                            <i class="fas fa-plus"></i> Agregar
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="producto-info">
-              <h3>{{ $producto->nombre }}</h3>
-              <p class="producto-desc">{{ Str::limit($producto->descripcion, 80) }}</p>
-              <div class="producto-precio">${{ number_format($producto->precio, 2) }}</div>
-              <div class="producto-actions">
-                <button class="btn-agregar-carrito" type="button">
-                  <i class="fas fa-plus"></i>
-                  Agregar
-                </button>
-              </div>
-            </div>
-          </div>
-          @endforeach
-        </div>
-        
-        @guest('cliente')
-        <div class="cta-registro" data-aos="fade-up">
-          <div class="cta-content">
+        @endforeach
+    </div>
+
+    @guest('cliente')
+        <div class="cta-registro" data-aos="fade-up" data-aos-delay="300">
             <h3>¿Quieres ver el menú completo?</h3>
-            <p>Regístrate y disfruta de:</p>
-            <ul>
-              <li><i class="fas fa-check"></i> Menú completo con todas las categorías</li>
-              <li><i class="fas fa-check"></i> Carrito de compras integrado</li>
-              <li><i class="fas fa-check"></i> Promociones exclusivas para miembros</li>
-              <li><i class="fas fa-check"></i> Seguimiento de pedidos en tiempo real</li>
-              <li><i class="fas fa-check"></i> Programa de fidelidad con puntos</li>
-            </ul>
+            <p>Regístrate y disfruta de todas nuestras funciones</p>
             <a href="{{ route('register') }}" class="btn btn-primary">
-              <i class="fas fa-user-plus"></i> Registrarme y ver menú completo
+                <i class="fas fa-user-plus"></i> Registrarme
             </a>
-            <p class="cta-small">¿Ya tienes cuenta? <a href="{{ route('login.cliente') }}">Inicia sesión aquí</a></p>
-          </div>
         </div>
-        @endguest
-      </div>
-    </section>
+    @endguest
+</section>
+
 
     <!-- PROMOCIONES TEASER -->
     <section id="promociones" class="promociones-section">
@@ -212,24 +200,24 @@
 
     <!-- HERO CLIENTE -->
     <section class="cliente-hero">
-      <div class="container">
-        <div class="cliente-welcome" data-aos="fade-up">
-          <h2>¡Hola, {{ Auth::guard('cliente')->user()->nombre }}! 👋</h2>
-          <p>Bienvenido de nuevo a tu cafetería favorita</p>
-          <div class="cliente-stats">
-            <div class="stat-card">
-              <i class="fas fa-gift"></i>
-              <span class="stat-number">{{ $promociones->count() }}</span>
-              <span class="stat-label">Promociones activas</span>
+            <div class="cliente-welcome-container" data-aos="fade-up">
+            <div class="cliente-welcome">
+                <h2>¡Hola, {{ Auth::guard('cliente')->user()->nombre }}! 👋</h2>
+                <p>Bienvenido de nuevo a tu cafetería favorita</p>
+                <div class="cliente-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-gift"></i>
+                        <span class="stat-number">{{ $promociones->count() }}</span>
+                        <span class="stat-label">Promociones activas</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="stat-number">{{ Auth::guard('cliente')->user()->total_pedidos }}</span>
+                        <span class="stat-label">Pedidos realizados</span>
+                    </div>
+                </div>
             </div>
-            <div class="stat-card">
-              <i class="fas fa-shopping-bag"></i>
-              <span class="stat-number">{{ Auth::guard('cliente')->user()->total_pedidos }}</span>
-              <span class="stat-label">Pedidos realizados</span>
-            </div>
-          </div>
         </div>
-      </div>
     </section>
 
     <!-- MENÚ COMPLETO eliminado del Home: los productos del menú se muestran en la página /menu -->

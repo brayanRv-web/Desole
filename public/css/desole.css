@@ -459,6 +459,21 @@ a {
 
 
 /* ===== CLIENTE WELCOME SECTION ===== */
+
+.cliente-welcome-container {
+  max-width: 1200px;       /* igual que promociones */
+  margin: 0 auto;          /* centrado horizontal */
+  padding: 0 20px;         /* margen interno igual que otras secciones */
+}
+
+.cliente-welcome {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
 .cliente-hero {
   background: linear-gradient(135deg, rgba(101, 207, 114, 0.05), rgba(0, 0, 0, 0.3));
   border-top: 2px solid var(--color-primary);
@@ -466,13 +481,6 @@ a {
   padding: 2.5rem 1rem;
   margin: 2rem 0;
 }
-
-.cliente-welcome {
-  max-width: 1100px;
-  margin: 0 auto;
-  text-align: center;
-}
-
 .cliente-welcome h2 {
   font-size: 2rem;
   color: var(--color-primary);
@@ -488,10 +496,12 @@ a {
 
 .cliente-stats {
   display: flex;
-  gap: 2rem;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center; /* centra los stat-cards */
   align-items: center;
+  gap: 2rem;
+  width: 100%;
+  margin: 0 auto; /* asegura centrado si hay menos elementos */
 }
 
 .stat-card {
@@ -500,12 +510,14 @@ a {
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  min-width: 160px;
+  flex: 1 1 160px; /* permite crecer o encogerse según pantalla */
+  max-width: 220px; /* evita que se salga del layout en móviles */
   padding: 1.2rem 1.8rem;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(101, 207, 114, 0.2);
   border-radius: 12px;
   transition: var(--transition);
+  text-align: center;
 }
 
 .stat-card:hover {
@@ -540,24 +552,21 @@ a {
     padding: 1.8rem 1rem;
     margin: 1.5rem 0;
   }
-  
+
   .cliente-welcome h2 {
     font-size: 1.6rem;
   }
-  
+
   .cliente-welcome > p {
     font-size: 1rem;
   }
-  
-  .cliente-stats {
-    gap: 1.2rem;
-  }
-  
+
   .stat-card {
-    min-width: 140px;
+    flex: 1 1 140px;
+    max-width: 45%; /* máximo 2 cards por fila */
     padding: 1rem 1.4rem;
   }
-  
+
   .stat-number {
     font-size: 1.5rem;
   }
@@ -567,28 +576,26 @@ a {
   .cliente-welcome h2 {
     font-size: 1.3rem;
   }
-  
-  .cliente-stats {
-    gap: 0.8rem;
-  }
-  
+
   .stat-card {
-    min-width: 120px;
+    flex: 1 1 120px;
+    max-width: 80%; /* 1 card por fila centrada */
     padding: 0.8rem 1rem;
   }
-  
+
   .stat-card i {
     font-size: 1.5rem;
   }
-  
+
   .stat-number {
     font-size: 1.3rem;
   }
-  
+
   .stat-label {
     font-size: 0.8rem;
   }
 }
+
 
 /* ===== CHATBOX Y BOTÓN ===== */
 .chatbox {
@@ -1565,4 +1572,73 @@ a {
         width: 4px;
         height: 100%;
     }
+}
+
+.destacados-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-align: center; /* Centra el título */
+}
+
+.destacados-subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--color-text-alt);
+    text-align: center; /* Centra el subtítulo */
+    margin-bottom: 2rem;
+}
+
+/* Mantener efecto fade solo para el contenido, no para el título */
+.productos-grid[data-aos] {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.productos-grid[data-aos].aos-animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* --- PRODUCTO CARD: EFECTO SUAVE --- */
+.producto-card {
+    background: var(--color-bg-alt);
+    border-radius: 15px;
+    padding: 18px;
+    border: 1px solid #222;
+    transition: 
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+    cursor: pointer;
+}
+
+/* Hover más sutil */
+.producto-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+    border-color: var(--color-primary);
+}
+
+/* Imagen con zoom ligero */
+.producto-img img {
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.producto-card:hover .producto-img img {
+    transform: scale(1.03);
+}
+
+/* Botón suave */
+.btn-agregar-carrito {
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.producto-card:hover .btn-agregar-carrito {
+    transform: translateY(-1px);
 }
